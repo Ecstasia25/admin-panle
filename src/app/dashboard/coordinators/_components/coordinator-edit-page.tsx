@@ -39,7 +39,7 @@ export default async function CoordinatorEditPage({
 
     return (
         <>
-            <CoordinatorForm initialData={coordinator} pageTitle={pageTitle} />;
+            <CoordinatorForm initialData={coordinator} pageTitle={pageTitle} />
 
         </>
     )

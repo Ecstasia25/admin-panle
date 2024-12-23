@@ -2,33 +2,36 @@
 import { client } from '@/utils/client';
 import { useQuery } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
-import AdminForm from './admin-form';
+import UserForm from './user-form';
 
 
-type AdminEditPageProps = {
-    adminId: string;
+
+
+
+type UserEditPageProps = {
+    id: string;
 };
 
-export default async function AdminEditPage({
-    adminId,
-}: AdminEditPageProps) {
-    let admin = null;
-    let pageTitle = 'Create New Admin';
+export default async function UserEditPage({
+    id,
+}: UserEditPageProps) {
+    let user = null;
+    let pageTitle = 'Create New user';
 
     const {
         data,
     } = useQuery({
-        queryKey: ['get-admin'],
+        queryKey: ['get-user'],
         queryFn: async () => {
-            const response = await client.auth.getUserById.$get({ id: adminId });
+            const response = await client.auth.getUserById.$get({ id });
             const { user } = await response.json();
             return user;
         },
     })
-    pageTitle = `Update Admin Details`;
+    pageTitle = `Update User Details`;
 
     if (data) {
-        admin = {
+        user = {
             ...data,
             createdAt: new Date(data.createdAt),
             updatedAt: new Date(data.updatedAt),
@@ -37,7 +40,7 @@ export default async function AdminEditPage({
 
     return (
         <>
-            <AdminForm initialData={admin} pageTitle={pageTitle} />
+            <UserForm initialData={user} pageTitle={pageTitle} />
         </>
     )
 }
