@@ -93,6 +93,46 @@ export const authRouter = router({
         },
       })
     }),
+  getAllCoordinators: privateProcedure
+    .input(
+      z.object({
+        page: z.number().optional(),
+        limit: z.number().optional(),
+        search: z.string().optional(),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { page = 1, limit = 10, search } = input
+
+      let admins = await db.user.findMany({
+        where: {
+          role: "COORDINATOR",
+        },
+      })
+
+      if (search) {
+        admins = matchSorter(admins, search, {
+          keys: ["name", "email", "phone"],
+        })
+      }
+
+      const allCoordCount = admins.length
+
+      const offset = (page - 1) * limit
+
+      const paginatedCoord = admins.slice(offset, offset + limit)
+
+      return c.json({
+        data: {
+          success: true,
+          allCoordsCount: allCoordCount,
+          coordinators: paginatedCoord,
+          message: "Coordinators fetched successfully",
+          offset,
+          limit,
+        },
+      })
+    }),
 
   deleteUser: privateProcedure
     .input(

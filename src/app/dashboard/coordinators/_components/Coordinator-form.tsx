@@ -38,7 +38,7 @@ const formSchema = z.object({
     role: z.nativeEnum(Role)
 });
 
-export default function AdminForm({
+export default function CoordinatorForm({
     initialData,
     pageTitle
 }: {
@@ -52,7 +52,7 @@ export default function AdminForm({
         defaultValues: {
             name: '',
             phone: '',
-            role: 'USER'
+            role: 'COORDINATOR'
         }
     });
 
@@ -61,7 +61,7 @@ export default function AdminForm({
             form.reset({
                 name: initialData.name || '',
                 phone: initialData.phone || '',
-                role: initialData.role || 'USER'
+                role: initialData.role || 'COORDINATOR'
             });
         }
     }, [initialData, form]);
@@ -87,10 +87,10 @@ export default function AdminForm({
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['get-admin']
+                queryKey: ['get-coordinator']
             });
-            toast.success('Admin updated successfully');
-            router.push('/dashboard/admins');
+            toast.success('Coordinator updated successfully');
+            router.push('/dashboard/coordinators');
         },
         onError: (error: Error) => {
             toast.error(error.message || "Failed to update");
@@ -124,7 +124,7 @@ export default function AdminForm({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Admin Name
+                                            Coordinator Name
                                         </FormLabel>
                                         <FormControl>
                                             <Input placeholder="Enter admin name" {...field} />

@@ -1,29 +1,26 @@
 "use client";
 import PageContainer from '@/components/layout/page-container'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/utils'
-import { Plus, RotateCcw } from 'lucide-react'
-import Link from 'next/link'
+import { RotateCcw } from 'lucide-react'
 import React from 'react'
 import { Heading } from '@/components/ui/heading'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { client } from '@/utils/client'
-import AdminsTable from "./admins-table"
+import AdminsTable from "./coordinators-table"
 import { toast } from 'sonner'
-import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
-
-interface AdminListingPageProps {
+interface CoordinatorListPageProps {
   page: number;
   search?: string;
   pageLimit: number;
 }
 
-const AdminListingPage = ({
+const CoordinatorListPage = ({
   page,
   search,
   pageLimit
-}: AdminListingPageProps) => {
+}: CoordinatorListPageProps) => {
   const [spinReload, setSpinReload] = React.useState(false);
   const filters = {
     page,
@@ -38,25 +35,25 @@ const AdminListingPage = ({
     isLoading,
     refetch
   } = useQuery({
-    queryKey: ['get-all-admins', filters],
+    queryKey: ['get-all-coordinators', filters],
     queryFn: async () => {
-      const response = await client.auth.getAllAdmins.$get(filters);
+      const response = await client.auth.getAllCoordinators.$get(filters);
       const { data } = await response.json();
       return data;
     },
   })
 
-  const adminsCount = data?.allAdminsCount || 0;
+  const coordsCount = data?.allCoordsCount || 0;
 
-  const dataWithDates = data?.admins?.map((admin) => ({
-    ...admin,
-    createdAt: new Date(admin.createdAt),
-    updatedAt: new Date(admin.updatedAt),
+  const dataWithDates = data?.coordinators?.map((coordinator) => ({
+    ...coordinator,
+    createdAt: new Date(coordinator.createdAt),
+    updatedAt: new Date(coordinator.updatedAt),
   }))
 
   const handleReload = () => {
     setSpinReload(true);
-    queryClient.invalidateQueries({ queryKey: ['get-all-admins', filters], exact: true });
+    queryClient.invalidateQueries({ queryKey: ['get-all-coordinators', filters], exact: true });
     refetch();
     toast.success('Data Refetched');
     setTimeout(() => {
@@ -69,8 +66,8 @@ const AdminListingPage = ({
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <Heading
-            title={`Admins (${adminsCount})`}
-            description="Manage all the admins in the system"
+            title={`Coordinators (${coordsCount})`}
+            description="Manage all the coordinators in the system"
           />
 
           <div className='flex items-center gap-2'>
@@ -97,15 +94,15 @@ const AdminListingPage = ({
         {/* {isLoading ? (
           <DataTableSkeleton columnCount={6} rowCount={5} />
         ) : ( */}
-          <AdminsTable
-            data={dataWithDates || []}
-            totalData={adminsCount}
-            isLoading={isLoading}
-          />
+        <AdminsTable
+          data={dataWithDates || []}
+          totalData={coordsCount}
+          isLoading={isLoading}
+        />
         {/* )} */}
       </div>
     </PageContainer>
   )
 }
 
-export default AdminListingPage
+export default CoordinatorListPage
