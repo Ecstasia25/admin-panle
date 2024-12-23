@@ -15,26 +15,24 @@ export default async function AdminEditPage({
     let admin = null;
     let pageTitle = 'Create New Admin';
 
-    if (adminId !== 'new') {
-        const {
-            data,
-        } = useQuery({
-            queryKey: ['get-admin'],
-            queryFn: async () => {
-                const response = await client.auth.getUserById.$get({ id: adminId });
-                const { user } = await response.json();
-                return user;
-            },
-        })
-        pageTitle = `Update Admin Details`;
+    const {
+        data,
+    } = useQuery({
+        queryKey: ['get-admin'],
+        queryFn: async () => {
+            const response = await client.auth.getUserById.$get({ id: adminId });
+            const { user } = await response.json();
+            return user;
+        },
+    })
+    pageTitle = `Update Admin Details`;
 
-        if (data) {
-            admin = {
-                ...data,
-                createdAt: new Date(data.createdAt),
-                updatedAt: new Date(data.updatedAt),
-            };
-        }
+    if (data) {
+        admin = {
+            ...data,
+            createdAt: new Date(data.createdAt),
+            updatedAt: new Date(data.updatedAt),
+        };
     }
 
     return (

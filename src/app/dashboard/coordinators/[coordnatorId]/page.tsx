@@ -1,7 +1,6 @@
 import PageContainer from "@/components/layout/page-container";
 import FormCardSkeleton from "@/components/ui/form-card-skeleton";
 import { Suspense } from "react";
-import AdminEditPage from "../_components/admin-edit-page";
 import CoordinatorEditPage from "../_components/coordinator-edit-page";
 
 export const metadata = {
