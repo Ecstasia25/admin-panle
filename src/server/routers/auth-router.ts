@@ -133,6 +133,46 @@ export const authRouter = router({
         },
       })
     }),
+  getAllUsers: privateProcedure
+    .input(
+      z.object({
+        page: z.number().optional(),
+        limit: z.number().optional(),
+        search: z.string().optional(),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { page = 1, limit = 10, search } = input
+
+      let users = await db.user.findMany({
+        where: {
+          role: "USER",
+        },
+      })
+
+      if (search) {
+        users = matchSorter(users, search, {
+          keys: ["name", "email", "phone"],
+        })
+      }
+
+      const allUsers = users.length
+
+      const offset = (page - 1) * limit
+
+      const paginatedUsers = users.slice(offset, offset + limit)
+
+      return c.json({
+        data: {
+          success: true,
+          allUsersCount: allUsers,
+          users: paginatedUsers,
+          message: "Users fetched successfully",
+          offset,
+          limit,
+        },
+      })
+    }),
 
   deleteUser: privateProcedure
     .input(
@@ -158,21 +198,21 @@ export const authRouter = router({
     .input(
       z.object({
         id: z.string(),
-        clerkId: z.string(),
         name: z.string().optional(),
         email: z.string().optional(),
         phone: z.string().optional(),
-        role: z.nativeEnum(Role),
+        role: z.nativeEnum(Role).optional(),
       })
     )
     .mutation(async ({ c, input }) => {
-      const { id, clerkId, name, phone, role } = input
+      const { id, name, email, phone, role } = input
       await db.user.update({
         where: {
           id,
         },
         data: {
           name,
+          email,
           phone,
           role,
         },

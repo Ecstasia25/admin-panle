@@ -1,6 +1,5 @@
 'use client';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Employee } from '@/constants/data';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { User } from '@prisma/client';
@@ -68,7 +67,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       return (
         <span className='min-w-[200px] flex items-center'>
-          {format(new Date(row.original.createdAt), 'PPP hh:mm a')}
+          {format(new Date(row.original.createdAt), 'PPP hh:mm')}
         </span>
       )
     }

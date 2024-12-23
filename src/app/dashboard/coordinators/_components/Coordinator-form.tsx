@@ -33,9 +33,7 @@ import * as z from 'zod';
 
 const formSchema = z.object({
     name: z.string().optional(),
-    phone: z.string().min(10, {
-        message: 'Phone number must be 10 characters long'
-    }).optional(),
+    phone: z.string().optional(),
     role: z.nativeEnum(Role)
 });
 
@@ -72,14 +70,12 @@ export default function CoordinatorForm({
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: z.infer<typeof formSchema> & {
             id: string;
-            clerkId: string;
         }) => {
             const res = await client.auth.updateUser.$post({
                 id: data.id,
                 name: data.name,
                 phone: data.phone,
                 role: data.role,
-                clerkId: data.clerkId
             });
             const json = await res.json();
 
@@ -105,7 +101,6 @@ export default function CoordinatorForm({
             mutate({
                 ...values,
                 id: initialData.id,
-                clerkId: initialData.clerkId
             });
         }
     }

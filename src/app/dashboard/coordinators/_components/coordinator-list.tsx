@@ -10,6 +10,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { client } from '@/utils/client'
 import AdminsTable from "./coordinators-table"
 import { toast } from 'sonner'
+import { useUser } from '@/hooks/users/use-user';
 interface CoordinatorListPageProps {
   page: number;
   search?: string;
@@ -21,6 +22,7 @@ const CoordinatorListPage = ({
   search,
   pageLimit
 }: CoordinatorListPageProps) => {
+  const { user } = useUser();
   const [spinReload, setSpinReload] = React.useState(false);
   const filters = {
     page,
@@ -49,7 +51,7 @@ const CoordinatorListPage = ({
     ...coordinator,
     createdAt: new Date(coordinator.createdAt),
     updatedAt: new Date(coordinator.updatedAt),
-  }))
+  })).filter((coordinator) => coordinator.id !== user?.id);
 
   const handleReload = () => {
     setSpinReload(true);

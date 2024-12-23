@@ -12,6 +12,7 @@ import { client } from '@/utils/client'
 import AdminsTable from "./admins-table"
 import { toast } from 'sonner'
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
+import { useUser } from '@/hooks/users/use-user';
 
 interface AdminListingPageProps {
   page: number;
@@ -33,6 +34,7 @@ const AdminListingPage = ({
 
   const queryClient = useQueryClient();
 
+  const {user} = useUser();
   const {
     data,
     isLoading,
@@ -52,7 +54,7 @@ const AdminListingPage = ({
     ...admin,
     createdAt: new Date(admin.createdAt),
     updatedAt: new Date(admin.updatedAt),
-  }))
+  })).filter((admin) => admin.id !== user?.id);
 
   const handleReload = () => {
     setSpinReload(true);

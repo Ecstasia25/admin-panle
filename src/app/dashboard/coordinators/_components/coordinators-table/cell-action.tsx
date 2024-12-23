@@ -32,8 +32,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       await client.auth.deleteUser.$post({ id })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get-all-admins"] })
-      toast.success("Admin deleted successfully")
+      queryClient.invalidateQueries({ queryKey: ["get-all-coordinators"] })
+      toast.success("Coordinator deleted successfully")
     }
 
   })
