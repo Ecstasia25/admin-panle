@@ -28,7 +28,14 @@ export const columns: ColumnDef<User>[] = [
   // },
   {
     accessorKey: 'name',
-    header: 'NAME'
+    header: 'NAME',
+    cell: ({ row }) => {
+      return (
+        <span className='min-w-[200px] flex items-center'>
+          {row.original.name}
+        </span>
+      )
+    }
   },
   {
     accessorKey: 'email',

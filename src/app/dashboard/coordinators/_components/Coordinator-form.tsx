@@ -19,6 +19,7 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select';
+import { useUser } from '@/hooks/users/use-user';
 import { client } from '@/utils/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Role, User } from '@prisma/client';
@@ -45,6 +46,8 @@ export default function CoordinatorForm({
     initialData: User | null;
     pageTitle: string;
 }) {
+
+    const { user } = useUser();
     const queryClient = useQueryClient();
     const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
@@ -151,8 +154,12 @@ export default function CoordinatorForm({
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="SUPERADMIN">SUPERADMIN</SelectItem>
-                                                <SelectItem value="ADMIN">ADMIN</SelectItem>
+                                                {user?.role === "SUPERADMIN" && (
+                                                    <SelectItem value="SUPERADMIN">SUPERADMIN</SelectItem>
+                                                )}
+                                                {(user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
+                                                    <SelectItem value="ADMIN">ADMIN</SelectItem>
+                                                )}
                                                 <SelectItem value="COORDINATOR">COORDINATOR</SelectItem>
                                                 <SelectItem value="USER">USER</SelectItem>
                                             </SelectContent>
