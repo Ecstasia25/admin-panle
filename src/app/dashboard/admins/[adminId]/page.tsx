@@ -1,4 +1,11 @@
-import React from 'react'
+import PageContainer from "@/components/layout/page-container";
+import FormCardSkeleton from "@/components/ui/form-card-skeleton";
+import { Suspense } from "react";
+import AdminEditPage from "../_components/admin-edit-page";
+
+export const metadata = {
+  title: 'Admin | Ecstasia Panel',
+};
 
 interface AdminDetailsProps {
   params: {
@@ -6,15 +13,20 @@ interface AdminDetailsProps {
   }
 }
 
+
 const AdminDetails = ({
   params
 }: AdminDetailsProps) => {
 
-  const adminId = params.adminId
+
   return (
-    <div>
-      {adminId}
-    </div>
+    <PageContainer scrollable>
+      <div className="flex-1 space-y-4">
+        <Suspense fallback={<FormCardSkeleton />}>
+          <AdminEditPage adminId={params.adminId} />
+        </Suspense>
+      </div>
+    </PageContainer>
   )
 }
 

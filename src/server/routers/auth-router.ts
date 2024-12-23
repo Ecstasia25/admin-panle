@@ -1,4 +1,5 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server"
+import { Role } from "@prisma/client"
 import { router } from "../__internals/router"
 import { privateProcedure, publicProcedure } from "../procedures"
 import { db } from "@/utils/db"
@@ -39,6 +40,19 @@ export const authRouter = router({
     })
     return c.json({ user })
   }),
+  getUserById: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { id } = input
+      const user = await db.user.findUnique({
+        where: { id },
+      })
+      return c.json({ user })
+    }),
   getAllAdmins: privateProcedure
     .input(
       z.object({
@@ -108,17 +122,11 @@ export const authRouter = router({
         name: z.string().optional(),
         email: z.string().optional(),
         phone: z.string().optional(),
-        role: z.enum(["ADMIN", "USER", "COORDINATOR"]).optional(),
+        role: z.nativeEnum(Role),
       })
     )
     .mutation(async ({ c, input }) => {
-      const { id, clerkId, name, phone } = input
-      const client = await clerkClient()
-      await client.users.updateUser(clerkId,{
-        firstName: name?.split(" ")[0] || "",
-        lastName: name?.split(" ")[1] || "",
-        primaryPhoneNumberID: phone,
-      } )
+      const { id, clerkId, name, phone, role } = input
       await db.user.update({
         where: {
           id,
@@ -126,6 +134,7 @@ export const authRouter = router({
         data: {
           name,
           phone,
+          role,
         },
       })
       return c.json({

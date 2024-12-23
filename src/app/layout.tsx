@@ -20,7 +20,7 @@ const eb_garamond = EB_Garamond({
 })
 
 export const metadata: Metadata = {
-  title: "Ecstasia Admin",
+  title: "Ecstasia Panel",
   description: "Ecstasia is the annual cultural extravaganza of the University of Engineering and Management (UEM), Kolkata. This highly anticipated fest ignites the campus with excitement, fostering camaraderie and offering a vibrant celebration of traditions.",
   manifest: "manifest.json",
   icons: {

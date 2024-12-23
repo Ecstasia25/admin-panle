@@ -9,7 +9,7 @@ type pageProps = {
 };
 
 export const metadata = {
-  title: 'Admins | Ecstasia Admin'
+  title: 'Admins | Ecstasia Panel'
 };
 
 export default async function Page({ searchParams }: pageProps) {
