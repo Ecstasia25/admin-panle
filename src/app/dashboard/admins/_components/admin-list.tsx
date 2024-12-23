@@ -77,7 +77,7 @@ const AdminListingPage = ({
             <Button
               variant={'secondary'}
               onClick={handleReload}
-              className='active:scale-95'
+              className='active:scale-95 hidden md:flex'
             >
               <RotateCcw className={cn("mr-2 h-4 w-4 rotate-180 transition-all",
                 spinReload && "animate-spin"

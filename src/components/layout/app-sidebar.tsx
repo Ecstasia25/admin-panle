@@ -63,7 +63,7 @@ export default function AppSidebar() {
           <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground mt-1">
             <company.logo className="size-6" />
           </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
+          <div className="grid flex-1 text-left text-sm leading-tight pt-0.5">
             <span className="truncate font-semibold">{company.name}</span>
             {isLoading ? (
               <Skeleton className="w-20 h-4 rounded-sm mt-0.5" />
