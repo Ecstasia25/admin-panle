@@ -1,0 +1,28 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SAUPERADMIN
+  ADMIN
+  COORDINATOR
+  USER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String   @unique
+  name      String?
+  email     String?  @unique
+  phone     String?  @unique
+  image     String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
