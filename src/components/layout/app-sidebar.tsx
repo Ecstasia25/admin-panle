@@ -78,7 +78,7 @@ export default function AppSidebar() {
       <SidebarContent className="overflow-x-hidden">
         <SidebarGroup>
           <SidebarGroupLabel className='uppercase'>
-            SUPERADMIN PANEL
+            {user?.role} PANEL
           </SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {

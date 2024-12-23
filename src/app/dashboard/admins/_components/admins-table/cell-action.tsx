@@ -8,21 +8,42 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { client } from '@/utils/client';
 import { User } from '@prisma/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface CellActionProps {
   data: User;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading, setLoading] = useState(false);
+
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  const onConfirm = async () => {};
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteAdmin, isPending } = useMutation({
+    mutationFn: async (id: string) => {
+      await client.auth.deleteUser.$post({ id })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get-all-admins"] })
+      toast.success("Admin deleted successfully")
+    }
+
+  })
+
+  const onConfirm = () => {
+    deleteAdmin(data.clerkId);
+    setOpen(false);
+  };
+
+  const loading = isPending;
 
   return (
     <>
@@ -43,11 +64,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/user/${data.id}`)}
+            onClick={() => router.push(`/dashboard/admins/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          <DropdownMenuItem
+            disabled={isPending}
+            onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>
         </DropdownMenuContent>

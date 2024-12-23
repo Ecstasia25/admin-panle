@@ -1,8 +1,20 @@
 import React from 'react'
 
-const AdminDetails = () => {
+interface AdminDetailsProps {
+  params: {
+    adminId: string
+  }
+}
+
+const AdminDetails = ({
+  params
+}: AdminDetailsProps) => {
+
+  const adminId = params.adminId
   return (
-    <div>AdminDetails</div>
+    <div>
+      {adminId}
+    </div>
   )
 }
 

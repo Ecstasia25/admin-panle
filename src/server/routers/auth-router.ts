@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs/server"
+import { clerkClient, currentUser } from "@clerk/nextjs/server"
 import { router } from "../__internals/router"
 import { privateProcedure, publicProcedure } from "../procedures"
 import { db } from "@/utils/db"
@@ -77,6 +77,60 @@ export const authRouter = router({
           offset,
           limit,
         },
+      })
+    }),
+
+  deleteUser: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ c, input }) => {
+      const { id } = input
+      const client = await clerkClient()
+      await client.users.deleteUser(id)
+      await db.user.delete({
+        where: {
+          clerkId: id,
+        },
+      })
+      return c.json({
+        success: true,
+        message: "User deleted successfully",
+      })
+    }),
+  updateUser: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        clerkId: z.string(),
+        name: z.string().optional(),
+        email: z.string().optional(),
+        phone: z.string().optional(),
+        role: z.enum(["ADMIN", "USER", "COORDINATOR"]).optional(),
+      })
+    )
+    .mutation(async ({ c, input }) => {
+      const { id, clerkId, name, phone } = input
+      const client = await clerkClient()
+      await client.users.updateUser(clerkId,{
+        firstName: name?.split(" ")[0] || "",
+        lastName: name?.split(" ")[1] || "",
+        primaryPhoneNumberID: phone,
+      } )
+      await db.user.update({
+        where: {
+          id,
+        },
+        data: {
+          name,
+          phone,
+        },
+      })
+      return c.json({
+        success: true,
+        message: "User updated successfully",
       })
     }),
 })
