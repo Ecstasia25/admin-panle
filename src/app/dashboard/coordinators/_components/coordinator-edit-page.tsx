@@ -2,8 +2,9 @@
 import { client } from '@/utils/client';
 import { useQuery } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
+import CoordinatorForm from './coordinator-form';
 
-import CoordinatorForm from './Coordinator-form';
+
 
 
 type AdminEditPageProps = {
@@ -38,7 +39,7 @@ export default async function CoordinatorEditPage({
 
     return (
         <>
-            <CoordinatorForm initialData={coordinator} pageTitle={pageTitle} />;
+            <CoordinatorForm initialData={coordinator} pageTitle={pageTitle} />
 
         </>
     )

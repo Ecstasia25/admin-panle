@@ -8,20 +8,21 @@ import React from 'react'
 import { Heading } from '@/components/ui/heading'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { client } from '@/utils/client'
-import AdminsTable from "./coordinators-table"
+
 import { toast } from 'sonner'
 import { useUser } from '@/hooks/users/use-user';
-interface CoordinatorListPageProps {
+import UserTable from './users-table';
+interface UserListPageProps {
   page: number;
   search?: string;
   pageLimit: number;
 }
 
-const CoordinatorListPage = ({
+const UserListPage = ({
   page,
   search,
   pageLimit
-}: CoordinatorListPageProps) => {
+}: UserListPageProps) => {
   const { user } = useUser();
   const [spinReload, setSpinReload] = React.useState(false);
   const filters = {
@@ -37,20 +38,20 @@ const CoordinatorListPage = ({
     isLoading,
     refetch
   } = useQuery({
-    queryKey: ['get-all-coordinators', filters],
+    queryKey: ['get-all-users', filters],
     queryFn: async () => {
-      const response = await client.auth.getAllCoordinators.$get(filters);
+      const response = await client.auth.getAllUsers.$get(filters);
       const { data } = await response.json();
       return data;
     },
   })
 
-  const coordsCount = data?.allCoordsCount || 0;
+  const coordsCount = data?.allUsersCount || 0;
 
-  const dataWithDates = data?.coordinators?.map((coordinator) => ({
-    ...coordinator,
-    createdAt: new Date(coordinator.createdAt),
-    updatedAt: new Date(coordinator.updatedAt),
+  const dataWithDates = data?.users?.map((user) => ({
+    ...user,
+    createdAt: new Date(user.createdAt),
+    updatedAt: new Date(user.updatedAt),
   })).filter((coordinator) => coordinator.id !== user?.id);
 
   const handleReload = () => {
@@ -68,8 +69,8 @@ const CoordinatorListPage = ({
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <Heading
-            title={`Coordinators (${coordsCount})`}
-            description="Manage all the coordinators in the system"
+            title={`User (${coordsCount})`}
+            description="Manage all the users in the system"
           />
 
           <div className='flex items-center gap-2'>
@@ -96,7 +97,7 @@ const CoordinatorListPage = ({
         {/* {isLoading ? (
           <DataTableSkeleton columnCount={6} rowCount={5} />
         ) : ( */}
-        <AdminsTable
+        <UserTable
           data={dataWithDates || []}
           totalData={coordsCount}
           isLoading={isLoading}
@@ -107,4 +108,4 @@ const CoordinatorListPage = ({
   )
 }
 
-export default CoordinatorListPage
+export default UserListPage

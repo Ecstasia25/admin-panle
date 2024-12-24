@@ -19,6 +19,7 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select';
+import { useUser } from '@/hooks/users/use-user';
 import { client } from '@/utils/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Role, User } from '@prisma/client';
@@ -32,9 +33,7 @@ import * as z from 'zod';
 
 const formSchema = z.object({
     name: z.string().optional(),
-    phone: z.string().min(10, {
-        message: 'Phone number must be 10 characters long'
-    }).optional(),
+    phone: z.string().optional(),
     role: z.nativeEnum(Role)
 });
 
@@ -45,6 +44,8 @@ export default function AdminForm({
     initialData: User | null;
     pageTitle: string;
 }) {
+
+    const { user } = useUser();
     const queryClient = useQueryClient();
     const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
@@ -69,14 +70,12 @@ export default function AdminForm({
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: z.infer<typeof formSchema> & {
             id: string;
-            clerkId: string;
         }) => {
             const res = await client.auth.updateUser.$post({
                 id: data.id,
                 name: data.name,
                 phone: data.phone,
-                role: data.role,
-                clerkId: data.clerkId
+                role: data.role
             });
             const json = await res.json();
 
@@ -102,7 +101,6 @@ export default function AdminForm({
             mutate({
                 ...values,
                 id: initialData.id,
-                clerkId: initialData.clerkId
             });
         }
     }
@@ -151,8 +149,13 @@ export default function AdminForm({
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="SUPERADMIN">SUPERADMIN</SelectItem>
-                                                <SelectItem value="ADMIN">ADMIN</SelectItem>
+
+                                                {user?.role === "SUPERADMIN" && (
+                                                    <SelectItem value="SUPERADMIN">SUPERADMIN</SelectItem>
+                                                )}
+                                                {(user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
+                                                    <SelectItem value="ADMIN">ADMIN</SelectItem>
+                                                )}
                                                 <SelectItem value="COORDINATOR">COORDINATOR</SelectItem>
                                                 <SelectItem value="USER">USER</SelectItem>
                                             </SelectContent>
@@ -194,5 +197,5 @@ export default function AdminForm({
                 </Form>
             </CardContent>
         </Card>
-    );
+    )
 }

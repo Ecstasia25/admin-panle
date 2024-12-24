@@ -9,7 +9,7 @@ datasource db {
 }
 
 enum Role {
-  SAUPERADMIN
+  SUPERADMIN
   ADMIN
   COORDINATOR
   USER
@@ -20,7 +20,7 @@ model User {
   clerkId   String   @unique
   name      String?
   email     String?  @unique
-  phone     String?  @unique
+  phone     String?  
   image     String?
   role      Role     @default(USER)
   createdAt DateTime @default(now())

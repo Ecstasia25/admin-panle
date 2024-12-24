@@ -32,8 +32,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       await client.auth.deleteUser.$post({ id })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get-all-coordinators"] })
-      toast.success("Coordinator deleted successfully")
+      queryClient.invalidateQueries({ queryKey: ["get-all-users"] })
+      toast.success("User deleted successfully")
     }
 
   })
@@ -64,7 +64,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/coordinators/${data.id}`)}
+            onClick={() => router.push(`/dashboard/users/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

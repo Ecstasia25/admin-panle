@@ -37,7 +37,7 @@ const formSchema = z.object({
     role: z.nativeEnum(Role)
 });
 
-export default function CoordinatorForm({
+export default function UserForm({
     initialData,
     pageTitle
 }: {
@@ -53,7 +53,7 @@ export default function CoordinatorForm({
         defaultValues: {
             name: '',
             phone: '',
-            role: 'COORDINATOR'
+            role: 'USER'
         }
     });
 
@@ -62,7 +62,7 @@ export default function CoordinatorForm({
             form.reset({
                 name: initialData.name || '',
                 phone: initialData.phone || '',
-                role: initialData.role || 'COORDINATOR'
+                role: initialData.role || 'USER'
             });
         }
     }, [initialData, form]);
@@ -86,10 +86,10 @@ export default function CoordinatorForm({
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['get-coordinator']
+                queryKey: ['get-user-id']
             });
-            toast.success('Coordinator updated successfully');
-            router.push('/dashboard/coordinators');
+            toast.success('User updated successfully');
+            router.push('/dashboard/users');
         },
         onError: (error: Error) => {
             toast.error(error.message || "Failed to update");
@@ -122,7 +122,7 @@ export default function CoordinatorForm({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Coordinator Name
+                                            User Name
                                         </FormLabel>
                                         <FormControl>
                                             <Input placeholder="Enter admin name" {...field} />
@@ -196,5 +196,5 @@ export default function CoordinatorForm({
                 </Form>
             </CardContent>
         </Card>
-    );
+    )
 }
