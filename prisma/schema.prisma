@@ -20,9 +20,35 @@ model User {
   clerkId   String   @unique
   name      String?
   email     String?  @unique
-  phone     String?  
+  phone     String?
   image     String?
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum EventStage {
+  ONSTAGE
+  OFFSTAGE
+}
+
+model Event {
+  id          String @id @default(uuid())
+  title       String
+  description String
+
+  stage     EventStage @default(OFFSTAGE)
+  date      DateTime
+  poster    String
+  groupSize String
+  slotCount Int?
+  archived  Boolean    @default(false)
+
+  price      String
+  discount   String?
+  finalPrice String?
+
+  coordinatorsId String[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
