@@ -5,7 +5,6 @@ import { DataTableSearch } from '@/components/ui/table/data-table-search';
 import { columns } from './columns';
 import { User } from '@prisma/client';
 import { useAdminTableFilters } from './use-admin-table-filters';
-import { Employee } from '@/constants/data';
 
 export default function EmployeeTable({
   data,
