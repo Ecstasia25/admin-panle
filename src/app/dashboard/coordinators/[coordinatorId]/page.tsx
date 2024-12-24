@@ -9,7 +9,7 @@ export const metadata = {
 
 interface AdminDetailsProps {
   params: {
-    coordnatorId: string
+    coordinatorId: string
   }
 }
 
@@ -23,7 +23,7 @@ const AdminDetails = ({
     <PageContainer scrollable>
       <div className="flex-1 space-y-4">
         <Suspense fallback={<FormCardSkeleton />}>
-          <CoordinatorEditPage coordnatorId={params.coordnatorId} />
+          <CoordinatorEditPage coordinatorId={params.coordinatorId} />
         </Suspense>
       </div>
     </PageContainer>
