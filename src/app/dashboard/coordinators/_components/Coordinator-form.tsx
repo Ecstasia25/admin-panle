@@ -125,7 +125,7 @@ export default function CoordinatorForm({
                                             Coordinator Name
                                         </FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter admin name" {...field} />
+                                            <Input placeholder="Enter coordinator name" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

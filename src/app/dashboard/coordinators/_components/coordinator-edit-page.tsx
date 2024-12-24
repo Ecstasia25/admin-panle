@@ -4,13 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import CoordinatorForm from './coordinator-form';
 
 
-type AdminEditPageProps = {
+type CoordinatorPageProps = {
     coordnatorId: string;
 };
 
 export default async function CoordinatorEditPage({
     coordnatorId,
-}: AdminEditPageProps) {
+}: CoordinatorPageProps) {
     let coordinator = null;
     let pageTitle = 'Create New Coordinator';
 
