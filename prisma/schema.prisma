@@ -41,7 +41,7 @@ model Event {
   date      DateTime
   poster    String
   groupSize String
-  slotCount Int?
+  slotCount String
   archived  Boolean    @default(false)
 
   price      String

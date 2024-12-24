@@ -26,10 +26,10 @@ import { useUser } from "@/hooks/users/use-user"
 import { client } from "@/utils/client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Event, EventStage } from "@prisma/client"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { CalendarIcon, Loader2, RotateCcw, Save } from "lucide-react"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { CalendarIcon, Loader2, RotateCcw } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import * as z from "zod"
@@ -65,10 +65,12 @@ export const EventFormSchema = z.object({
     stage: z.nativeEnum(EventStage, {
         required_error: "Stage is Required",
     }),
-    groupSize: z.enum(GROUP_SIZE, {
+    groupSize: z.string({
         required_error: "Group Size is Required",
     }),
-    slotCount: z.number().optional(),
+    slotCount: z.string({
+        required_error: "Slot Count is Required",
+    }),
     archived: z.boolean().optional(),
     price: z.string({
         required_error: "Price is Required",
@@ -91,7 +93,6 @@ export default function EventForm({
 }) {
     const [spinReload, setSpinReload] = useState(false);
     const router = useRouter()
-
     const {
         data,
         isLoading,
@@ -104,17 +105,41 @@ export default function EventForm({
         },
     })
 
+    const { mutate: createEvent, isPending: isCreatingEvent } = useMutation({
+        mutationFn: async (data: z.infer<typeof EventFormSchema>) => {
+            const res = await client.event.createEvent.$post(data);
+            
+            if (!res.ok) {
+                throw new Error("Failed to create event")
+            }
+    
+            const json = await res.json();
+            if (!json.success) {
+                throw new Error(json.message || "Failed to create event")
+            }
+            return json;
+        },
+        onSuccess: () => {
+            toast.success("Event created successfully")
+            router.push("/dashboard/events")
+        },
+        onError: (error) => {
+            toast.error(error.message)
+            console.error(error);
+        },
+    })
+
 
     const form = useForm<z.infer<typeof EventFormSchema>>({
         resolver: zodResolver(EventFormSchema),
         defaultValues: {
             title: "",
             description: "",
-            poster: "",
+            poster: "https://firebasestorage.googleapis.com/v0/b/agrios-4f389.appspot.com/o/Event%2F1735057584524-fusiongala.png?alt=media&token=9e6ef397-4d1e-456f-8638-0b5c44402c32",
             date: new Date(),
             stage: EventStage.OFFSTAGE,
             groupSize: "1",
-            slotCount: 30,
+            slotCount: "30",
             archived: false,
             price: "100",
             discount: "",
@@ -161,7 +186,8 @@ export default function EventForm({
     }
 
     function onSubmit(values: z.infer<typeof EventFormSchema>) {
-        console.log(values)
+        console.log(values);
+        createEvent(values)
     }
 
     const price = form.watch("price");
@@ -503,7 +529,6 @@ export default function EventForm({
                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl>
                                                 <SelectTrigger
-                                                    className=""
                                                 >
                                                     <SelectValue placeholder="Select event group size" />
                                                 </SelectTrigger>
@@ -533,7 +558,6 @@ export default function EventForm({
                                             <Input
                                                 placeholder="Enter slot count"
                                                 {...field}
-                                                type="number"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -571,6 +595,9 @@ export default function EventForm({
                                     className="mr-2"
                                 >
                                     Create
+                                    {isCreatingEvent && (
+                                        <Loader2 className="size-4 ml-2 shrink-0 animate-spin" />
+                                    )}
                                 </Button>
                             ) : (
                                 <Button

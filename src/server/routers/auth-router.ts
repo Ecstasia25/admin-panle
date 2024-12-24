@@ -222,24 +222,28 @@ export const authRouter = router({
         message: "User updated successfully",
       })
     }),
-    getCooForEvent: privateProcedure.query(async ({ c }) => {
-      const coordinators = await db.user.findMany({
-        where: {
-          role: "COORDINATOR",
-        },
-      })
+  getCooForEvent: privateProcedure.query(async ({ c }) => {
+    const coordinators = await db.user.findMany({
+      where: {
+      role: {
+        in: ["COORDINATOR", "ADMIN"],
+      },
+      },
+    })
 
-      interface coordinatorObject {
-        value: string;
-        label: string;
-      }
+    interface coordinatorObject {
+      value: string
+      label: string
+    }
 
-      const coordinatorOptions: coordinatorObject[] = coordinators.map((coordinator) => {
+    const coordinatorOptions: coordinatorObject[] = coordinators.map(
+      (coordinator) => {
         return {
           value: coordinator.id,
           label: coordinator.name ?? "Unknown",
         }
-      })
-   return c.json({ coordinatorOptions})
-    })
+      }
+    )
+    return c.json({ coordinatorOptions })
+  }),
 })

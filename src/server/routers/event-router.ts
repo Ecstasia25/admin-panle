@@ -6,24 +6,9 @@ import { db } from "@/utils/db"
 export const eventRouter = router({
   createEvent: privateProcedure
     .input(EventFormSchema)
-    .query(async ({ c, input }) => {
-      const {
-        title,
-        description,
-        poster,
-        date,
-        stage,
-        groupSize,
-        slotCount,
-        archived,
-        price,
-        discount,
-        finalPrice,
-        coordinatorsId,
-      } = input
-
-      const event = await db.event.create({
-        data: {
+    .mutation(async ({ c, input }) => {
+      try {
+        const {
           title,
           description,
           poster,
@@ -36,13 +21,43 @@ export const eventRouter = router({
           discount,
           finalPrice,
           coordinatorsId,
-        },
-      })
+        } = input
 
-      return c.json({
-        success: true,
-        event,
-        message: "Event created successfully",
-      })
+        // Create the event in the database
+        const event = await db.event.create({
+          data: {
+            title,
+            description,
+            poster,
+            date,
+            stage,
+            groupSize,
+            slotCount,
+            archived,
+            price,
+            discount: discount || null,
+            finalPrice: finalPrice || null,
+            coordinatorsId,
+          },
+        })
+
+        // Return a success response
+        return c.json({
+          success: true,
+          event,
+          message: "Event created successfully",
+        })
+      } catch (error) {
+        console.error("Error creating event:", error)
+
+        // Return an error response
+        return c.json({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to create the event",
+        })
+      }
     }),
 })
