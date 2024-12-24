@@ -21,7 +21,7 @@ export default async function UserEditPage({
     const {
         data,
     } = useQuery({
-        queryKey: ['get-user'],
+        queryKey: ['get-user-id'],
         queryFn: async () => {
             const response = await client.auth.getUserById.$get({ id });
             const { user } = await response.json();

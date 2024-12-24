@@ -86,7 +86,7 @@ export default function UserForm({
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['get-user']
+                queryKey: ['get-user-id']
             });
             toast.success('User updated successfully');
             router.push('/dashboard/users');
@@ -109,7 +109,7 @@ export default function UserForm({
         <Card className="mx-auto w-full">
             <CardHeader>
                 <CardTitle className="text-left text-2xl font-bold">
-                    {pageTitle} {initialData ? `(${initialData.name})` : ''} {initialData?.id}
+                    {pageTitle} {initialData ? `(${initialData.name})` : ''}
                 </CardTitle>
             </CardHeader>
             <CardContent>
