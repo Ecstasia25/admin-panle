@@ -8,7 +8,7 @@ import React from 'react'
 import { Heading } from '@/components/ui/heading'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { client } from '@/utils/client'
-import AdminsTable from "./coordinators-table"
+import CoordinatorTable from "./coordinators-table"
 import { toast } from 'sonner'
 import { useUser } from '@/hooks/users/use-user';
 interface CoordinatorListPageProps {
@@ -96,7 +96,7 @@ const CoordinatorListPage = ({
         {/* {isLoading ? (
           <DataTableSkeleton columnCount={6} rowCount={5} />
         ) : ( */}
-        <AdminsTable
+        <CoordinatorTable
           data={dataWithDates || []}
           totalData={coordsCount}
           isLoading={isLoading}
