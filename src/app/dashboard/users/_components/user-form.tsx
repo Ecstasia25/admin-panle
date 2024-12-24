@@ -125,7 +125,7 @@ export default function UserForm({
                                             User Name
                                         </FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter admin name" {...field} />
+                                            <Input placeholder="Enter user name" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

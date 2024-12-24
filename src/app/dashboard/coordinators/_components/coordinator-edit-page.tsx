@@ -4,13 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import CoordinatorForm from './coordinator-form';
 
 
-type AdminEditPageProps = {
-    coordnatorId: string;
+type CoordinatorPageProps = {
+    coordinatorId: string;
 };
 
 export default async function CoordinatorEditPage({
-    coordnatorId,
-}: AdminEditPageProps) {
+    coordinatorId,
+}: CoordinatorPageProps) {
     let coordinator = null;
     let pageTitle = 'Create New Coordinator';
 
@@ -19,7 +19,7 @@ export default async function CoordinatorEditPage({
     } = useQuery({
         queryKey: ['get-coordinator'],
         queryFn: async () => {
-            const response = await client.auth.getUserById.$get({ id: coordnatorId });
+            const response = await client.auth.getUserById.$get({ id: coordinatorId });
             const { user } = await response.json();
             return user;
         },
