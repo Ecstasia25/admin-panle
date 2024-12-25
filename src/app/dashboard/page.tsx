@@ -1,8 +1,12 @@
-import { currentUser } from '@clerk/nextjs/server'
-import React from 'react'
 
-const DashboardPage = async() => {
+import { currentUser } from '@clerk/nextjs/server'
+
+
+
+const DashboardPage = async () => {
   const auth = await currentUser()
+
+
   return (
     <div>
       {auth?.id}
