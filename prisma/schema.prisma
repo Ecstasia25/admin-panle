@@ -16,16 +16,18 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  clerkId   String   @unique
-  name      String?
-  email     String?  @unique
-  phone     String?
-  image     String?
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  events Event[] @relation("EventCoordinator")
+  id          String   @id @default(uuid())
+  clerkId     String   @unique
+  name        String?
+  email       String?  @unique
+  phone       String?
+  image       String?
+  address     String?
+  collegeName String?
+  role        Role     @default(USER)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  events      Event[]  @relation("EventCoordinator")
 }
 
 enum EventStage {

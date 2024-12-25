@@ -15,11 +15,14 @@ import { ClerkProvider, useClerk } from '@clerk/nextjs';
 import { ClerkLoaded, ClerkLoading } from '@clerk/nextjs'
 import { Skeleton } from '../ui/skeleton';
 import { useUser } from '@/hooks/users/use-user';
+import { useRouter } from 'next/navigation';
 
 
 export function UserNav() {
 
   const { signOut } = useClerk();
+
+  const router = useRouter();
 
   const { user } = useUser();
   if (user) {
@@ -63,14 +66,26 @@ export function UserNav() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => router.push('/dashboard/profile')}
+              >
                 Profile
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => router.push('/dashboard/myevents')}
+              >
                 Your Events
                 <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
               </DropdownMenuItem>
+              {(user?.role === "SUPERADMIN" || user?.role === "ADMIN") && (
+                <DropdownMenuItem
+                  onClick={() => router.push('/dashboard/events')}
+                >
+                  Manage Events
+                  <DropdownMenuShortcut>⌘X</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              )}
               {/* <DropdownMenuItem>
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>

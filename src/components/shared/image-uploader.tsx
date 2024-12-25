@@ -66,9 +66,11 @@ export const ImageUploader = ({
 
   const onDelete = (url: string) => {
     onRemove(url);
-    deleteObject(ref(storage, url)).then(() => {
-      toast.success("Image deleted successfully");
-    });
+    if (url.startsWith('https://firebasestorage.googleapis.com/')) {
+      deleteObject(ref(storage, url)).then(() => {
+        toast.success("Image deleted successfully");
+      });
+    }
   };
 
   return (
