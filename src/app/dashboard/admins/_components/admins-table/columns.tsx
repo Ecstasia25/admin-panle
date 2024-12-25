@@ -67,7 +67,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       return (
         <span className='min-w-[200px] flex items-center'>
-          {format(new Date(row.original.createdAt), 'PPP hh:mm')}
+          {format(new Date(row.original.createdAt), 'PPP hh:mm a')}
         </span>
       )
     }

@@ -50,6 +50,9 @@ export const authRouter = router({
       const { id } = input
       const user = await db.user.findUnique({
         where: { id },
+        include: {
+          events: true,
+        },
       })
       return c.json({ user })
     }),
@@ -233,4 +236,36 @@ export const authRouter = router({
 
     return c.json({ coordinators })
   }),
+
+  updateProfile: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().optional(),
+        phone: z.string().optional(),
+        collegeName: z.string().optional(),
+        address: z.string().optional(),
+        image: z.string().optional(),
+      })
+    )
+    .mutation(async ({ c, input }) => {
+      const { id, name, phone, collegeName, address, image } = input
+      const user = await db.user.update({
+        where: {
+          id,
+        },
+        data: {
+          name,
+          phone,
+          collegeName,
+          address,
+          image,
+        },
+      })
+      return c.json({
+        success: true,
+        user,
+        message: "Profile updated successfully",
+      })
+    }),
 })

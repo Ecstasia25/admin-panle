@@ -35,11 +35,12 @@ import {
   ChevronRight,
   ChevronsUpDown,
   Component,
-  LogOut
+  LogOut,
+  UserCog
 } from 'lucide-react';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../ui/icons';
 import { useClerk } from '@clerk/nextjs';
@@ -56,6 +57,8 @@ export default function AppSidebar() {
   const pathname = usePathname();
   const { user, isLoading } = useUser();
   const { signOut } = useClerk();
+
+  const router = useRouter();
 
   // const filteredNavItems = navItems.filter((item) => {
   //   if (user && user.role === 'COORDINATOR') {
@@ -204,9 +207,13 @@ export default function AppSidebar() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <BadgeCheck />
-                    Account
+                  <DropdownMenuItem
+                    onClick={() => {
+                      router.push('/dashboard/profile');
+                    }}
+                  >
+                    <UserCog />
+                    Profile
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
