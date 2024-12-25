@@ -11,7 +11,7 @@ import {
 import { client } from '@/utils/client';
 import { Event } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit, MoreHorizontal, Trash } from 'lucide-react';
+import { Copy, CopyCheck, Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -21,7 +21,7 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-
+  const [isCopying, setIsCopying] = useState(false)
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -38,6 +38,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   })
 
+  const onCopy = (id: string) => {
+    setIsCopying(true)
+    navigator.clipboard.writeText(id);
+    toast("Event ID Copied");
+    setTimeout(() => {
+      setIsCopying(false)
+    }, 2000)
+  };
   const onConfirm = () => {
     deleteAdmin(data.id);
     setOpen(false);
@@ -62,7 +70,17 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => onCopy(data.id)}
+          >
+            {isCopying ? (
+              <CopyCheck className="w-4 h-4 mr-2 text-green-500" />
+            ) : (
+              <Copy className="w-4 h-4 mr-2" />
+            )}
+            Copy Id
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => router.push(`/dashboard/events/${data.id}`)}
           >
