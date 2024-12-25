@@ -36,7 +36,7 @@ const Page = () => {
             <BackgroundPattern className="absolute inset-0 left-1/2 z-0 -translate-x-1/2 opacity-75" />
             <div className="relative z-10 flex -translate-y-1/2 flex-col items-center gap-6 text-center">
                 <Loader className="w-10 h-10 text-black dark:text-white animate-spin" />
-                <h1 className="text-2xl font-semibold">Creating your account...</h1>
+                <h1 className="text-2xl font-semibold">Fetching account details...</h1>
                 <p className="text-base/7 text-gray-600 dark:text-muted-foreground max-w-prose">
                     Just a moment while we set things up for you.
                 </p>

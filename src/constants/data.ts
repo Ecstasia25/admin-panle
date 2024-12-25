@@ -43,6 +43,14 @@ export const navItems: NavItem[] = [
     isActive: false,
     items: [] // No child items
   },
+  {
+    title: 'MY EVENTS',
+    url: '/dashboard/myevents',
+    icon: "aparature",
+    shortcut: ['m', 'e'],
+    isActive: false,
+    items: [] // No child items
+  },
   // {
   //   title: 'Account',
   //   url: '#', // Placeholder as there is no direct link for the parent

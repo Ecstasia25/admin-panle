@@ -142,14 +142,14 @@ export const eventRouter = router({
       const paginatedEvents = events.slice(offset, offset + limit)
 
       return c.json({
+        success: true,
         data: {
-          success: true,
           allEventCount: allEvents,
           events: paginatedEvents,
-          message: "Events fetched successfully",
           offset,
           limit,
         },
+        message: "Events fetched successfully",
       })
     }),
   getEventById: privateProcedure
@@ -345,7 +345,7 @@ export const eventRouter = router({
         message: "Event fetched successfully",
       })
     }),
-    getFilterEventsByPublic: publicProcedure
+  getFilterEventsByPublic: publicProcedure
     .input(
       z.object({
         page: z.number().optional(),
@@ -388,14 +388,14 @@ export const eventRouter = router({
       const paginatedEvents = events.slice(offset, offset + limit)
 
       return c.json({
+        success: true,
         data: {
-          success: true,
           allEventCount: allEvents,
           events: paginatedEvents,
-          message: "Events fetched successfully",
           offset,
           limit,
         },
+        message: "Events fetched successfully",
       })
     }),
 })
