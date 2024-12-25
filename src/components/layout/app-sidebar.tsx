@@ -57,12 +57,12 @@ export default function AppSidebar() {
   const { user, isLoading } = useUser();
   const { signOut } = useClerk();
 
-  const filteredNavItems = navItems.filter((item) => {
-    if (user && user.role === 'COORDINATOR') {
-      return item.title !== 'ADMINS' && item.title !== 'USERS' && item.title !== 'COORDINATORS';
-    }
-    return true;
-  });
+  // const filteredNavItems = navItems.filter((item) => {
+  //   if (user && user.role === 'COORDINATOR') {
+  //     return item.title !== 'ADMINS' && item.title !== 'USERS' && item.title !== 'COORDINATORS';
+  //   }
+  //   return true;
+  // });
 
   return (
     <Sidebar collapsible="icon" className=''>
@@ -89,7 +89,7 @@ export default function AppSidebar() {
             {user?.role} PANEL
           </SidebarGroupLabel>
           <SidebarMenu>
-            {filteredNavItems.map((item) => {
+            {navItems.map((item) => {
               const Icon = item.icon ? Icons[item.icon as keyof typeof Icons] : Icons.logo;
               return item?.items && item?.items?.length > 0 ? (
                 <Collapsible

@@ -311,4 +311,24 @@ export const eventRouter = router({
       message: "Event fetched successfully",
     })
   }),
+  getEventByIdPublic: publicProcedure
+    .input(
+      z.object({
+        id: z.string({
+          required_error: "Event ID is Required",
+        }),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { id } = input
+      const event = await db.event.findUnique({
+        where: { id },
+        include: { coordinators: true },
+      })
+      return c.json({
+        success: true,
+        event,
+        message: "Event fetched successfully",
+      })
+    }),
 })

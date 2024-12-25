@@ -12,6 +12,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import EventsTable from "./events-table"
+import { ApiHeading } from "@/components/shared/api-heading";
+import { ApiList } from "./events-table/api-list";
 
 interface EventListPageProps {
     page: number;
@@ -101,6 +103,10 @@ const EventListPage = ({
                     totalData={eventsCount}
                     isLoading={isLoading}
                 />
+
+                <ApiHeading title="API" description="API calls for events" />
+                <Separator />
+                <ApiList entityName="event" entityNameId="id" />
             </div>
         </PageContainer>
     )

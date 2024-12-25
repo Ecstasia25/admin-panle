@@ -7,6 +7,8 @@ import {
 } from "@tanstack/react-query"
 import LandingPageContent from "../_components/landing/landing-content"
 import { Metadata } from "next"
+import { currentUser } from "@clerk/nextjs/server"
+import { redirect } from "next/navigation"
 
 export const metadata: Metadata = {
   title: "Home | Ecstasia Admin",
@@ -15,6 +17,13 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const queryClient = new QueryClient()
+  const auth = await currentUser()
+
+  if (auth?.id) {
+    redirect('/dashboard/events')
+  } else {
+    redirect('/welcome')
+  }
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <LandingPageContent />
