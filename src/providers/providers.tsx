@@ -27,7 +27,7 @@ export const Providers = ({ children }: PropsWithChildren) => {
   )
 
   return <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       {children}
     </ThemeProvider>
 
