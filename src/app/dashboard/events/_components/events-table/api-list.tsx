@@ -17,11 +17,6 @@ export const ApiList = ({ entityName, entityNameId }: ApiListProps) => {
     <>
       <ApiAlert
         title="GET EVENTS"
-        variant="private"
-        description={`${baseUrl}/${entityName}/getEvents`}
-      />
-      <ApiAlert
-        title="GET EVENTS"
         variant="public"
         description={`${baseUrl}/${entityName}/getEventsPublic`}
       />
@@ -34,6 +29,21 @@ export const ApiList = ({ entityName, entityNameId }: ApiListProps) => {
         title="GET EVENT"
         variant="public"
         description={`${baseUrl}/${entityName}/getEventByIdPublic?id={${entityNameId}}`}
+      />
+      <ApiAlert
+        title="GET EVENTS BY FILTER"
+        variant="private"
+        description={`${baseUrl}/${entityName}/events/getEvents?q={value}&stage={enum}&groupSize={count}`}
+      />
+      <ApiAlert
+        title="GET EVENTS BY FILTER"
+        variant="public"
+        description={`${baseUrl}/${entityName}/events/getFilterEventsByPublic?q={value}&stage={enum}&groupSize={count}`}
+      />
+      <ApiAlert
+        title="GET EVENTS BY PAGINATION"
+        variant="public"
+        description={`${baseUrl}/${entityName}/events/getFilterEventsByPublic?limit={value}&page=1`}
       />
     </>
   );
