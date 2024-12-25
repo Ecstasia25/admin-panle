@@ -1,6 +1,6 @@
 import { EventStage } from "@prisma/client"
 import { router } from "../__internals/router"
-import { privateProcedure } from "../procedures"
+import { privateProcedure, publicProcedure } from "../procedures"
 import { db } from "@/utils/db"
 import { z } from "zod"
 import { matchSorter } from "match-sorter"
@@ -214,6 +214,19 @@ export const eventRouter = router({
           coordinators,
         } = input
 
+        const currentEvent = await db.event.findUnique({
+          where: { id },
+          include: {
+            coordinators: true,
+          },
+        })
+
+        if (!currentEvent) {
+          return c.json({
+            success: false,
+            message: "Event Not Found",
+          })
+        }
         // Update the event in the database
         const event = await db.event.update({
           where: { id },
@@ -230,6 +243,8 @@ export const eventRouter = router({
             discount,
             finalPrice,
             coordinators: {
+              disconnect: currentEvent.coordinators.map((e) => ({ id: e.id })),
+
               connect: coordinators.map((id) => ({
                 id,
               })),
@@ -288,4 +303,12 @@ export const eventRouter = router({
         })
       }
     }),
+  getEventsPublic: publicProcedure.query(async ({ c }) => {
+    const events = await db.event.findMany({})
+    return c.json({
+      success: true,
+      events,
+      message: "Event fetched successfully",
+    })
+  }),
 })

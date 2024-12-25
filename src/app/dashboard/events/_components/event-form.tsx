@@ -48,6 +48,7 @@ import { format } from "date-fns"
 import { cn } from "@/utils"
 import { Checkbox } from "@/components/ui/checkbox"
 import { MultiSelect } from "@/components/ui/multi-select"
+import FormCardSkeleton from "@/components/ui/form-card-skeleton"
 
 type Event = {
   id: string
@@ -96,19 +97,18 @@ type EventFormValues = z.infer<typeof EventFormSchema>
 export default function EventForm({
   initialData,
   pageTitle,
-  pageState,
   eventId,
 }: {
   initialData: Event | null
   pageTitle: string
-  pageState: "create" | "edit"
   eventId?: string
 }) {
   const [spinReload, setSpinReload] = useState(false)
   const router = useRouter()
   const queryClient = useQueryClient()
+  const [isFormReady, setIsFormReady] = useState(false);
 
-  const { data: coordinatorOptions = [], isLoading } = useQuery({
+  const { data: coordinatorOptions, isLoading: isCoordinatorsLoading } = useQuery({
     queryKey: ["get-event-coordinators"],
     queryFn: async () => {
       const response = await client.auth.getCooForEvent.$get()
@@ -116,6 +116,70 @@ export default function EventForm({
       return coordinators
     },
   })
+
+  const {
+    data: eventData,
+    isLoading: isEventLoading,
+  } = useQuery({
+    queryKey: ['get-event'],
+    queryFn: async () => {
+      if (!eventId) throw new Error("Event ID is required");
+      const response = await client.event.getEventById.$get({ id: eventId });
+      const { event } = await response.json();
+      return event;
+    },
+  })
+
+
+  const form = useForm<EventFormValues>({
+    resolver: zodResolver(EventFormSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      poster: "",
+      date: new Date(),
+      stage: EventStage.OFFSTAGE,
+      groupSize: "1",
+      slotCount: "30",
+      archived: false,
+      price: "100",
+      discount: "",
+      finalPrice: "",
+      coordinators: [],
+    },
+  })
+
+
+  useEffect(() => {
+    if (eventData && !isCoordinatorsLoading && !isEventLoading) {
+
+      form.reset({
+        title: eventData.title,
+        description: eventData.description,
+        poster: eventData.poster,
+        date: new Date(eventData.date),
+        stage: eventData.stage,
+        groupSize: eventData.groupSize.toString(),
+        slotCount: eventData.slotCount.toString(),
+        archived: eventData.archived,
+        price: eventData.price.toString(),
+        discount: eventData.discount?.toString() || "",
+        finalPrice: eventData.finalPrice?.toString() || "",
+        coordinators: eventData.coordinators.map((coordinator) => coordinator.id),
+      })
+      setIsFormReady(true);
+    }
+  }, [initialData, isEventLoading, form, isFormReady])
+
+
+  const formatedCoordinatorOptions: CoordinatorOption[] =
+    coordinatorOptions?.map((coordinator) => ({
+      value: coordinator.id,
+      label: coordinator.name || "",
+    })) || []
+
+
+
 
   const { mutate: createEvent, isPending: isCreatingEvent } = useMutation({
     mutationFn: async (data: EventFormValues) => {
@@ -147,59 +211,13 @@ export default function EventForm({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-event"] })
-      form.reset({
-        stage: initialData?.stage,
-      })
       toast.success("Event updated successfully")
     },
     onError: (error) => toast.error(error.message),
   })
 
-  const form = useForm<EventFormValues>({
-    resolver: zodResolver(EventFormSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      poster: "",
-      date: new Date(),
-      stage: EventStage.OFFSTAGE,
-      groupSize: "1",
-      slotCount: "30",
-      archived: false,
-      price: "100",
-      discount: "",
-      finalPrice: "",
-      coordinators: [],
-    },
-  })
-
-  useEffect(() => {
-    if (initialData) {
-      form.reset({
-        title: initialData.title,
-        description: initialData.description,
-        poster: initialData.poster,
-        date: new Date(initialData.date),
-        stage: initialData.stage,
-        groupSize: initialData.groupSize.toString(),
-        slotCount: initialData.slotCount.toString(),
-        archived: initialData.archived,
-        price: initialData.price.toString(),
-        discount: initialData.discount?.toString() || "",
-        finalPrice: initialData.finalPrice?.toString() || "",
-        coordinators:
-          initialData.coordinators.map((e: { id: string }) => e.id) || [],
-      })
-    }
-  }, [initialData, form])
-
-  const formatedCoordinatorOptions: CoordinatorOption[] =
-    coordinatorOptions?.map((coordinator) => ({
-      value: coordinator.id,
-      label: coordinator.name || "",
-    }))
-
   function relaodPage() {
+    queryClient.invalidateQueries({ queryKey: ["get-event"] })
     setSpinReload(true)
     window.location.reload()
     router.refresh()
@@ -260,6 +278,14 @@ export default function EventForm({
     }
     return "0.00"
   }, [price, discount, form])
+
+
+  if (eventId && (isEventLoading || !isFormReady)) {
+    return (
+      <FormCardSkeleton />
+    );
+  }
+
 
   return (
     <Card className="mx-auto w-full">
@@ -381,7 +407,7 @@ export default function EventForm({
                                           size="icon"
                                           variant={
                                             field.value &&
-                                            field.value.getHours() % 12 ===
+                                              field.value.getHours() % 12 ===
                                               hour % 12
                                               ? "default"
                                               : "ghost"
@@ -414,7 +440,7 @@ export default function EventForm({
                                         size="icon"
                                         variant={
                                           field.value &&
-                                          field.value.getMinutes() === minute
+                                            field.value.getMinutes() === minute
                                             ? "default"
                                             : "ghost"
                                         }
@@ -443,10 +469,10 @@ export default function EventForm({
                                         size="icon"
                                         variant={
                                           field.value &&
-                                          ((ampm === "AM" &&
-                                            field.value.getHours() < 12) ||
-                                            (ampm === "PM" &&
-                                              field.value.getHours() >= 12))
+                                            ((ampm === "AM" &&
+                                              field.value.getHours() < 12) ||
+                                              (ampm === "PM" &&
+                                                field.value.getHours() >= 12))
                                             ? "default"
                                             : "ghost"
                                         }
@@ -544,13 +570,15 @@ export default function EventForm({
                     <FormLabel>Event Coordinators</FormLabel>
                     <FormControl>
                       <MultiSelect
-                        options={formatedCoordinatorOptions || []}
-                        onValueChange={field.onChange}
+                        options={formatedCoordinatorOptions}
+                        value={field.value}
                         defaultValue={field.value}
+                        onValueChange={field.onChange}
                         placeholder="Select Coordinators"
-                        variant="inverted"
+                        disabled={isCoordinatorsLoading}
                         maxCount={1}
-                        disabled={isLoading}
+                        variant="inverted"
+                        className="bg-background"
                       />
                     </FormControl>
                     <FormMessage />

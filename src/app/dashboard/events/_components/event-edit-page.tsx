@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import EventForm from "./event-form";
 import { useQuery } from "@tanstack/react-query";
 import { client } from "@/utils/client";
@@ -16,7 +16,7 @@ interface EventEditPageProps {
 const EventEditPage = ({ eventId }: EventEditPageProps) => {
 
     const [isEditPage, setIsEditPage] = useState(false)
-    const router = useRouter()
+
 
     let event = null;
     const {
@@ -46,6 +46,7 @@ const EventEditPage = ({ eventId }: EventEditPageProps) => {
         };
     }
 
+
     useEffect(() => {
         if (eventId === "new") {
             setIsEditPage(true)
@@ -55,8 +56,7 @@ const EventEditPage = ({ eventId }: EventEditPageProps) => {
         <>
             <EventForm
                 eventId={data?.id}
-                initialData={event}
-                pageState={isEditPage ? "edit" : "create"} pageTitle={isEditPage ? "Create Event" : "Edit Event"} />
+                initialData={event} pageTitle={isEditPage ? "Create Event" : "Edit Event"} />
         </>
     )
 }
