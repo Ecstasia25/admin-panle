@@ -19,18 +19,24 @@ interface EventListPageProps {
     page: number;
     search?: string;
     pageLimit: number;
+    stage?: "ONSTAGE" | "OFFSTAGE" | undefined| null;
+    groupSize?: string;
 }
 
 const EventListPage = ({
     page,
     search,
-    pageLimit
+    pageLimit,
+    stage,
+    groupSize,
 }: EventListPageProps) => {
     const [spinReload, setSpinReload] = useState(false);
     const filters = {
         page,
         limit: pageLimit,
         ...(search && { search }),
+        ...(stage && { stage: stage as "ONSTAGE" | "OFFSTAGE" }),
+        ...(groupSize && { groupSize }),
     };
     const queryClient = useQueryClient();
 

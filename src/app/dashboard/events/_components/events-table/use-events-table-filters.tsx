@@ -4,7 +4,17 @@ import { searchParams } from '@/lib/searchparams';
 import { useQueryState } from 'nuqs';
 import { useCallback, useMemo } from 'react';
 
+export const STAGE_OPTIONS = [
+  { value: 'ONSTAGE', label: 'ONSTAGE' },
+  { value: 'OFFSTAGE', label: 'OFFSTAGE' }
+];
 
+export const GROUP_SIZE_OPTIONS = [
+  { value: '1', label: 'SOLO' },
+  { value: '2', label: 'DUO' },
+  { value: '4', label: 'SQUAD' },
+  { value: '8', label: 'TEAM' }
+];
 
 export function useAdminTableFilters() {
   const [searchQuery, setSearchQuery] = useQueryState(
@@ -20,6 +30,16 @@ export function useAdminTableFilters() {
     searchParams.page.withDefault(1)
   );
 
+  const [stageFilter, setStageFilter] = useQueryState(
+    'stage',
+    searchParams.stage.withOptions({ shallow: false }).withDefault('')
+  );
+
+  const [groupSizeFilter, setGroupSizeFilter] = useQueryState(
+    'groupSize',
+    searchParams.groupSize.withOptions({ shallow: false }).withDefault('')
+  );
+
   const resetFilters = useCallback(() => {
     setSearchQuery(null);
 
@@ -27,7 +47,7 @@ export function useAdminTableFilters() {
   }, [setSearchQuery, setPage]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!searchQuery 
+    return !!searchQuery
   }, [searchQuery,]);
 
   return {
@@ -36,6 +56,10 @@ export function useAdminTableFilters() {
     page,
     setPage,
     resetFilters,
-    isAnyFilterActive
+    isAnyFilterActive,
+    stageFilter,
+    setStageFilter,
+    groupSizeFilter,
+    setGroupSizeFilter
   };
 }
