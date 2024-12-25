@@ -330,7 +330,7 @@ const ProfilePageContent = () => {
                                             className="active:scale-95"
                                         >
                                             Delete Account
-                                            {isPending ? (
+                                            {isDeleting ? (
                                                 <Loader2 className="ml-2 size-4 shrink-0 animate-spin" />
                                             ) : (
                                                 <TriangleAlert className="ml-2 size-4 shrink-0" />
@@ -361,13 +361,13 @@ const ProfilePageContent = () => {
                 onClose={handleClose}
             >
                 <div className="flex flex-col gap-3">
-                    <h1 className="text-xl text-red-500 font-semibold flex items-center gap-2">
+                    <h1 className="text-xl font-semibold flex items-center gap-2">
                         Delete Account
                         <TriangleAlert className="size-4 shrink-0 mt-0.5" />
                     </h1>
                     <p className="text-sm font-normal">
                         This account will be deleted, along with all of its information,
-                        bookings and tickets.(this action cannot be undone.)
+                        bookings and tickets.(this action cannot be undone)
                     </p>
                     <Form {...deleteAccountForm}>
                         <form
