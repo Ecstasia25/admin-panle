@@ -1,11 +1,8 @@
+// src/components/multi-select.tsx
+
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import {
-  CheckIcon,
-  XCircle,
-  ChevronDown,
-  XIcon,
-} from "lucide-react";
+import { CheckIcon, XCircle, ChevronDown, XIcon, Sparkles } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -26,9 +23,12 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 
-
+/**
+ * Variants for the multi-select component to handle different styles.
+ * Uses class-variance-authority (cva) to define different styles based on "variant" prop.
+ */
 const multiSelectVariants = cva(
-  "m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
+  "m-1 transition ease-in-out delay-150 duration-300",
   {
     variants: {
       variant: {
@@ -52,7 +52,7 @@ const multiSelectVariants = cva(
  */
 interface MultiSelectProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof multiSelectVariants> {
+  VariantProps<typeof multiSelectVariants> {
   /**
    * An array of option objects to be displayed in the multi-select component.
    * Each option object has a label, value, and an optional icon.
@@ -190,13 +190,13 @@ export const MultiSelect = React.forwardRef<
         onOpenChange={setIsPopoverOpen}
         modal={modalPopover}
       >
-        <PopoverTrigger asChild>
+        <PopoverTrigger asChild >
           <Button
             ref={ref}
             {...props}
             onClick={handleTogglePopover}
             className={cn(
-              "flex w-full p-1 rounded-md border min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit [&_svg]:pointer-events-auto",
+              "flex w-full p-1 border min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit rounded-lg",
               className
             )}
           >
@@ -209,7 +209,7 @@ export const MultiSelect = React.forwardRef<
                     return (
                       <Badge
                         key={value}
-                        className={cn(
+                        className={cn("rounded-lg",
                           isAnimating ? "animate-bounce" : "",
                           multiSelectVariants({ variant })
                         )}
@@ -219,13 +219,13 @@ export const MultiSelect = React.forwardRef<
                           <IconComponent className="h-4 w-4 mr-2" />
                         )}
                         {option?.label}
-                        <XCircle
+                        {/* <XCircle
                           className="ml-2 h-4 w-4 cursor-pointer"
                           onClick={(event) => {
                             event.stopPropagation();
                             toggleOption(value);
                           }}
-                        />
+                        /> */}
                       </Badge>
                     );
                   })}
@@ -358,6 +358,15 @@ export const MultiSelect = React.forwardRef<
             </CommandList>
           </Command>
         </PopoverContent>
+        {animation > 0 && selectedValues.length > 0 && (
+          <Sparkles
+            className={cn(
+              "cursor-pointer my-2 text-foreground bg-background w-3 h-3",
+              isAnimating ? "" : "text-muted-foreground"
+            )}
+            onClick={() => setIsAnimating(!isAnimating)}
+          />
+        )}
       </Popover>
     );
   }

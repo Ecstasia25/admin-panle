@@ -25,6 +25,7 @@ model User {
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  events Event[] @relation("EventCoordinator")
 }
 
 enum EventStage {
@@ -48,7 +49,7 @@ model Event {
   discount   String?
   finalPrice String?
 
-  coordinatorsId String[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  coordinators User[]   @relation("EventCoordinator")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

@@ -6,3 +6,5 @@ getUserById = ['get-user-id']
 getAllUsers = ['get-users']
 
 createEvent = ['create-event']
+getEventById = ['get-event']
+getEvents = ['get-events']

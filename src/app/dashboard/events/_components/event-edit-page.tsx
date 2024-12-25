@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import EventForm from "./event-form";
+import { useQuery } from "@tanstack/react-query";
+import { client } from "@/utils/client";
 
 
 interface EventEditPageProps {
@@ -10,12 +12,39 @@ interface EventEditPageProps {
 }
 
 
+
 const EventEditPage = ({ eventId }: EventEditPageProps) => {
 
     const [isEditPage, setIsEditPage] = useState(false)
     const router = useRouter()
 
-    const event = null;
+    let event = null;
+    const {
+        data,
+    } = useQuery({
+        queryKey: ['get-event'],
+        queryFn: async () => {
+            const response = await client.event.getEventById.$get({ id: eventId });
+            const { event } = await response.json();
+            return event;
+        },
+    })
+
+    if (data) {
+        event = {
+            ...data,
+            createdAt: new Date(data.createdAt),
+            updatedAt: new Date(data.updatedAt),
+            date: new Date(data.date),
+            discount: data.discount ?? undefined,
+            finalPrice: data.finalPrice ?? undefined,
+            coordinators: data.coordinators.map(coordinator => ({
+                ...coordinator,
+                createdAt: new Date(coordinator.createdAt),
+                updatedAt: new Date(coordinator.updatedAt)
+            }))
+        };
+    }
 
     useEffect(() => {
         if (eventId === "new") {
@@ -24,7 +53,10 @@ const EventEditPage = ({ eventId }: EventEditPageProps) => {
     }, [eventId])
     return (
         <>
-            <EventForm pageState={isEditPage ? "edit" :"create"} initialData={event} pageTitle={isEditPage ? "Create Event" : "Edit Event"} />
+            <EventForm
+                eventId={data?.id}
+                initialData={event}
+                pageState={isEditPage ? "edit" : "create"} pageTitle={isEditPage ? "Create Event" : "Edit Event"} />
         </>
     )
 }
