@@ -360,7 +360,7 @@ const ProfilePageContent = () => {
                 setShowModal={setShowDeleteModal}
                 onClose={handleClose}
             >
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 px-6 py-6 md:px-3 md:py-3">
                     <h1 className="text-xl font-semibold flex items-center gap-2">
                         Delete Account
                         <TriangleAlert className="size-4 shrink-0 mt-0.5" />
