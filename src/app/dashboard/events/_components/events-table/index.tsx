@@ -3,15 +3,15 @@
 import { DataTable } from '@/components/ui/table/data-table';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
 import { columns } from './columns';
-import { User } from '@prisma/client';
-import { useAdminTableFilters } from './use-admin-table-filters';
+import { Event, User } from '@prisma/client';
+import { useAdminTableFilters } from './use-events-table-filters';
 
-export default function UserTable({
+export default function EmployeeTable({
   data,
   totalData,
   isLoading
 }: {
-  data: User[];
+  data: Event[];
   totalData: number;
   isLoading?: boolean;
 
@@ -26,7 +26,7 @@ export default function UserTable({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-4">
         <DataTableSearch
-          searchKey="name"
+          searchKey="title"
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           setPage={setPage}

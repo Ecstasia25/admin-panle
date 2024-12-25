@@ -222,4 +222,15 @@ export const authRouter = router({
         message: "User updated successfully",
       })
     }),
+  getCooForEvent: privateProcedure.query(async ({ c }) => {
+    const coordinators = await db.user.findMany({
+      where: {
+        role: {
+          in: ["COORDINATOR", "ADMIN"],
+        },
+      },
+    })
+
+    return c.json({ coordinators })
+  }),
 })
