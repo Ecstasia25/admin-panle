@@ -9,11 +9,11 @@ import { useEffect } from 'react'
 const LandingPageContent = () => {
     const router = useRouter()
     const { user } = useUser()
-    // useEffect(() => {
-    //     if (user?.id) {
-    //         router.replace('/dashboard')
-    //     }
-    // }, [user, router])
+    useEffect(() => {
+        if (user?.id) {
+            router.replace('/dashboard')
+        }
+    }, [user, router])
     return (
         <main className="flex !dark:grainy  flex-col items-center justify-center min-h-[90vh]">
             <div className="container flex flex-col items-center justify-center gap-12 md:gap-6 px-4 py-16">

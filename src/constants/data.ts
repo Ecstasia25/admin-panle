@@ -1,6 +1,4 @@
-import { NavItem } from '@/types';
-
-
+import { NavItem } from "@/types"
 
 export const navItems: NavItem[] = [
   // {
@@ -12,44 +10,52 @@ export const navItems: NavItem[] = [
   //   items: [] // Empty array as there are no child items for Dashboard
   // },
   {
-    title: 'ADMINS',
-    url: '/dashboard/admins',
+    title: "ADMINS",
+    url: "/dashboard/admins",
     icon: "userCog",
-    shortcut: ['a', 'a'],
+    shortcut: ["a", "a"],
     isActive: false,
-    items: [] // No child items
+    items: [], // No child items
   },
   {
-    title: 'COORDINATORS',
-    url: '/dashboard/coordinators',
+    title: "COORDINATORS",
+    url: "/dashboard/coordinators",
     icon: "userPlus",
-    shortcut: ['c', 'c'],
+    shortcut: ["c", "c"],
     isActive: false,
-    items: [] // No child items
+    items: [], // No child items
   },
   {
-    title: 'USERS',
-    url: '/dashboard/users',
+    title: "USERS",
+    url: "/dashboard/users",
     icon: "user",
-    shortcut: ['u', 'u'],
+    shortcut: ["u", "u"],
     isActive: false,
-    items: [] // No child items
+    items: [], // No child items
   },
   {
-    title: 'EVENTS',
-    url: '/dashboard/events',
+    title: "EVENTS",
+    url: "/dashboard/events",
     icon: "clapperboard",
-    shortcut: ['e', 'e'],
+    shortcut: ["e", "e"],
     isActive: false,
-    items: [] // No child items
+    items: [], // No child items
   },
   {
-    title: 'MY EVENTS',
-    url: '/dashboard/myevents',
+    title: "MY EVENTS",
+    url: "/dashboard/myevents",
     icon: "aparature",
-    shortcut: ['m', 'e'],
+    shortcut: ["m", "e"],
     isActive: false,
-    items: [] // No child items
+    items: [], // No child items
+  },
+  {
+    title: "PROFILE",
+    url: "/dashboard/profile",
+    icon: "cog",
+    shortcut: ["m", "e"],
+    isActive: false,
+    items: [], // No child items
   },
   // {
   //   title: 'Account',
@@ -72,4 +78,4 @@ export const navItems: NavItem[] = [
   //     }
   //   ]
   // },
-];
+]

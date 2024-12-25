@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -13,11 +14,14 @@ import {
 import { ClerkProvider, useClerk } from '@clerk/nextjs';
 import { ClerkLoaded, ClerkLoading } from '@clerk/nextjs'
 import { Skeleton } from '../ui/skeleton';
+import { useUser } from '@/hooks/users/use-user';
 
 
 export function UserNav() {
 
-  const { signOut, user } = useClerk();
+  const { signOut } = useClerk();
+
+  const { user } = useUser();
   if (user) {
     return (
       <ClerkProvider>
@@ -33,11 +37,11 @@ export function UserNav() {
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
                     <AvatarImage
-                      src={user?.imageUrl || ""}
-                      alt={user?.fullName?.slice(0, 2)?.toUpperCase() || 'ES'}
+                      src={user?.image || ""}
+                      alt={user?.name?.slice(0, 2)?.toUpperCase() || 'ES'}
                     />
                     <AvatarFallback>
-                      {user?.fullName?.slice(0, 2)?.toUpperCase()}
+                      {user?.name?.slice(0, 2)?.toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -50,29 +54,29 @@ export function UserNav() {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {user?.fullName}
+                  {user?.name}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {user?.emailAddresses[0]?.emailAddress}
+                  {user?.email}
                 </p>
               </div>
             </DropdownMenuLabel>
-            {/* <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              Profile
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Billing
-              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                Profile
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                Your Events
+                <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
+              </DropdownMenuItem>
+              {/* <DropdownMenuItem>
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>New Team</DropdownMenuItem>
-          </DropdownMenuGroup> */}
+            <DropdownMenuItem>New Team</DropdownMenuItem> */}
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()}>
               Log out
