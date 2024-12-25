@@ -36,6 +36,7 @@ import {
   UserRoundCog,
   UserRoundPlus,
   Clapperboard,
+  Aperture,
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -73,6 +74,7 @@ export const Icons = {
   userCog: UserRoundCog,
   userPlus: UserRoundPlus,
   clapperboard: Clapperboard,
+  aparature:Aperture,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

@@ -11,11 +11,13 @@ import { Plus, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
-import EventsTable from "./events-table"
+import MyEventsTable from "./my-events-table"
 import { ApiHeading } from "@/components/shared/api-heading";
-import { ApiList } from "./events-table/api-list";
+import { ApiList } from "./my-events-table/api-list";
+import { useUser } from "@/hooks/users/use-user";
+import { useRouter } from "next/navigation";
 
-interface EventListPageProps {
+interface MyEventsListPageProps {
     page: number;
     search?: string;
     pageLimit: number;
@@ -23,15 +25,21 @@ interface EventListPageProps {
     groupSize?: string;
 }
 
-const EventListPage = ({
+const MyEventsListPage = ({
     page,
     search,
     pageLimit,
     stage,
     groupSize,
-}: EventListPageProps) => {
+}: MyEventsListPageProps) => {
+    const { user } = useUser();
+    const router = useRouter();
     const [spinReload, setSpinReload] = useState(false);
+
+
+
     const filters = {
+        id: user?.id,
         page,
         limit: pageLimit,
         ...(search && { search }),
@@ -45,17 +53,17 @@ const EventListPage = ({
         isLoading,
         refetch
     } = useQuery({
-        queryKey: ['get-all-events', filters],
+        queryKey: ['get-all-coevents', filters],
         queryFn: async () => {
-            const response = await client.event.getEvents.$get(filters);
+            const response = await client.coevents.getFilteredCordEventsByCoId.$get(filters);
             const { data } = await response.json();
             return data;
         },
     })
 
-    const eventsCount = data?.allEventCount || 0;
+    const eventsCount = data?.allCoordEvntsCount || 0;
 
-    const dataWithDates = data?.events?.map((event) => ({
+    const dataWithDates = data?.allCoordEvents?.map((event) => ({
         ...event,
         createdAt: new Date(event.createdAt),
         updatedAt: new Date(event.updatedAt),
@@ -66,7 +74,7 @@ const EventListPage = ({
 
     const handleReload = () => {
         setSpinReload(true);
-        queryClient.invalidateQueries({ queryKey: ['get-all-events', filters], exact: true });
+        queryClient.invalidateQueries({ queryKey: ['get-all-coevents', filters], exact: true });
         refetch();
         toast.success('Data Refetched');
         setTimeout(() => {
@@ -79,8 +87,8 @@ const EventListPage = ({
             <div className="space-y-4">
                 <div className="flex items-start justify-between">
                     <Heading
-                        title={`Events (${eventsCount})`}
-                        description="Manage all the events in the system"
+                        title={`Assigned Events (${eventsCount})`}
+                        description="Manage all the events assigned to you in the system"
                     />
 
                     <div className='flex items-center gap-2'>
@@ -95,27 +103,21 @@ const EventListPage = ({
                             )} />
                             Reload
                         </Button>
-                        <Link
-                            href={'/dashboard/events/new'}
-                            className={cn(buttonVariants({ variant: 'default' }))}
-                        >
-                            <Plus className="mr-2 h-4 w-4" /> Add New
-                        </Link>
                     </div>
                 </div>
                 <Separator />
-                <EventsTable
+                <MyEventsTable
                     data={dataWithDates || []}
                     totalData={eventsCount}
                     isLoading={isLoading}
                 />
 
-                <ApiHeading title="API" description="API calls for events" />
+                <ApiHeading title="API" description="API calls for my events" />
                 <Separator />
-                <ApiList entityName="event" entityNameId="id" />
+                <ApiList entityName="myevents" entityNameId="id" />
             </div>
         </PageContainer>
     )
 }
 
-export default EventListPage
+export default MyEventsListPage

@@ -66,7 +66,7 @@ export const columns: ColumnDef<User>[] = [
     header: "CREATED AT",
     cell: ({ row }) => {
       return (
-        <span>
+        <span className='min-w-[200px] flex items-center'>
           {format(new Date(row.original.createdAt), 'PPP hh:mm')}
         </span>
       )
