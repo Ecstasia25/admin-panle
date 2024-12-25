@@ -4,9 +4,11 @@ import { DataTable } from '@/components/ui/table/data-table';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
 import { columns } from './columns';
 import { Event, User } from '@prisma/client';
-import { useAdminTableFilters } from './use-events-table-filters';
+import { GROUP_SIZE_OPTIONS, STAGE_OPTIONS, useAdminTableFilters } from './use-events-table-filters';
+import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
+import { DataTableFilterBox } from '@/components/ui/table/data-table-filter-box';
 
-export default function EmployeeTable({
+export default function EventsTable({
   data,
   totalData,
   isLoading
@@ -20,6 +22,13 @@ export default function EmployeeTable({
     searchQuery,
     setPage,
     setSearchQuery,
+    resetFilters,
+    isAnyFilterActive,
+    stageFilter,
+    setStageFilter,
+    groupSizeFilter,
+    setGroupSizeFilter,
+
   } = useAdminTableFilters();
 
   return (
@@ -31,10 +40,36 @@ export default function EmployeeTable({
           setSearchQuery={setSearchQuery}
           setPage={setPage}
         />
+        <DataTableFilterBox
+          filterKey="stage"
+          title="Stage"
+          options={STAGE_OPTIONS}
+          setFilterValue={
+            setStageFilter
+          }
+          filterValue={stageFilter}
+        />
+        <DataTableFilterBox
+          filterKey="groupSize"
+          title="Group Size"
+          options={GROUP_SIZE_OPTIONS}
+          setFilterValue={
+            setGroupSizeFilter
+          }
+          filterValue={
+            groupSizeFilter
+          }
+        />
+        <DataTableResetFilter
+          isFilterActive={isAnyFilterActive}
+          onReset={resetFilters}
+        />
       </div>
       <DataTable
         isLoading={isLoading}
-        columns={columns} data={data} totalItems={totalData} />
+        columns={columns} data={data} totalItems={totalData}
+        noResultHeaderWidth='min-w-[130px]'
+      />
 
     </div>
   );

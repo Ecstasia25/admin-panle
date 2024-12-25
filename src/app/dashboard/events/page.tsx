@@ -19,9 +19,14 @@ export default async function Page({ searchParams }: pageProps) {
     const page = searchParamsCache.get('page');
     const pageLimit = searchParamsCache.get('limit');
     const search = searchParamsCache.get('q') || '';
+    const groupSize = searchParamsCache.get('groupSize') || '';
+    const stage = (searchParamsCache.get('stage') === 'ONSTAGE' || searchParamsCache.get('stage') === 'OFFSTAGE') ? searchParamsCache.get('stage') as "ONSTAGE" | "OFFSTAGE" : undefined;
+
     return <EventListPage
         page={page}
         search={search}
         pageLimit={pageLimit}
+        stage={stage}
+        groupSize={groupSize}
     />;
 }

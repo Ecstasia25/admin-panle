@@ -105,15 +105,29 @@ export const eventRouter = router({
         page: z.number().optional(),
         limit: z.number().optional(),
         search: z.string().optional(),
+        stage: z.nativeEnum(EventStage).optional(),
+        groupSize: z.string().optional(),
       })
     )
     .query(async ({ c, input }) => {
-      const { page = 1, limit = 10, search } = input
+      const { page = 1, limit = 10, search, stage, groupSize } = input
+      let eventsArray = stage ? stage.split(".") : []
+      let formatedEventsArray = groupSize ? groupSize.split(".") : []
+
       let events = await db.event.findMany({
         include: {
           coordinators: true,
         },
       })
+
+      if (eventsArray.length > 0) {
+        events = events.filter((event) => eventsArray.includes(event.stage))
+      }
+      if (formatedEventsArray.length > 0) {
+        events = events.filter((event) =>
+          formatedEventsArray.includes(event.groupSize)
+        )
+      }
 
       if (search) {
         events = matchSorter(events, search, {

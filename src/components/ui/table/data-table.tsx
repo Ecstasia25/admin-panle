@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import { cn } from '@/utils';
 import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon
@@ -37,6 +38,7 @@ interface DataTableProps<TData, TValue> {
   totalItems: number;
   pageSizeOptions?: number[];
   isLoading?: boolean;
+  noResultHeaderWidth?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -44,7 +46,8 @@ export function DataTable<TData, TValue>({
   data,
   totalItems,
   pageSizeOptions = [10, 20, 30, 40, 50],
-  isLoading
+  isLoading,
+  noResultHeaderWidth
 }: DataTableProps<TData, TValue>) {
   const [currentPage, setCurrentPage] = useQueryState(
     'page',
@@ -96,11 +99,11 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       <ScrollArea className="grid h-[calc(80vh-220px)] rounded-md border md:h-[calc(90dvh-240px)]">
         <Table className="relative">
-          <TableHeader>
+          <TableHeader >
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className={cn('min-w-[100px]', noResultHeaderWidth)}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -128,7 +131,8 @@ export function DataTable<TData, TValue>({
                       data-state={row.getIsSelected() && 'selected'}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
+                        <TableCell
+                         key={cell.id} className=''>
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()

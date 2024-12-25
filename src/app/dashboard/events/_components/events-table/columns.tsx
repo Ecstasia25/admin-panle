@@ -48,23 +48,23 @@ export const columns: ColumnDef<Event>[] = [
     }
   },
   {
-    accessorKey: 'slotCount',
-    header: 'SLOT COUNT',
-    cell: ({ row }) => {
-      return (
-        <span className='min-w-[100px] flex items-center'>
-          {row.original.slotCount}
-        </span>
-      )
-    }
-  },
-  {
     accessorKey: 'groupSize',
     header: 'GROUP SIZE',
     cell: ({ row }) => {
       return (
         <span className='min-w-[100px] flex items-center'>
           {row.original.groupSize}
+        </span>
+      )
+    }
+  },
+  {
+    accessorKey: 'slotCount',
+    header: 'SLOT COUNT',
+    cell: ({ row }) => {
+      return (
+        <span className='min-w-[100px] flex items-center'>
+          {row.original.slotCount}
         </span>
       )
     }
