@@ -21,8 +21,6 @@ export default async function Home() {
 
   if (auth?.id) {
     redirect('/dashboard/events')
-  } else {
-    redirect('/welcome')
   }
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
