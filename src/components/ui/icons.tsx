@@ -39,6 +39,7 @@ import {
   Aperture,
   ShipWheel,
   Cog,
+  Layout,
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -78,6 +79,7 @@ export const Icons = {
   clapperboard: Clapperboard,
   aparature:Aperture,
   shipwheel:ShipWheel,
+  layout:Layout,
   cog:Cog,
   gitHub: ({ ...props }: LucideProps) => (
     <svg

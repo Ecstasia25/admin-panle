@@ -1,17 +1,11 @@
 
-import { currentUser } from '@clerk/nextjs/server'
+
+import OverViewPageDetails from '../_components/dashboard/overview-page-content'
 
 
 
 const DashboardPage = async () => {
-  const auth = await currentUser()
-
-
-  return (
-    <div>
-      {auth?.id}
-    </div>
-  )
+  return <OverViewPageDetails />
 }
 
 export default DashboardPage
