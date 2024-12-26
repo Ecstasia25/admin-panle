@@ -13,6 +13,7 @@ export const searchParams = {
   categories: parseAsString,
   stage: parseAsString,
   groupSize: parseAsString,
+  category: parseAsString,
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

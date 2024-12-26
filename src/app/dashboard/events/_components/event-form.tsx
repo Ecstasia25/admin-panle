@@ -23,7 +23,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { client } from "@/utils/client"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { EventStage, User } from "@prisma/client"
+import { EventCategory, EventStage, User } from "@prisma/client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   CalendarIcon,
@@ -78,6 +78,7 @@ type CoordinatorOption = {
 const EventFormSchema = z.object({
   title: z.string().min(3, { message: "Title is Required" }),
   description: z.string().min(10, { message: "Description is Required" }),
+  category: z.nativeEnum(EventCategory, { required_error: "Category is Required" }),
   poster: z.string({ required_error: "Poster is Required" }),
   date: z.date({ required_error: "Date is Required" }),
   stage: z.nativeEnum(EventStage, { required_error: "Stage is Required" }),
@@ -136,6 +137,7 @@ export default function EventForm({
     defaultValues: {
       title: "",
       description: "",
+      category: EventCategory.DANCE,
       poster: "",
       date: new Date(),
       stage: EventStage.OFFSTAGE,
@@ -156,6 +158,7 @@ export default function EventForm({
       form.reset({
         title: eventData.title,
         description: eventData.description,
+        category: eventData.category,
         poster: eventData.poster,
         date: new Date(eventData.date),
         stage: eventData.stage,
@@ -527,6 +530,36 @@ export default function EventForm({
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               <FormField
                 control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>
+                      Event Category
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select event category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.values(EventCategory).map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="price"
                 render={({ field }) => (
                   <FormItem className="w-full">
@@ -631,7 +664,7 @@ export default function EventForm({
                 control={form.control}
                 name="archived"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-white">
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-white dark:bg-background">
                     <FormControl>
                       <Checkbox
                         checked={field.value}

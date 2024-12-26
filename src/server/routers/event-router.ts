@@ -1,4 +1,4 @@
-import { EventStage } from "@prisma/client"
+import { EventCategory, EventStage } from "@prisma/client"
 import { router } from "../__internals/router"
 import { privateProcedure, publicProcedure } from "../procedures"
 import { db } from "@/utils/db"
@@ -14,6 +14,9 @@ export const eventRouter = router({
         }),
         description: z.string().min(10, {
           message: "Description is Required",
+        }),
+        category: z.nativeEnum(EventCategory, {
+          required_error: "Category is Required",
         }),
         poster: z.string({
           required_error: "Poster is Required",
@@ -46,6 +49,7 @@ export const eventRouter = router({
         const {
           title,
           description,
+          category,
           poster,
           date,
           stage,
@@ -63,6 +67,7 @@ export const eventRouter = router({
           data: {
             title,
             description,
+            category,
             poster,
             date,
             stage,
@@ -107,12 +112,14 @@ export const eventRouter = router({
         search: z.string().optional(),
         stage: z.nativeEnum(EventStage).optional(),
         groupSize: z.string().optional(),
+        category: z.string().optional(),
       })
     )
     .query(async ({ c, input }) => {
-      const { page = 1, limit = 10, search, stage, groupSize } = input
+      const { page = 1, limit = 10, search, stage, groupSize, category } = input
       let eventsArray = stage ? stage.split(".") : []
       let formatedEventsArray = groupSize ? groupSize.split(".") : []
+      let categoryFormatedArray = category ? category.split(".") : []
 
       let events = await db.event.findMany({
         include: {
@@ -129,9 +136,15 @@ export const eventRouter = router({
         )
       }
 
+      if (categoryFormatedArray.length > 0) {
+        events = events.filter((event) =>
+          categoryFormatedArray.includes(event.category)
+        )
+      }
+
       if (search) {
         events = matchSorter(events, search, {
-          keys: ["title", "stage"],
+          keys: ["title", "stage", "category"],
         })
       }
 
@@ -184,6 +197,9 @@ export const eventRouter = router({
         description: z.string().min(10, {
           message: "Description is Required",
         }),
+        category: z.nativeEnum(EventCategory, {
+          required_error: "Category is Required",
+        }),
         poster: z.string({
           required_error: "Poster is Required",
         }),
@@ -216,6 +232,7 @@ export const eventRouter = router({
           id,
           title,
           description,
+          category,
           poster,
           date,
           stage,
@@ -247,6 +264,7 @@ export const eventRouter = router({
           data: {
             title,
             description,
+            category,
             poster,
             date,
             stage,
@@ -353,12 +371,14 @@ export const eventRouter = router({
         search: z.string().optional(),
         stage: z.nativeEnum(EventStage).optional(),
         groupSize: z.string().optional(),
+        category: z.nativeEnum(EventCategory).optional(),
       })
     )
     .query(async ({ c, input }) => {
-      const { page = 1, limit = 10, search, stage, groupSize } = input
+      const { page = 1, limit = 10, search, stage, groupSize, category } = input
       let eventsArray = stage ? stage.split(".") : []
       let formatedEventsArray = groupSize ? groupSize.split(".") : []
+      let categoryFormatedArray = category ? category.split(".") : []
 
       let events = await db.event.findMany({
         include: {
@@ -372,6 +392,12 @@ export const eventRouter = router({
       if (formatedEventsArray.length > 0) {
         events = events.filter((event) =>
           formatedEventsArray.includes(event.groupSize)
+        )
+      }
+
+      if (categoryFormatedArray.length > 0) {
+        events = events.filter((event) =>
+          categoryFormatedArray.includes(event.category)
         )
       }
 

@@ -16,6 +16,17 @@ export const GROUP_SIZE_OPTIONS = [
   { value: '8', label: 'TEAM' }
 ];
 
+export const CATEGORY_OPTIONS = [
+  { value: 'DANCE', label: 'DANCE' },
+  { value: 'MUSIC', label: 'MUSIC' },
+  { value: 'DRAMA', label: 'DRAMA' },
+  { value: 'LITERARY', label: 'LITERARY' },
+  { value: 'INFORMALS', label: 'INFORMALS' },
+  { value: 'ART', label: 'ART' },
+  { value: 'SPORTS', label: 'SPORTS' },
+  { value: 'PHOTORAPHY', label: 'PHOTORAPHY' }
+];
+
 export function useAdminTableFilters() {
   const [searchQuery, setSearchQuery] = useQueryState(
     'q',
@@ -23,7 +34,6 @@ export function useAdminTableFilters() {
       .withOptions({ shallow: false, throttleMs: 1000 })
       .withDefault('')
   );
-
 
   const [page, setPage] = useQueryState(
     'page',
@@ -40,15 +50,28 @@ export function useAdminTableFilters() {
     searchParams.groupSize.withOptions({ shallow: false }).withDefault('')
   );
 
+  const [categoryFilter, setCategoryFilter] = useQueryState(
+    'category',
+    searchParams.category.withOptions({ shallow: false }).withDefault('')
+  );
+
   const resetFilters = useCallback(() => {
     setSearchQuery(null);
-
+    setStageFilter('');
+    setGroupSizeFilter('');
+    setCategoryFilter('');
     setPage(1);
-  }, [setSearchQuery, setPage]);
+  }, [setSearchQuery, setStageFilter, setGroupSizeFilter, setCategoryFilter, setPage]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!searchQuery
-  }, [searchQuery,]);
+    return Boolean(
+      searchQuery || 
+      stageFilter || 
+      groupSizeFilter || 
+      categoryFilter || 
+      (page !== 1)
+    );
+  }, [searchQuery, stageFilter, groupSizeFilter, categoryFilter, page]);
 
   return {
     searchQuery,
@@ -60,6 +83,8 @@ export function useAdminTableFilters() {
     stageFilter,
     setStageFilter,
     groupSizeFilter,
-    setGroupSizeFilter
+    setGroupSizeFilter,
+    categoryFilter,
+    setCategoryFilter
   };
 }

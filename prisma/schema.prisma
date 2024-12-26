@@ -35,10 +35,22 @@ enum EventStage {
   OFFSTAGE
 }
 
+enum EventCategory {
+  DANCE
+  MUSIC
+  DRAMA
+  LITERARY
+  INFORMALS
+  ART
+  SPORTS
+  PHOTORAPHY
+}
+
 model Event {
-  id          String @id @default(uuid())
+  id          String        @id @default(uuid())
   title       String
   description String
+  category    EventCategory
 
   stage     EventStage @default(OFFSTAGE)
   date      DateTime
