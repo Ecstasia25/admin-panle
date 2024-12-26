@@ -8,78 +8,83 @@ export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.CLERK_WEBHOOK_SECRET
 
   if (!SIGNING_SECRET) {
-    return NextResponse.json(
-      { error: "Missing CLERK_WEBHOOK_SECRET" },
-      { status: 500 }
+    throw new Error(
+      "Error: Please add SIGNING_SECRET from Clerk Dashboard to .env or .env.local"
     )
   }
 
-  const headerPayload = headers()
+  // Create new Svix instance with secret
+  const wh = new Webhook(SIGNING_SECRET)
+
+  // Get headers
+  const headerPayload = await headers()
   const svix_id = headerPayload.get("svix-id")
   const svix_timestamp = headerPayload.get("svix-timestamp")
   const svix_signature = headerPayload.get("svix-signature")
 
+  // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return NextResponse.json({ error: "Missing Svix headers" }, { status: 400 })
+    return new Response("Error: Missing Svix headers", {
+      status: 400,
+    })
   }
 
-  try {
-    const payload = await req.json()
-    const body = JSON.stringify(payload)
+  // Get body
+  const payload = await req.json()
+  const body = JSON.stringify(payload)
 
-    const wh = new Webhook(SIGNING_SECRET)
-    const evt = wh.verify(body, {
+  let evt: WebhookEvent
+
+  // Verify payload with headers
+  try {
+    evt = wh.verify(body, {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
     }) as WebhookEvent
-
-    switch (evt.type) {
-      case "user.created": {
-        const {
-          id,
-          email_addresses,
-          image_url,
-          first_name,
-          last_name,
-          phone_numbers,
-        } = evt.data
-
-        if (!id || !email_addresses?.length) {
-          return NextResponse.json(
-            { error: "Missing required user data" },
-            { status: 400 }
-          )
-        }
-
-        await db.user.create({
-          data: {
-            clerkId: id,
-            email: email_addresses[0].email_address,
-            name: [first_name, last_name].filter(Boolean).join(" "),
-            image: image_url,
-            phone: phone_numbers?.[0]?.phone_number || null,
-          },
-        })
-
-        return NextResponse.json(
-          { message: "User created successfully" },
-          { status: 201 }
-        )
-      }
-
-      default: {
-        return NextResponse.json(
-          { message: "Webhook received" },
-          { status: 200 }
-        )
-      }
-    }
-  } catch (error) {
-    console.error("Webhook error:", error)
-    return NextResponse.json(
-      { error: "Webhook verification failed" },
-      { status: 400 }
-    )
+  } catch (err) {
+    console.error("Error: Could not verify webhook:", err)
+    return new Response("Error: Verification error", {
+      status: 400,
+    })
   }
+
+  const eventType = evt.type
+
+  if (eventType === "user.created") {
+    const {
+      id,
+      email_addresses,
+      image_url,
+      first_name,
+      last_name,
+      phone_numbers,
+    } = evt.data
+
+    if (!id || !email_addresses) {
+      return new Response("Error: Missing user data", {
+        status: 400,
+      })
+    }
+
+    const user = {
+      id,
+      email: email_addresses[0].email_address,
+      image: image_url,
+      name: `${first_name} ${last_name}`,
+      phone: phone_numbers[0]?.phone_number,
+    }
+
+    await db.user.create({
+      data: {
+        clerkId: id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        image: user.image,
+      },
+    })
+    return NextResponse.json({ message: "New user created", user: user })
+  }
+  return new Response("Success", { status: 200 })
 }
