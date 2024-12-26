@@ -71,6 +71,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
+            onClick={() => router.push(`/dashboard/myevents/${data.id}`)}
+          >
+            <Edit className="mr-2 h-4 w-4" />
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem
             className="cursor-pointer"
             onClick={() => onCopy(data.id)}
           >
@@ -80,12 +86,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               <Copy className="w-4 h-4 mr-2" />
             )}
             Copy Id
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/myevents/${data.id}`)}
-          >
-            <Edit className="mr-2 h-4 w-4" />
-            Edit
           </DropdownMenuItem>
           {/* <DropdownMenuItem
             disabled={isPending}

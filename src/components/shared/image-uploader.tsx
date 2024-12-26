@@ -99,7 +99,7 @@ export const ImageUploader = ({
           </div>
         </>
       ) : (
-        <div className="w-60 max-w-60 h-[300px] rounded-md overflow-hidden border border-dashed border-gray-200 flex items-center justify-center flex-col gap-3 object-contain bg-white">
+        <div className="w-60 max-w-60 h-[300px] rounded-md overflow-hidden border border-dashed border-gray-200 flex items-center justify-center flex-col gap-3 object-contain bg-white dark:bg-background">
           {isLoading ? (
             <>
               <div className="flex flex-col items-center gap-y-2 justify-center w-full">

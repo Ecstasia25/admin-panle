@@ -27,10 +27,12 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   PaginationState,
+  SortingState,
   useReactTable
 } from '@tanstack/react-table';
 import { ChevronLeftIcon, ChevronRightIcon, Loader, Loader2 } from 'lucide-react';
 import { parseAsInteger, useQueryState } from 'nuqs';
+import { useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -49,6 +51,7 @@ export function DataTable<TData, TValue>({
   isLoading,
   noResultHeaderWidth
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
   const [currentPage, setCurrentPage] = useQueryState(
     'page',
     parseAsInteger.withOptions({ shallow: false }).withDefault(1)
@@ -86,8 +89,10 @@ export function DataTable<TData, TValue>({
     columns,
     pageCount: pageCount,
     state: {
+      sorting,
       pagination: paginationState
     },
+    onSortingChange: setSorting,
     onPaginationChange: handlePaginationChange,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -132,7 +137,7 @@ export function DataTable<TData, TValue>({
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
-                         key={cell.id} className=''>
+                          key={cell.id} className=''>
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()

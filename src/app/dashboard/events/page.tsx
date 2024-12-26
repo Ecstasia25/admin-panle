@@ -20,6 +20,9 @@ export default async function Page({ searchParams }: pageProps) {
     const pageLimit = searchParamsCache.get('limit');
     const search = searchParamsCache.get('q') || '';
     const groupSize = searchParamsCache.get('groupSize') || '';
+    const day = searchParamsCache.get('day') || '';
+    const validCategories = ['DANCE', 'MUSIC', 'DRAMA', 'LITERARY', 'INFORMALS', 'ART', 'SPORTS', 'PHOTORAPHY'] as const;
+    const category = searchParamsCache.get('category') as typeof validCategories[number] | undefined;
     const stage = (searchParamsCache.get('stage') === 'ONSTAGE' || searchParamsCache.get('stage') === 'OFFSTAGE') ? searchParamsCache.get('stage') as "ONSTAGE" | "OFFSTAGE" : undefined;
 
     return <EventListPage
@@ -28,5 +31,7 @@ export default async function Page({ searchParams }: pageProps) {
         pageLimit={pageLimit}
         stage={stage}
         groupSize={groupSize}
+        category={category}
+        day={day}
     />;
 }

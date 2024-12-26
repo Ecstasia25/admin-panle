@@ -4,6 +4,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { Event } from '@prisma/client';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { ArrowUpDown } from 'lucide-react';
 
 export const columns: ColumnDef<Event>[] = [
   {
@@ -33,6 +35,34 @@ export const columns: ColumnDef<Event>[] = [
         <span className='min-w-[100px] flex items-center'>
           {row.original.title}
         </span>
+      )
+    }
+  },
+  {
+    accessorKey: 'category',
+    header: 'CATEGORY',
+    cell: ({ row }) => {
+      return (
+        <span className='min-w-[100px] flex items-center'>
+          {row.original.category}
+        </span>
+      )
+    }
+  },
+  {
+    accessorKey: 'day',
+    header: 'EVENT DAY',
+    cell: ({ row }) => {
+      return (
+        row.original.day ? (
+          <span className='min-w-[100px] flex items-center'>
+            {row.original.day}
+          </span>
+        ) : (
+          <span className='min-w-[100px] flex items-center italic'>
+            null
+          </span>
+        )
       )
     }
   },
@@ -85,9 +115,15 @@ export const columns: ColumnDef<Event>[] = [
     header: 'DISCOUNT',
     cell: ({ row }) => {
       return (
-        <span className='min-w-[100px] flex items-center'>
-          {row.original.discount} %
-        </span>
+        row.original.discount ? (
+          <span className='min-w-[100px] flex items-center'>
+            {row.original.discount} %
+          </span>
+        ) : (
+          <span className='min-w-[100px] flex items-center italic'>
+            null
+          </span>
+        )
       )
     }
   },
@@ -104,7 +140,19 @@ export const columns: ColumnDef<Event>[] = [
   },
   {
     accessorKey: 'date',
-    header: 'EVENT DATE',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            column.toggleSorting(column.getIsSorted() === "asc")
+          }}
+        >
+          EVENT DATE
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       return (
         <span className='min-w-[200px] flex items-center'>
