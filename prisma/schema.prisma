@@ -46,6 +46,11 @@ enum EventCategory {
   PHOTORAPHY
 }
 
+enum EventDay {
+  DAY1
+  DAY2
+}
+
 model Event {
   id          String        @id @default(uuid())
   title       String
@@ -53,6 +58,7 @@ model Event {
   category    EventCategory
 
   stage     EventStage @default(OFFSTAGE)
+  day       EventDay   @default(DAY1)
   date      DateTime
   poster    String
   groupSize String

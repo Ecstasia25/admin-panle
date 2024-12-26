@@ -27,6 +27,11 @@ export const CATEGORY_OPTIONS = [
   { value: 'PHOTORAPHY', label: 'PHOTORAPHY' }
 ];
 
+export const DAY_OPTIONS = [
+  { value: "DAY1", label: "DAY1" },
+  { value: "DAY2", label: "DAY2" }
+]
+
 export function useAdminTableFilters() {
   const [searchQuery, setSearchQuery] = useQueryState(
     'q',
@@ -55,23 +60,30 @@ export function useAdminTableFilters() {
     searchParams.category.withOptions({ shallow: false }).withDefault('')
   );
 
+  const [dayFilter, setDayFilter] = useQueryState(
+    'day',
+    searchParams.day.withOptions({ shallow: false }).withDefault('')
+  )
+
   const resetFilters = useCallback(() => {
     setSearchQuery(null);
     setStageFilter('');
     setGroupSizeFilter('');
     setCategoryFilter('');
+    setDayFilter('');
     setPage(1);
-  }, [setSearchQuery, setStageFilter, setGroupSizeFilter, setCategoryFilter, setPage]);
+  }, [setSearchQuery, setStageFilter, setGroupSizeFilter, setCategoryFilter, setPage, setDayFilter]);
 
   const isAnyFilterActive = useMemo(() => {
     return Boolean(
-      searchQuery || 
-      stageFilter || 
-      groupSizeFilter || 
-      categoryFilter || 
+      searchQuery ||
+      stageFilter ||
+      groupSizeFilter ||
+      dayFilter ||
+      categoryFilter ||
       (page !== 1)
     );
-  }, [searchQuery, stageFilter, groupSizeFilter, categoryFilter, page]);
+  }, [searchQuery, stageFilter, groupSizeFilter, categoryFilter, page, dayFilter]);
 
   return {
     searchQuery,
@@ -85,6 +97,8 @@ export function useAdminTableFilters() {
     groupSizeFilter,
     setGroupSizeFilter,
     categoryFilter,
-    setCategoryFilter
+    setCategoryFilter,
+    dayFilter,
+    setDayFilter
   };
 }

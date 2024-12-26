@@ -21,6 +21,7 @@ interface EventListPageProps {
     pageLimit: number;
     stage?: "ONSTAGE" | "OFFSTAGE" | undefined | null;
     groupSize?: string;
+    day?: string;
     category?: "DANCE" | "MUSIC" | "DRAMA" | "LITERARY" | "INFORMALS" | "ART" | "SPORTS" | "PHOTORAPHY";
 }
 
@@ -30,7 +31,8 @@ const EventListPage = ({
     pageLimit,
     stage,
     groupSize,
-    category
+    category,
+    day
 }: EventListPageProps) => {
     const [spinReload, setSpinReload] = useState(false);
     const filters = {
@@ -39,6 +41,7 @@ const EventListPage = ({
         ...(search && { search }),
         ...(stage && { stage: stage as "ONSTAGE" | "OFFSTAGE" }),
         ...(groupSize && { groupSize }),
+        ...(day && { day }),
         ...(category && { category: category as "DANCE" | "MUSIC" | "DRAMA" | "LITERARY" | "INFORMALS" | "ART" | "SPORTS" | "PHOTORAPHY" }),
     };
     const queryClient = useQueryClient();

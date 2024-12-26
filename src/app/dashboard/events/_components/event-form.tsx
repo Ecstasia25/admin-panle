@@ -23,7 +23,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { client } from "@/utils/client"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { EventCategory, EventStage, User } from "@prisma/client"
+import { EventCategory, EventDay, EventStage, User } from "@prisma/client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   CalendarIcon,
@@ -78,7 +78,9 @@ type CoordinatorOption = {
 const EventFormSchema = z.object({
   title: z.string().min(3, { message: "Title is Required" }),
   description: z.string().min(10, { message: "Description is Required" }),
-  category: z.nativeEnum(EventCategory, { required_error: "Category is Required" }),
+  category: z.nativeEnum(EventCategory, {
+    required_error: "Category is Required",
+  }),
   poster: z.string({ required_error: "Poster is Required" }),
   date: z.date({ required_error: "Date is Required" }),
   stage: z.nativeEnum(EventStage, { required_error: "Stage is Required" }),
@@ -88,6 +90,9 @@ const EventFormSchema = z.object({
   price: z.string({ required_error: "Price is Required" }),
   discount: z.string().optional(),
   finalPrice: z.string().optional(),
+  day: z.nativeEnum(EventDay, {
+    required_error: "Event day is required",
+  }),
   coordinators: z.array(z.string()).min(1, {
     message: "At least one coordinator is required",
   }),
@@ -107,30 +112,27 @@ export default function EventForm({
   const [spinReload, setSpinReload] = useState(false)
   const router = useRouter()
   const queryClient = useQueryClient()
-  const [isFormReady, setIsFormReady] = useState(false);
+  const [isFormReady, setIsFormReady] = useState(false)
 
-  const { data: coordinatorOptions, isLoading: isCoordinatorsLoading } = useQuery({
-    queryKey: ["get-event-coordinators"],
+  const { data: coordinatorOptions, isLoading: isCoordinatorsLoading } =
+    useQuery({
+      queryKey: ["get-event-coordinators"],
+      queryFn: async () => {
+        const response = await client.auth.getCooForEvent.$get()
+        const { coordinators } = await response.json()
+        return coordinators
+      },
+    })
+
+  const { data: eventData, isLoading: isEventLoading } = useQuery({
+    queryKey: ["get-event"],
     queryFn: async () => {
-      const response = await client.auth.getCooForEvent.$get()
-      const { coordinators } = await response.json()
-      return coordinators
+      if (!eventId) throw new Error("Event ID is required")
+      const response = await client.event.getEventById.$get({ id: eventId })
+      const { event } = await response.json()
+      return event
     },
   })
-
-  const {
-    data: eventData,
-    isLoading: isEventLoading,
-  } = useQuery({
-    queryKey: ['get-event'],
-    queryFn: async () => {
-      if (!eventId) throw new Error("Event ID is required");
-      const response = await client.event.getEventById.$get({ id: eventId });
-      const { event } = await response.json();
-      return event;
-    },
-  })
-
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(EventFormSchema),
@@ -147,14 +149,13 @@ export default function EventForm({
       price: "100",
       discount: "",
       finalPrice: "",
+      day: "DAY1",
       coordinators: [],
     },
   })
 
-
   useEffect(() => {
     if (eventData && !isCoordinatorsLoading && !isEventLoading) {
-
       form.reset({
         title: eventData.title,
         description: eventData.description,
@@ -168,21 +169,20 @@ export default function EventForm({
         price: eventData.price.toString(),
         discount: eventData.discount?.toString() || "",
         finalPrice: eventData.finalPrice?.toString() || "",
-        coordinators: eventData.coordinators.map((coordinator) => coordinator.id),
+        day: eventData.day,
+        coordinators: eventData.coordinators.map(
+          (coordinator) => coordinator.id
+        ),
       })
-      setIsFormReady(true);
+      setIsFormReady(true)
     }
   }, [initialData, isEventLoading, form, isFormReady])
-
 
   const formatedCoordinatorOptions: CoordinatorOption[] =
     coordinatorOptions?.map((coordinator) => ({
       value: coordinator.id,
       label: coordinator.name || "",
     })) || []
-
-
-
 
   const { mutate: createEvent, isPending: isCreatingEvent } = useMutation({
     mutationFn: async (data: EventFormValues) => {
@@ -282,13 +282,9 @@ export default function EventForm({
     return "0.00"
   }, [price, discount, form])
 
-
   if (eventId && (isEventLoading || !isFormReady)) {
-    return (
-      <FormCardSkeleton />
-    );
+    return <FormCardSkeleton />
   }
-
 
   return (
     <Card className="mx-auto w-full">
@@ -499,6 +495,62 @@ export default function EventForm({
                   />
                   <FormField
                     control={form.control}
+                    name="day"
+                    render={({ field }) => (
+                      <FormItem className="w-full md:w-1/2 -mt-2">
+                        <FormLabel>Event Day</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select event day" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {Object.values(EventDay).map((stage) => (
+                              <SelectItem key={stage} value={stage}>
+                                {stage}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-full flex flex-col md:flex-row items-center gap-4">
+                  <FormField
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Event Category</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select event category" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {Object.values(EventCategory).map((category) => (
+                              <SelectItem key={category} value={category}>
+                                {category}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
                     name="stage"
                     render={({ field }) => (
                       <FormItem className="w-full md:w-1/2 -mt-2">
@@ -528,35 +580,6 @@ export default function EventForm({
               </div>
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>
-                      Event Category
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select event category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {Object.values(EventCategory).map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               <FormField
                 control={form.control}

@@ -14,6 +14,7 @@ export const searchParams = {
   stage: parseAsString,
   groupSize: parseAsString,
   category: parseAsString,
+  day: parseAsString,
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

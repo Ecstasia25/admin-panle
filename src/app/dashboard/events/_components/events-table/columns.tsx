@@ -50,6 +50,23 @@ export const columns: ColumnDef<Event>[] = [
     }
   },
   {
+    accessorKey: 'day',
+    header: 'EVENT DAY',
+    cell: ({ row }) => {
+      return (
+        row.original.day ? (
+          <span className='min-w-[100px] flex items-center'>
+            {row.original.day}
+          </span>
+        ) : (
+          <span className='min-w-[100px] flex items-center italic'>
+            null
+          </span>
+        )
+      )
+    }
+  },
+  {
     accessorKey: 'stage',
     header: 'STAGE TYPE',
     cell: ({ row }) => {

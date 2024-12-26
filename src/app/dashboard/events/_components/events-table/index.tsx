@@ -4,7 +4,7 @@ import { DataTable } from '@/components/ui/table/data-table';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
 import { columns } from './columns';
 import { Event } from '@prisma/client';
-import { CATEGORY_OPTIONS, GROUP_SIZE_OPTIONS, STAGE_OPTIONS, useAdminTableFilters } from './use-events-table-filters';
+import { CATEGORY_OPTIONS, DAY_OPTIONS, GROUP_SIZE_OPTIONS, STAGE_OPTIONS, useAdminTableFilters } from './use-events-table-filters';
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { DataTableFilterBox } from '@/components/ui/table/data-table-filter-box';
 
@@ -30,6 +30,8 @@ export default function EventsTable({
     setGroupSizeFilter,
     categoryFilter,
     setCategoryFilter,
+    dayFilter,
+    setDayFilter
 
   } = useAdminTableFilters();
 
@@ -59,6 +61,17 @@ export default function EventsTable({
             setStageFilter
           }
           filterValue={stageFilter}
+        />
+        <DataTableFilterBox
+          filterKey="day"
+          title="Day"
+          options={
+            DAY_OPTIONS
+          }
+          setFilterValue={
+            setDayFilter
+          }
+          filterValue={dayFilter}
         />
         <DataTableFilterBox
           filterKey="groupSize"
