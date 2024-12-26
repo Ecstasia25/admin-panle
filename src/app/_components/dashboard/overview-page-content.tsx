@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { Clapperboard, UserCog, UserPlus, UsersRound } from "lucide-react"
 
 const OverViewPageDetails = () => {
+    const { user, isLoading } = useUser()
 
     const { data, isLoading: isOverviewLoading, error } = useQuery({
         queryKey: ['get-overview-details'],
@@ -28,9 +29,6 @@ const OverViewPageDetails = () => {
         },
     },
     )
-
-
-    const { user, isLoading } = useUser()
 
     return (
         <PageContainer scrollable>

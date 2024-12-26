@@ -60,6 +60,8 @@ export default function AppSidebar() {
 
   const router = useRouter();
 
+  
+
   // const filteredNavItems = navItems.filter((item) => {
   //   if (user && user.role === 'COORDINATOR') {
   //     return item.title !== 'ADMINS' && item.title !== 'USERS' && item.title !== 'COORDINATORS';

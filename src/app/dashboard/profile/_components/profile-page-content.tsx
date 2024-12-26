@@ -126,10 +126,9 @@ const ProfilePageContent = () => {
             await client.auth.deleteUser.$post({ id })
         },
         onSuccess: () => {
-            signOut()
+            router.push("/")
             toast.success("Account deleted successfully")
             setShowDeleteModal(false)
-            router.replace("/sign-up")
         },
         onError: (error: Error) => {
             toast.error(error.message || "Failed to delete")

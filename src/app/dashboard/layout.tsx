@@ -2,7 +2,6 @@ import KBar from '@/components/kbar';
 import AppSidebar from '@/components/layout/app-sidebar';
 import Header from '@/components/layout/header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { useUser } from '@/hooks/users/use-user';
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 
@@ -16,9 +15,6 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-
-
-  
   const cookieStore = cookies();
   const defaultOpen = cookieStore.get('sidebar:state')?.value === 'true';
   return (
