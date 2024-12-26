@@ -104,10 +104,10 @@ model Booking {
   groupSize String
 
   members User[] @relation("BookingMembers")
-  event Event @relation(fields: [eventId], references: [id])
+  event   Event  @relation(fields: [eventId], references: [id])
 
-  status BookingStatus @default(ONHOLD)
-  isPaid    Boolean @default(false)
+  status    BookingStatus @default(ONHOLD)
+  isPaid    Boolean       @default(false)
   pymentId  String?
   sessionId String?
 
