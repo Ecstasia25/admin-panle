@@ -186,6 +186,14 @@ const ProfilePageContent = () => {
         return <FormCardSkeleton />
     }
 
+    const newChangesMade = form.formState.isDirty || (
+        form.getValues("name") !== user?.name ||
+        form.getValues("phone") !== user?.phone ||
+        form.getValues("collegeName") !== user?.collegeName ||
+        form.getValues("address") !== user?.address ||
+        form.getValues("image") !== user?.image
+    )
+
     const handleClose = () => {
         setShowDeleteModal(false)
     }
@@ -337,7 +345,7 @@ const ProfilePageContent = () => {
                                             )}
                                         </Button>
                                         <Button
-                                            disabled={isLoading || isPending}
+                                            disabled={isLoading || isPending || !newChangesMade}
                                             type="submit"
                                             className="active:scale-95"
                                         >
