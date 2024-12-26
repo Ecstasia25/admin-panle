@@ -10,3 +10,7 @@ getEventById = ['get-event']
 getEvents = ['get-events']
 
 getOverviewDetails = ['get-overview-details']
+
+ngrock command to start server = ngrok http --url=talented-foal-strongly.ngrok-free.app 3000
+
+domain = https://talented-foal-strongly.ngrok-free.app/
