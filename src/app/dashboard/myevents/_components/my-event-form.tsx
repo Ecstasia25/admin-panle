@@ -23,7 +23,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { client } from "@/utils/client"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { EventStage, User } from "@prisma/client"
+import { EventCategory, EventDay, EventStage, User } from "@prisma/client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   CalendarIcon,
@@ -78,6 +78,9 @@ type CoordinatorOption = {
 const EventFormSchema = z.object({
   title: z.string().min(3, { message: "Title is Required" }),
   description: z.string().min(10, { message: "Description is Required" }),
+  category: z.nativeEnum(EventCategory, {
+    required_error: "Category is Required",
+  }),
   poster: z.string({ required_error: "Poster is Required" }),
   date: z.date({ required_error: "Date is Required" }),
   stage: z.nativeEnum(EventStage, { required_error: "Stage is Required" }),
@@ -87,6 +90,9 @@ const EventFormSchema = z.object({
   price: z.string({ required_error: "Price is Required" }),
   discount: z.string().optional(),
   finalPrice: z.string().optional(),
+  day: z.nativeEnum(EventDay, {
+    required_error: "Event day is required",
+  }),
   coordinators: z.array(z.string()).min(1, {
     message: "At least one coordinator is required",
   }),
@@ -136,6 +142,8 @@ export default function MyEventForm({
     defaultValues: {
       title: "",
       description: "",
+      category: EventCategory.DANCE,
+      day: EventDay.DAY1,
       poster: "",
       date: new Date(),
       stage: EventStage.OFFSTAGE,
@@ -156,6 +164,8 @@ export default function MyEventForm({
       form.reset({
         title: eventData.title,
         description: eventData.description,
+        category: eventData.category,
+        day: eventData.day,
         poster: eventData.poster,
         date: new Date(eventData.date),
         stage: eventData.stage,
@@ -474,10 +484,65 @@ export default function MyEventForm({
                   />
                   <FormField
                     control={form.control}
-                    name="stage"
-                    disabled
+                    name="day"
                     render={({ field }) => (
                       <FormItem className="w-full md:w-1/2 -mt-2">
+                        <FormLabel>Event Day</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select event day" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {Object.values(EventDay).map((stage) => (
+                              <SelectItem key={stage} value={stage}>
+                                {stage}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-full flex flex-col md:flex-row items-center gap-4">
+                  <FormField
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Event Category</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select event category" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {Object.values(EventCategory).map((category) => (
+                              <SelectItem key={category} value={category}>
+                                {category}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="stage"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
                         <FormLabel>Event Stage Type</FormLabel>
                         <Select
                           onValueChange={field.onChange}

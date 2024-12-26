@@ -553,7 +553,7 @@ export default function EventForm({
                     control={form.control}
                     name="stage"
                     render={({ field }) => (
-                      <FormItem className="w-full md:w-1/2 -mt-2">
+                      <FormItem className="w-full">
                         <FormLabel>Event Stage Type</FormLabel>
                         <Select
                           onValueChange={field.onChange}
