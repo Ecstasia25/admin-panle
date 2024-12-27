@@ -9,14 +9,16 @@ export const fcmRouter = router({
       z.object({
         token: z.string(),
         userId: z.string(),
+        deviceOs: z.string(),
       })
     )
     .mutation(async ({ c, input }) => {
-      const { token, userId } = input
+      const { token, userId, deviceOs } = input
       const fcmToken = await db.fcmTokens.create({
         data: {
           token,
           userId,
+          deviceOs,
         },
       })
       return c.json({
@@ -38,8 +40,10 @@ export const fcmRouter = router({
           userId,
         },
       })
+      const deviceOs = fcmToken?.deviceOs
       return c.json({
         token: fcmToken,
+        deviceOs,
         success: !!fcmToken,
         message: !!fcmToken ? "Token is present" : "Token is not present",
       })
@@ -49,10 +53,11 @@ export const fcmRouter = router({
       z.object({
         token: z.string(),
         userId: z.string(),
+        deviceOs: z.string(),
       })
     )
     .mutation(async ({ c, input }) => {
-      const { token, userId } = input
+      const { token, userId, deviceOs } = input
       const existingToken = await db.fcmTokens.findFirst({
         where: { userId },
       })
@@ -64,6 +69,7 @@ export const fcmRouter = router({
         },
         data: {
           token,
+          deviceOs,
         },
       })
       return c.json({
