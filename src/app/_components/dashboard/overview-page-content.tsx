@@ -13,10 +13,12 @@ import { Clapperboard, UserCog, UserPlus, UsersRound } from "lucide-react"
 import useFCM from "@/hooks/useFCM"
 import { toast } from "sonner"
 import { useEffect } from "react"
+import { useDeviceOS } from 'react-haiku';
 
 const OverViewPageDetails = () => {
     const { user, isLoading } = useUser()
     const { fcmToken } = useFCM()
+    const deviceOS = useDeviceOS();
 
     const { data, isLoading: isOverviewLoading } = useQuery({
         queryKey: ['get-overview-details'],
@@ -27,13 +29,13 @@ const OverViewPageDetails = () => {
         },
     })
 
-    const { data: existingToken } = useQuery({
+    const { data: existingToken, isLoading: isTokenLoading } = useQuery({
         queryKey: ['check-fcm-token', user?.id],
         enabled: !!user?.id && !!fcmToken,
         queryFn: async () => {
             const response = await client.fcm.checkToken.$get({ userId: user!.id })
-            const { token } = await response.json()
-            return token
+            const { token, deviceOs: storedDeviceOs } = await response.json()
+            return { token, deviceOs: storedDeviceOs }
         },
     })
 
@@ -42,7 +44,8 @@ const OverViewPageDetails = () => {
             if (!fcmToken || !user?.id) return
             const res = await client.fcm.createFcmToken.$post({
                 token: fcmToken,
-                userId: user.id
+                userId: user.id,
+                deviceOs: deviceOS
             })
             const json = await res.json()
             if (!json.success) throw new Error(json.message)
@@ -58,7 +61,8 @@ const OverViewPageDetails = () => {
             if (!fcmToken || !user?.id) return
             const res = await client.fcm.updateToken.$post({
                 token: fcmToken,
-                userId: user.id
+                userId: user.id,
+                deviceOs: deviceOS
             })
             const json = await res.json()
             if (!json.success) throw new Error(json.message)
@@ -70,15 +74,17 @@ const OverViewPageDetails = () => {
     })
 
     useEffect(() => {
-        if (!fcmToken || !user?.id) return
+        if (!fcmToken || !user?.id || isTokenLoading) return
 
-        if (!existingToken) {
+        if (!existingToken || !existingToken.token) {
             createFCM()
-        } else if (existingToken.token !== fcmToken) {
+        } else if (
+            existingToken.token.token !== fcmToken ||
+            existingToken.token.deviceOs !== deviceOS
+        ) {
             updateFCM()
         }
-    }, [fcmToken, existingToken, user?.id])
-
+    }, [fcmToken, existingToken, user?.id, deviceOS, isTokenLoading])
 
     return (
         <PageContainer scrollable>
@@ -90,8 +96,6 @@ const OverViewPageDetails = () => {
                         <h2 className="text-2xl font-bold tracking-tight">
                             Hi, {user?.name?.split(' ')[0]} Welcome back 👋
                         </h2>
-
-
                     )}
                 </div>
                 <Tabs defaultValue="overview" className="space-y-4">
@@ -183,7 +187,6 @@ const OverViewPageDetails = () => {
                                         </Button>
                                     </div>
                                 </Card>
-
                             </div>
                         )}
                     </TabsContent>
