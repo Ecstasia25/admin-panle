@@ -15,6 +15,7 @@ export const searchParams = {
   groupSize: parseAsString,
   category: parseAsString,
   day: parseAsString,
+  deviceOs: parseAsString,
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

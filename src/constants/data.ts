@@ -50,6 +50,14 @@ export const navItems: NavItem[] = [
     items: [], // No child items
   },
   {
+    title: "NOTIFICATIONS",
+    url: "/dashboard/notification",
+    icon: "bellDot",
+    shortcut: ["e", "e"],
+    isActive: false,
+    items: [], // No child items
+  },
+  {
     title: "MY EVENTS",
     url: "/dashboard/myevents",
     icon: "aparature",

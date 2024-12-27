@@ -1,17 +1,15 @@
 "use client";
 import PageContainer from '@/components/layout/page-container'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/utils'
-import { Plus, RotateCcw } from 'lucide-react'
-import Link from 'next/link'
+import {  RotateCcw } from 'lucide-react'
 import React from 'react'
 import { Heading } from '@/components/ui/heading'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { client } from '@/utils/client'
 import AdminsTable from "./admins-table"
 import { toast } from 'sonner'
-import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
 import { useUser } from '@/hooks/users/use-user';
 
 interface AdminListingPageProps {
