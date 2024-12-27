@@ -53,11 +53,31 @@ const OverViewPageDetails = () => {
         },
     })
 
+    const { mutate: updateFCM } = useMutation({
+        mutationFn: async () => {
+            if (!fcmToken || !user?.id) return
+            const res = await client.fcm.updateToken.$post({
+                token: fcmToken,
+                userId: user.id
+            })
+            const json = await res.json()
+            if (!json.success) throw new Error(json.message)
+            return json
+        },
+        onError: (error: Error) => {
+            toast.error(error.message || "Failed to update notification token")
+        },
+    })
+
     useEffect(() => {
-        if (fcmToken && !existingToken) {
+        if (!fcmToken || !user?.id) return
+
+        if (!existingToken) {
             createFCM()
+        } else if (existingToken.token !== fcmToken) {
+            updateFCM()
         }
-    }, [fcmToken, existingToken])
+    }, [fcmToken, existingToken, user?.id])
 
 
     return (

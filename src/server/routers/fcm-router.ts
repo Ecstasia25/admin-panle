@@ -44,4 +44,32 @@ export const fcmRouter = router({
         message: !!fcmToken ? "Token is present" : "Token is not present",
       })
     }),
+  updateToken: publicProcedure
+    .input(
+      z.object({
+        token: z.string(),
+        userId: z.string(),
+      })
+    )
+    .mutation(async ({ c, input }) => {
+      const { token, userId } = input
+      const existingToken = await db.fcmTokens.findFirst({
+        where: { userId },
+      })
+      if (!existingToken) throw new Error("Token not found")
+
+      const fcmToken = await db.fcmTokens.update({
+        where: {
+          id: existingToken.id,
+        },
+        data: {
+          token,
+        },
+      })
+      return c.json({
+        success: true,
+        fcmToken,
+        message: "Token updated successfully",
+      })
+    }),
 })
