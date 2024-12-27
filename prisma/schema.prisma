@@ -31,6 +31,14 @@ model User {
   booking     Booking[] @relation("BookingMembers")
 }
 
+model FcmTokens {
+  id        String   @id @default(uuid())
+  token     String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum EventStage {
   ONSTAGE
   OFFSTAGE
