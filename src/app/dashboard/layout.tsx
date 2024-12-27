@@ -7,7 +7,6 @@ import { cookies } from 'next/headers';
 
 export const metadata: Metadata = {
   title: 'Dashboard | Ecstasia Admin',
-  manifest: '/manifest.json'
 };
 
 export default function DashboardLayout({
