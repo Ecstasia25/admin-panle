@@ -4,12 +4,7 @@ import PageContainer from "@/components/layout/page-container"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useUser } from "@/hooks/users/use-user"
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { client } from "@/utils/client"
 import { NumberTicker } from "@/components/shared/number-ticker"
@@ -19,38 +14,39 @@ import useFCM from "@/hooks/useFCM"
 import { toast } from "sonner"
 import { useEffect } from "react"
 
-
 const OverViewPageDetails = () => {
     const { user, isLoading } = useUser()
-
     const { fcmToken } = useFCM()
 
-    const { data, isLoading: isOverviewLoading, error } = useQuery({
+    const { data, isLoading: isOverviewLoading } = useQuery({
         queryKey: ['get-overview-details'],
         queryFn: async () => {
-            const response = await client.overview.getOverviewDetails.$get();
-            const { data } = await response.json();
-            return data;
+            const response = await client.overview.getOverviewDetails.$get()
+            const { data } = await response.json()
+            return data
         },
-    },
-    )
+    })
 
-    const { mutate: createFCM, isPending } = useMutation({
+    const { data: existingToken } = useQuery({
+        queryKey: ['check-fcm-token', user?.id],
+        enabled: !!user?.id && !!fcmToken,
+        queryFn: async () => {
+            const response = await client.fcm.checkToken.$get({ userId: user!.id })
+            const { token } = await response.json()
+            return token
+        },
+    })
+
+    const { mutate: createFCM } = useMutation({
         mutationFn: async () => {
-            if (!fcmToken || !user?.id) return;
+            if (!fcmToken || !user?.id) return
             const res = await client.fcm.createFcmToken.$post({
                 token: fcmToken,
                 userId: user.id
             })
             const json = await res.json()
-
-            if (!json.success) {
-                throw new Error(json.message)
-            }
+            if (!json.success) throw new Error(json.message)
             return json
-        },
-        onSuccess: () => {
-            toast.success("Notification Enabled")
         },
         onError: (error: Error) => {
             toast.error(error.message || "Failed to enable notification")
@@ -58,11 +54,10 @@ const OverViewPageDetails = () => {
     })
 
     useEffect(() => {
-        if (fcmToken) {
+        if (fcmToken && !existingToken) {
             createFCM()
         }
-    }, [fcmToken])
-
+    }, [fcmToken, existingToken])
 
 
     return (

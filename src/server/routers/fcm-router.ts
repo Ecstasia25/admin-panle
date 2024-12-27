@@ -25,4 +25,23 @@ export const fcmRouter = router({
         message: "Token created successfully",
       })
     }),
+  checkToken: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { userId } = input
+      const fcmToken = await db.fcmTokens.findFirst({
+        where: {
+          userId,
+        },
+      })
+      return c.json({
+        token: fcmToken,
+        success: !!fcmToken,
+        message: !!fcmToken ? "Token is present" : "Token is not present",
+      })
+    }),
 })
