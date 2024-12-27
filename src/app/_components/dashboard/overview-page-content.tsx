@@ -7,18 +7,23 @@ import { useUser } from "@/hooks/users/use-user"
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle
 } from '@/components/ui/card';
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { client } from "@/utils/client"
 import { NumberTicker } from "@/components/shared/number-ticker"
 import { Button } from "@/components/ui/button"
 import { Clapperboard, UserCog, UserPlus, UsersRound } from "lucide-react"
+import useFCM from "@/hooks/useFCM"
+import { toast } from "sonner"
+import { useEffect } from "react"
+
 
 const OverViewPageDetails = () => {
     const { user, isLoading } = useUser()
+
+    const { fcmToken } = useFCM()
 
     const { data, isLoading: isOverviewLoading, error } = useQuery({
         queryKey: ['get-overview-details'],
@@ -29,6 +34,36 @@ const OverViewPageDetails = () => {
         },
     },
     )
+
+    const { mutate: createFCM, isPending } = useMutation({
+        mutationFn: async () => {
+            if (!fcmToken || !user?.id) return;
+            const res = await client.fcm.createFcmToken.$post({
+                token: fcmToken,
+                userId: user.id
+            })
+            const json = await res.json()
+
+            if (!json.success) {
+                throw new Error(json.message)
+            }
+            return json
+        },
+        onSuccess: () => {
+            toast.success("Notification Enabled")
+        },
+        onError: (error: Error) => {
+            toast.error(error.message || "Failed to enable notification")
+        },
+    })
+
+    useEffect(() => {
+        if (fcmToken) {
+            createFCM()
+        }
+    }, [fcmToken])
+
+
 
     return (
         <PageContainer scrollable>
@@ -43,8 +78,6 @@ const OverViewPageDetails = () => {
 
 
                     )}
-                    <div className="hidden items-center space-x-2 md:flex">
-                    </div>
                 </div>
                 <Tabs defaultValue="overview" className="space-y-4">
                     <TabsList className="mt-4">
