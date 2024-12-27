@@ -14,3 +14,5 @@ getOverviewDetails = ['get-overview-details']
 ngrock command to start server = ngrok http --url=talented-foal-strongly.ngrok-free.app 3000
 
 domain = https://talented-foal-strongly.ngrok-free.app/
+
+CLERK_WEBHOOK_SECRET = whsec_qR9r1tfnlxKc/bHfVFxQmj+VWYtJTOjA (PROD)
