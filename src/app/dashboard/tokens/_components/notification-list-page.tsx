@@ -27,6 +27,8 @@ const NotificationsListPage = ({
 
     const [spinReload, setSpinReload] = useState(false);
 
+    const token = "eo3FDGFULUY_9WL4CP6s7K:APA91bGyNem6KqtQg1KeFi85Dp9zxPrWWtNr_ouYztkXUVYEH6L476E-DWHkboSFWzK0RcSxxzaNDqD9QDTGa5KEda3rCQip2Zb4xvbqBztWb1nDS6QaYBY"
+
     const filters = {
         page,
         limit: pageLimit,
@@ -56,7 +58,27 @@ const NotificationsListPage = ({
     }))
 
 
-
+    const { mutate: sendNotification } = useMutation({
+        mutationFn: async (data: { token: string; title: string; body: string, logoUrl: string, imageUrl: string, clickAction: string }) => {
+            const res = await client.notification.sendNotification.$post({
+                token: data.token,
+                title: data.title,
+                body: data.body,
+                logoUrl: data.logoUrl,
+                imageUrl: data.imageUrl,
+                clickAction: data.clickAction,
+            })
+            const json = await res.json()
+            if (!json.success) throw new Error(json.message)
+            return json
+        },
+        onSuccess: () => {
+            toast.success("Notification sent")
+        },
+        onError: (error: Error) => {
+            toast.error(error.message || "Failed to send notification")
+        },
+    })
     const handleReload = () => {
         setSpinReload(true);
         refetch();
@@ -79,6 +101,16 @@ const NotificationsListPage = ({
                     <div className='flex items-center gap-2'>
                         <Button
                             className='active:scale-95 hidden md:flex'
+                            onClick={() => {
+                                sendNotification({
+                                    token: token,
+                                    title: "Ecstasia 2025",
+                                    body: "New Event Added",
+                                    logoUrl: "https://firebasestorage.googleapis.com/v0/b/ecstasia2024.appspot.com/o/Typo%20and%20Logos%2FLOGO.svg?alt=media&token=82bd1e1d-26f8-4a0c-b2f4-f5115909b837",
+                                    imageUrl: "https://ecstasia.uem.edu.in/assets/knownsense/knownsense.png",
+                                    clickAction: "https://ecstasia.uem.edu.in/"
+                                })
+                            }}
                         >
                             Send Notification
                         </Button>
