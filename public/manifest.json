@@ -21,7 +21,6 @@
   "lang": "en-US",
   "name": "Ecstaisa",
   "short_name": "Ecstasia",
-  "start_url": "/",
-  "scope": "https://ecstasia.exions.tech",
+  "start_url": "/dashboard",
   "description": "Ecstasia is the annual cultural extravaganza of the University of Engineering and Management (UEM), Kolkata. This highly anticipated fest ignites the campus with excitement, fostering camaraderie and offering a vibrant celebration of traditions."
 }
