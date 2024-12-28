@@ -40,6 +40,8 @@ import {
   ShipWheel,
   Cog,
   Layout,
+  BellDot,
+  Key
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -80,7 +82,9 @@ export const Icons = {
   aparature:Aperture,
   shipwheel:ShipWheel,
   layout:Layout,
+  bellDot: BellDot,
   cog:Cog,
+  key:Key,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

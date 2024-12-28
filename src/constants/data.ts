@@ -50,6 +50,14 @@ export const navItems: NavItem[] = [
     items: [], // No child items
   },
   {
+    title: "FCM TOKENS",
+    url: "/dashboard/tokens",
+    icon: "key",
+    shortcut: ["k", "k"],
+    isActive: false,
+    items: [], // No child items
+  },
+  {
     title: "MY EVENTS",
     url: "/dashboard/myevents",
     icon: "aparature",
@@ -61,7 +69,7 @@ export const navItems: NavItem[] = [
     title: "PROFILE",
     url: "/dashboard/profile",
     icon: "cog",
-    shortcut: ["m", "e"],
+    shortcut: ["p", "p"],
     isActive: false,
     items: [], // No child items
   },
