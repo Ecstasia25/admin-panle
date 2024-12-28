@@ -20,7 +20,7 @@ export default async function Home() {
   const auth = await currentUser()
 
   if (auth?.id) {
-    redirect('/dashboard/events')
+    redirect('/dashboard')
   }
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

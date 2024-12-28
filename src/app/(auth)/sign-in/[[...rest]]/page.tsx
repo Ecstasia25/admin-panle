@@ -9,8 +9,8 @@ const Page = () => {
   return (
     <div className="w-full flex-1 flex items-center justify-center">
       <SignIn
-      // fallbackRedirectUrl={"/welcome"}
-      // forceRedirectUrl={"/welcome"}
+      fallbackRedirectUrl={"/dashboard"}
+      forceRedirectUrl={"/dashboard"}
       />
     </div>
   )
