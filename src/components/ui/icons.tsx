@@ -41,6 +41,7 @@ import {
   Cog,
   Layout,
   BellDot,
+  Key
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -83,6 +84,7 @@ export const Icons = {
   layout:Layout,
   bellDot: BellDot,
   cog:Cog,
+  key:Key,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

@@ -11,7 +11,7 @@ import {
 import { client } from '@/utils/client';
 import { Event, FcmTokens, User } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Copy, CopyCheck, Edit, FileText, MoreHorizontal, Trash } from 'lucide-react';
+import { Copy, CopyCheck, Edit, FileText, MoreHorizontal, Trash, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -20,6 +20,7 @@ import {
   Sheet,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -63,7 +64,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [isCopying, setIsCopying] = useState(false)
   const [open, setOpen] = useState(false);
-  const router = useRouter();
 
 
   const queryClient = useQueryClient();
@@ -149,10 +149,28 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               Details of the FCM Token and the user associated with this token and the device OS
             </SheetDescription>
           </SheetHeader>
-          <div className='w-full flex flex-col gap-3 py-3 mt-4'>
+          <div className='w-full flex flex-col gap-4 py-3 mt-4'>
             <TokenDetailsUnit label="FCM Token" value={data.token} />
             <TokenDetailsUnit label="User ID" value={data.userId} />
+            <Button
+              variant={"outline"}
+              className='active:scale-95 pointer-events-none select-none flex justify-start'
+            >
+              Device OS : {data.deviceOs}
+            </Button>
           </div>
+          <SheetFooter>
+            <Button
+              variant={"destructive"}
+              onClick={() => {
+                setShowDetails(false)
+                setOpen(true)
+              }}
+            >
+              Delete Token
+              <Trash2 className='size-4 shrink-0 ml-2' />
+            </Button>
+          </SheetFooter>
         </SheetContent>
       </Sheet>
 
