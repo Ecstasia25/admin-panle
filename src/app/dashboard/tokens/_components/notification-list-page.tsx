@@ -27,6 +27,8 @@ const NotificationsListPage = ({
 
     const [spinReload, setSpinReload] = useState(false);
 
+    const token = "eo3FDGFULUY_9WL4CP6s7K:APA91bGyNem6KqtQg1KeFi85Dp9zxPrWWtNr_ouYztkXUVYEH6L476E-DWHkboSFWzK0RcSxxzaNDqD9QDTGa5KEda3rCQip2Zb4xvbqBztWb1nDS6QaYBY"
+
     const filters = {
         page,
         limit: pageLimit,
@@ -56,7 +58,6 @@ const NotificationsListPage = ({
     }))
 
 
-
     const handleReload = () => {
         setSpinReload(true);
         refetch();
@@ -77,11 +78,6 @@ const NotificationsListPage = ({
                     />
 
                     <div className='flex items-center gap-2'>
-                        <Button
-                            className='active:scale-95 hidden md:flex'
-                        >
-                            Send Notification
-                        </Button>
                         <Button
                             variant={'secondary'}
 
