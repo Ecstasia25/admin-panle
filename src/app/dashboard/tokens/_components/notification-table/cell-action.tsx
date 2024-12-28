@@ -156,6 +156,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               variant={"outline"}
               className='active:scale-95 pointer-events-none select-none flex justify-start'
             >
+              User Name : {data.userName}
+            </Button>
+            <Button
+              variant={"outline"}
+              className='active:scale-95 pointer-events-none select-none flex justify-start'
+            >
               Device OS : {data.deviceOs}
             </Button>
           </div>

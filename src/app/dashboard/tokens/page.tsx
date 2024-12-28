@@ -8,7 +8,7 @@ type pageProps = {
 };
 
 export const metadata = {
-    title: 'Notifications | Ecstasia Panel'
+    title: 'FCM Tokens | Ecstasia Panel'
 };
 
 export default async function Page({ searchParams }: pageProps) {
