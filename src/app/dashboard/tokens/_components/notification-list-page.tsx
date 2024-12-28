@@ -6,7 +6,7 @@ import { Heading } from '@/components/ui/heading'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/utils'
 import { client } from '@/utils/client';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { RotateCcw } from 'lucide-react'
 import React, { useState } from 'react'
 import { toast } from 'sonner';
@@ -56,6 +56,7 @@ const NotificationsListPage = ({
     }))
 
 
+
     const handleReload = () => {
         setSpinReload(true);
         refetch();
@@ -76,6 +77,11 @@ const NotificationsListPage = ({
                     />
 
                     <div className='flex items-center gap-2'>
+                        <Button
+                            className='active:scale-95 hidden md:flex'
+                        >
+                            Send Notification
+                        </Button>
                         <Button
                             variant={'secondary'}
 

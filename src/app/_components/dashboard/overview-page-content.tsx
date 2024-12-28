@@ -45,7 +45,8 @@ const OverViewPageDetails = () => {
             const res = await client.fcm.createFcmToken.$post({
                 token: fcmToken,
                 userId: user.id,
-                deviceOs: deviceOS
+                deviceOs: deviceOS,
+                userName: user.name || ""
             })
             const json = await res.json()
             if (!json.success) throw new Error(json.message)
@@ -62,7 +63,8 @@ const OverViewPageDetails = () => {
             const res = await client.fcm.updateToken.$post({
                 token: fcmToken,
                 userId: user.id,
-                deviceOs: deviceOS
+                deviceOs: deviceOS,
+                userName: user.name || ""
             })
             const json = await res.json()
             if (!json.success) throw new Error(json.message)

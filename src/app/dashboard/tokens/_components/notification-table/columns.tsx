@@ -49,12 +49,12 @@ export const columns: ColumnDef<FcmTokens>[] = [
     }
   },
   {
-    accessorKey: 'userId',
-    header: 'USER ID',
+    accessorKey: 'userName',
+    header: 'USER NAME',
     cell: ({ row }) => {
       return (
-        <span className='min-w-[100px] flex items-center'>
-          {formatedString(row.original.userId)}
+        <span className='min-w-[150px] flex items-center'>
+        {row.original.userName}
         </span>
       )
     }
