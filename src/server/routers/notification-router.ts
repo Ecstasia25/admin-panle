@@ -8,19 +8,19 @@ export const notificationRouter = router({
     .input(
       z.object({
         title: z.string(),
-        description: z.string(),
+        body: z.string(),
         imageUrl: z.string(),
         logoUrl: z.string(),
         tokens: z.array(z.string()),
       })
     )
     .mutation(async ({ c, input }) => {
-      const { title, description, imageUrl, logoUrl, tokens } = input
+      const { title, body, imageUrl, logoUrl, tokens } = input
       try {
         await NotificationService.sendNotification(
           tokens,
           title,
-          description,
+          body,
           imageUrl,
           logoUrl
         )
