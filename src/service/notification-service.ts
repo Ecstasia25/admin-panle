@@ -58,7 +58,7 @@ class NotificationService {
           image: imageUrl,
         },
         fcm_options: {
-          link: "https://your-default-link.com", // Add a default link for web users
+          link: "https://ecstasia.uem.edu.in", // Add a default link for web users
         },
       },
       tokens, // Target device tokens
