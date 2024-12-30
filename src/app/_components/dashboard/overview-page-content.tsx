@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import PageContainer from "@/components/layout/page-container"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -12,13 +13,23 @@ import { Button } from "@/components/ui/button"
 import { Clapperboard, UserCog, UserPlus, UsersRound } from "lucide-react"
 import useFCM from "@/hooks/useFCM"
 import { toast } from "sonner"
-import { useEffect } from "react"
-import { useDeviceOS } from 'react-haiku';
+import { useDeviceOS } from 'react-haiku'
 
 const OverViewPageDetails = () => {
     const { user, isLoading } = useUser()
     const { fcmToken } = useFCM()
-    const deviceOS = useDeviceOS();
+    const [deviceOS, setDeviceOS] = useState<string | null>(null)
+
+    // Handle device OS detection on client side only
+    useEffect(() => {
+        try {
+            const haiku = useDeviceOS()
+            setDeviceOS(haiku)
+        } catch (error) {
+            console.error('Failed to detect device OS:', error)
+            setDeviceOS('unknown')
+        }
+    }, [])
 
     const { data, isLoading: isOverviewLoading } = useQuery({
         queryKey: ['get-overview-details'],
@@ -41,7 +52,7 @@ const OverViewPageDetails = () => {
 
     const { mutate: createFCM } = useMutation({
         mutationFn: async () => {
-            if (!fcmToken || !user?.id) return
+            if (!fcmToken || !user?.id || !deviceOS) return
             const res = await client.fcm.createFcmToken.$post({
                 token: fcmToken,
                 userId: user.id,
@@ -59,7 +70,7 @@ const OverViewPageDetails = () => {
 
     const { mutate: updateFCM } = useMutation({
         mutationFn: async () => {
-            if (!fcmToken || !user?.id) return
+            if (!fcmToken || !user?.id || !deviceOS) return
             const res = await client.fcm.updateToken.$post({
                 token: fcmToken,
                 userId: user.id,
@@ -76,7 +87,7 @@ const OverViewPageDetails = () => {
     })
 
     useEffect(() => {
-        if (!fcmToken || !user?.id || isTokenLoading) return
+        if (!fcmToken || !user?.id || isTokenLoading || !deviceOS) return
 
         if (!existingToken || !existingToken.token) {
             createFCM()
@@ -128,9 +139,10 @@ const OverViewPageDetails = () => {
                                     </CardContent>
                                     <div className="absolute top-3 right-3">
                                         <Button
-                                            variant={"noeffect"}
-                                            size={"icon"}
-                                            className="flex items-center justify-center bg-yellow-500/30">
+                                            variant="noeffect"
+                                            size="icon"
+                                            className="flex items-center justify-center bg-yellow-500/30"
+                                        >
                                             <Clapperboard className="size-5 shrink-0 text-yellow-600" />
                                         </Button>
                                     </div>
@@ -146,9 +158,10 @@ const OverViewPageDetails = () => {
                                     </CardContent>
                                     <div className="absolute top-3 right-3">
                                         <Button
-                                            variant={"noeffect"}
-                                            size={"icon"}
-                                            className="flex items-center justify-center bg-rose-500/30">
+                                            variant="noeffect"
+                                            size="icon"
+                                            className="flex items-center justify-center bg-rose-500/30"
+                                        >
                                             <UserCog className="size-5 shrink-0 text-rose-600" />
                                         </Button>
                                     </div>
@@ -164,9 +177,10 @@ const OverViewPageDetails = () => {
                                     </CardContent>
                                     <div className="absolute top-3 right-3">
                                         <Button
-                                            variant={"noeffect"}
-                                            size={"icon"}
-                                            className="flex items-center justify-center bg-violet-500/30">
+                                            variant="noeffect"
+                                            size="icon"
+                                            className="flex items-center justify-center bg-violet-500/30"
+                                        >
                                             <UserPlus className="size-5 shrink-0 text-violet-600" />
                                         </Button>
                                     </div>
@@ -182,9 +196,10 @@ const OverViewPageDetails = () => {
                                     </CardContent>
                                     <div className="absolute top-3 right-3">
                                         <Button
-                                            variant={"noeffect"}
-                                            size={"icon"}
-                                            className="flex items-center justify-center bg-green-500/30">
+                                            variant="noeffect"
+                                            size="icon"
+                                            className="flex items-center justify-center bg-green-500/30"
+                                        >
                                             <UsersRound className="size-5 shrink-0 text-green-600" />
                                         </Button>
                                     </div>

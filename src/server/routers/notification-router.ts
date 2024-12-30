@@ -1,21 +1,22 @@
 import { z } from "zod"
 import { router } from "../__internals/router"
 import { publicProcedure } from "../procedures"
-import NotificationService from "../notification-service"
+import NotificationService from "@/service/notification-service"
 
 export const notificationRouter = router({
   sendNotification: publicProcedure
     .input(
       z.object({
+        tokens: z.array(z.string()),
         title: z.string(),
         body: z.string(),
         imageUrl: z.string(),
         logoUrl: z.string(),
-        tokens: z.array(z.string()),
       })
     )
     .mutation(async ({ c, input }) => {
-      const { title, body, imageUrl, logoUrl, tokens } = input
+      const { tokens, title, body, imageUrl, logoUrl } = input
+
       try {
         await NotificationService.sendNotification(
           tokens,
@@ -25,14 +26,13 @@ export const notificationRouter = router({
           logoUrl
         )
         return c.json({
-          message: "Notification sent successfully",
           success: true,
+          message: "Notification sent successfully",
         })
       } catch (error: any) {
         return c.json({
-          message: "Error sending notification",
-          error: error.message,
           success: false,
+          message: "Error sending notification",
         })
       }
     }),
