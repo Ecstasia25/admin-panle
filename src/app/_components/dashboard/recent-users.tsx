@@ -32,7 +32,7 @@ const RecentUserItems = ({
     createdAt
 }: RecentUserItemsProps) => {
     return (
-        <div className="flex items-center justify-between w-full">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full">
             <div className="flex items-center gap-3">
                 <Avatar className="flex h-9 w-9 items-center justify-center space-y-0 border">
                     <AvatarImage src={userImage} alt="Avatar" />
@@ -59,11 +59,11 @@ const RecentUserItems = ({
                     )}
                 </div>
             </div>
-            <div className="space-y-1">
-                <div className="text-sm font-normal">
+            <div className="mt-1 md:mt-0 flex flex-row md:flex-col items-center md:items-end justify-between pl-12 w-full">
+                <div className="text-xs font-normal">
                     {format(createdAt, "PPP")}
                 </div>
-                <div className="text-xs font-normal flex items-center justify-end">
+                <div className="text-xs font-normal">
                     {format(createdAt, "hh:mm a")}
                 </div>
             </div>
