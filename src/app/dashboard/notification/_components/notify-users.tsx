@@ -147,6 +147,7 @@ const NotifyUsersPage = () => {
     },
     onSuccess: () => {
       form.reset()
+      setImage("")
       toast.success("Notification sent successfully")
     },
     onError: (error: Error) => {
@@ -309,7 +310,7 @@ const NotifyUsersPage = () => {
                       name="title"
                       render={({ field }) => (
                         <FormItem className="w-full">
-                          <FormLabel>Title</FormLabel>
+                          <FormLabel>Notification Title</FormLabel>
                           <FormControl>
                             <Input placeholder="Enter title" {...field} />
                           </FormControl>
@@ -322,7 +323,8 @@ const NotifyUsersPage = () => {
                       name="body"
                       render={({ field }) => (
                         <FormItem className="w-full">
-                          <FormLabel>Description</FormLabel>
+                          <FormLabel>
+                            Notification Description</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Enter description"
