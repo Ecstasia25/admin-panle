@@ -42,7 +42,6 @@ const ProfileFormSchema = z.object({
 type ProfileFormValues = z.infer<typeof ProfileFormSchema>
 
 const ProfilePageContent = () => {
-    const { signOut } = useClerk()
     const [isCopying, setIsCopying] = useState(false)
     const [isCopying2, setIsCopying2] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
