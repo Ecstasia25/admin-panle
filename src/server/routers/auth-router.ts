@@ -185,8 +185,6 @@ export const authRouter = router({
     )
     .mutation(async ({ c, input }) => {
       const { id } = input
-      const client = await clerkClient()
-      await client.users.deleteUser(id)
       await db.user.delete({
         where: {
           clerkId: id,
