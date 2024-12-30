@@ -268,4 +268,14 @@ export const authRouter = router({
         message: "Profile updated successfully",
       })
     }),
+  getRecentUsers: privateProcedure.query(async ({ c }) => {
+    const users = await db.user.findMany({
+      take: 7,
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+
+    return c.json({ users })
+  }),
 })
