@@ -14,6 +14,7 @@ import { Clapperboard, UserCog, UserPlus, UsersRound } from "lucide-react"
 import useFCM from "@/hooks/useFCM"
 import { toast } from "sonner"
 import { useDeviceOS } from 'react-haiku'
+import RecentUsers from "./recent-users"
 
 const OverViewPageDetails = () => {
     const { user, isLoading } = useUser()
@@ -207,6 +208,18 @@ const OverViewPageDetails = () => {
                                 </Card>
                             </div>
                         )}
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-8">
+                            <Card className="col-span-4 md:col-span-4">
+                                <CardHeader className="mb-4">
+                                    <CardTitle>
+                                        Recent Users
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <RecentUsers />
+                                </CardContent>
+                            </Card>
+                        </div>
                     </TabsContent>
                     <TabsContent value="analytics" className="space-y-4">
                         analytics
