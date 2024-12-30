@@ -20,16 +20,17 @@ const OverViewPageDetails = () => {
     const { fcmToken } = useFCM()
     const [deviceOS, setDeviceOS] = useState<string | null>(null)
 
+    const haiku = useDeviceOS()
+
     // Handle device OS detection on client side only
     useEffect(() => {
         try {
-            const haiku = useDeviceOS()
             setDeviceOS(haiku)
         } catch (error) {
             console.error('Failed to detect device OS:', error)
             setDeviceOS('unknown')
         }
-    }, [])
+    }, [haiku])
 
     const { data, isLoading: isOverviewLoading } = useQuery({
         queryKey: ['get-overview-details'],
