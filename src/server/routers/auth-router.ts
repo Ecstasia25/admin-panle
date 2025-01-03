@@ -268,7 +268,7 @@ export const authRouter = router({
     }),
   getRecentUsers: privateProcedure.query(async ({ c }) => {
     const users = await db.user.findMany({
-      take: 7,
+      take: 5,
       orderBy: {
         createdAt: "desc",
       },
@@ -277,3 +277,6 @@ export const authRouter = router({
     return c.json({ users })
   }),
 })
+
+
+// ExionsTech@2024

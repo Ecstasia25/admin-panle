@@ -11,27 +11,14 @@ import { client } from "@/utils/client"
 import { NumberTicker } from "@/components/shared/number-ticker"
 import { Button } from "@/components/ui/button"
 import { Clapperboard, UserCog, UserPlus, UsersRound } from "lucide-react"
-import useFCM from "@/hooks/useFCM"
 import { toast } from "sonner"
 import { useDeviceOS } from 'react-haiku'
 import RecentUsers from "./recent-users"
 
 const OverViewPageDetails = () => {
     const { user, isLoading } = useUser()
-    const { fcmToken } = useFCM()
-    const [deviceOS, setDeviceOS] = useState<string | null>(null)
 
-    const haiku = useDeviceOS()
 
-    // Handle device OS detection on client side only
-    useEffect(() => {
-        try {
-            setDeviceOS(haiku)
-        } catch (error) {
-            console.error('Failed to detect device OS:', error)
-            setDeviceOS('unknown')
-        }
-    }, [haiku])
 
     const { data, isLoading: isOverviewLoading } = useQuery({
         queryKey: ['get-overview-details'],
@@ -42,64 +29,6 @@ const OverViewPageDetails = () => {
         },
     })
 
-    const { data: existingToken, isLoading: isTokenLoading } = useQuery({
-        queryKey: ['check-fcm-token', user?.id],
-        enabled: !!user?.id && !!fcmToken,
-        queryFn: async () => {
-            const response = await client.fcm.checkToken.$get({ userId: user!.id })
-            const { token, deviceOs: storedDeviceOs } = await response.json()
-            return { token, deviceOs: storedDeviceOs }
-        },
-    })
-
-    const { mutate: createFCM } = useMutation({
-        mutationFn: async () => {
-            if (!fcmToken || !user?.id || !deviceOS) return
-            const res = await client.fcm.createFcmToken.$post({
-                token: fcmToken,
-                userId: user.id,
-                deviceOs: deviceOS,
-                userName: user.name || ""
-            })
-            const json = await res.json()
-            if (!json.success) throw new Error(json.message)
-            return json
-        },
-        onError: (error: Error) => {
-            toast.error(error.message || "Failed to enable notification")
-        },
-    })
-
-    const { mutate: updateFCM } = useMutation({
-        mutationFn: async () => {
-            if (!fcmToken || !user?.id || !deviceOS) return
-            const res = await client.fcm.updateToken.$post({
-                token: fcmToken,
-                userId: user.id,
-                deviceOs: deviceOS,
-                userName: user.name || ""
-            })
-            const json = await res.json()
-            if (!json.success) throw new Error(json.message)
-            return json
-        },
-        onError: (error: Error) => {
-            toast.error(error.message || "Failed to update notification token")
-        },
-    })
-
-    useEffect(() => {
-        if (!fcmToken || !user?.id || isTokenLoading || !deviceOS) return
-
-        if (!existingToken || !existingToken.token) {
-            createFCM()
-        } else if (
-            existingToken.token.token !== fcmToken ||
-            existingToken.token.deviceOs !== deviceOS
-        ) {
-            updateFCM()
-        }
-    }, [fcmToken, existingToken, user?.id, deviceOS, isTokenLoading])
 
     return (
         <PageContainer scrollable>
