@@ -136,6 +136,46 @@ export const authRouter = router({
         },
       })
     }),
+  getAllReaps: privateProcedure
+    .input(
+      z.object({
+        page: z.number().optional(),
+        limit: z.number().optional(),
+        search: z.string().optional(),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { page = 1, limit = 10, search } = input
+
+      let reaps = await db.user.findMany({
+        where: {
+          role: "REAP",
+        },
+      })
+
+      if (search) {
+        reaps = matchSorter(reaps, search, {
+          keys: ["name", "email", "phone"],
+        })
+      }
+
+      const allReapCount = reaps.length
+
+      const offset = (page - 1) * limit
+
+      const paginatedReaps = reaps.slice(offset, offset + limit)
+
+      return c.json({
+        data: {
+          success: true,
+          allReapCount: allReapCount,
+          reaps: paginatedReaps,
+          message: "Reaps fetched successfully",
+          offset,
+          limit,
+        },
+      })
+    }),
   getAllUsers: privateProcedure
     .input(
       z.object({
@@ -277,6 +317,5 @@ export const authRouter = router({
     return c.json({ users })
   }),
 })
-
 
 // ExionsTech@2024

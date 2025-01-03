@@ -18,6 +18,14 @@ export const navItems: NavItem[] = [
     items: [], // No child items
   },
   {
+    title: "COLLEGE REAPS",
+    url: "/dashboard/reaps",
+    icon: "userRoundPen",
+    shortcut: ["r", "r"],
+    isActive: false,
+    items: [], // No child items
+  },
+  {
     title: "COORDINATORS",
     url: "/dashboard/coordinators",
     icon: "userPlus",
