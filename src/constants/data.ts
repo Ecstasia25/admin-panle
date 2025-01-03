@@ -42,14 +42,6 @@ export const navItems: NavItem[] = [
     items: [], // No child items
   },
   {
-    title: "FCM TOKENS",
-    url: "/dashboard/tokens",
-    icon: "key",
-    shortcut: ["k", "k"],
-    isActive: false,
-    items: [], // No child items
-  },
-  {
     title: "MY EVENTS",
     url: "/dashboard/myevents",
     icon: "aparature",
@@ -57,14 +49,6 @@ export const navItems: NavItem[] = [
     isActive: false,
     items: [], // No child items
   },
-  // {
-  //   title: "NOTIFICATION",
-  //   url: "/dashboard/notification",
-  //   icon: "bellDot",
-  //   shortcut: ["n", "n"],
-  //   isActive: false,
-  //   items: [], // No child items
-  // },
   {
     title: "PROFILE",
     url: "/dashboard/profile",

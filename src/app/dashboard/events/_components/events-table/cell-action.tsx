@@ -35,7 +35,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       queryClient.invalidateQueries({ queryKey: ["get-all-events"] })
       toast.success("Event deleted successfully")
     }
-
   })
 
   const onCopy = (id: string) => {

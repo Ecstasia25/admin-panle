@@ -1,6 +1,5 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -13,22 +12,22 @@ enum Role {
   ADMIN
   COORDINATOR
   USER
+  REAP
 }
 
 model User {
-  id          String    @id @default(uuid())
-  clerkId     String    @unique
+  id          String   @id @default(uuid())
+  clerkId     String   @unique
   name        String?
-  email       String?   @unique
+  email       String?  @unique
   phone       String?
   image       String?
   address     String?
   collegeName String?
-  role        Role      @default(USER)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  events      Event[]   @relation("EventCoordinator")
-  booking     Booking[] @relation("BookingMembers")
+  role        Role     @default(USER)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  events      Event[]  @relation("EventCoordinator")
 }
 
 model FcmTokens {
@@ -36,14 +35,10 @@ model FcmTokens {
   token     String
   userId    String
   userName  String
-  deviceOs String
+  deviceOs  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-
-
-
 
 enum EventStage {
   ONSTAGE
@@ -84,66 +79,7 @@ model Event {
   discount   String?
   finalPrice String?
 
-  coordinators User[]    @relation("EventCoordinator")
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  bookings     Booking[]
-  Ticket       Ticket[]
-}
-
-enum BookingStatus {
-  ONHOLD
-  PROCESSING
-  CONFIRMED
-  CANCELED
-  EXPIRED
-}
-
-enum PaymentType {
-  MONEY
-  CENTRAL
-}
-
-model Booking {
-  id          String      @id @default(uuid())
-  eventId     String
-  price       String
-  paymentType PaymentType @default(MONEY)
-
-  leaderId     String
-  leaderName   String
-  leaderNumber String
-  leaderAdress String
-
-  groupSize String
-
-  members User[] @relation("BookingMembers")
-  event   Event  @relation(fields: [eventId], references: [id])
-
-  status    BookingStatus @default(ONHOLD)
-  isPaid    Boolean       @default(false)
-  pymentId  String?
-  sessionId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Ticket    Ticket[]
-
-  @@unique([id])
-}
-
-model Ticket {
-  id String @id @default(uuid())
-
-  totalEntry String
-  baseImage  String
-  secretCode String
-  bookingId  String
-  eventId    String
-
-  booking Booking @relation(fields: [bookingId], references: [id])
-  event   Event   @relation(fields: [eventId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  coordinators User[]   @relation("EventCoordinator")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
