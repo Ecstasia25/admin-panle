@@ -37,7 +37,7 @@ const formSchema = z.object({
     role: z.nativeEnum(Role)
 });
 
-export default function AdminForm({
+export default function ReapForm({
     initialData,
     pageTitle
 }: {
@@ -53,7 +53,7 @@ export default function AdminForm({
         defaultValues: {
             name: '',
             phone: '',
-            role: 'USER'
+            role: 'REAP'
         }
     });
 
@@ -62,7 +62,7 @@ export default function AdminForm({
             form.reset({
                 name: initialData.name || '',
                 phone: initialData.phone || '',
-                role: initialData.role || 'USER'
+                role: initialData.role || 'REAP'
             });
         }
     }, [initialData, form]);
@@ -86,9 +86,9 @@ export default function AdminForm({
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ['get-admin']
+                queryKey: ['get-reap']
             });
-            toast.success('Admin updated successfully');
+            toast.success('Reap updated successfully');
             router.push('/dashboard/admins');
         },
         onError: (error: Error) => {
@@ -122,10 +122,10 @@ export default function AdminForm({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Admin Name
+                                            Reap Name
                                         </FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter admin name" {...field} />
+                                            <Input placeholder="Enter reap name" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -156,8 +156,8 @@ export default function AdminForm({
                                                 {(user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
                                                     <SelectItem value="ADMIN">ADMIN</SelectItem>
                                                 )}
-                                                 {(user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
-                                                     <SelectItem value="REAP">COLLEGE REAP</SelectItem>
+                                                {(user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
+                                                    <SelectItem value="REAP">COLLEGE REAP</SelectItem>
                                                 )}
                                                 <SelectItem value="COORDINATOR">COORDINATOR</SelectItem>
                                                 <SelectItem value="USER">USER</SelectItem>
