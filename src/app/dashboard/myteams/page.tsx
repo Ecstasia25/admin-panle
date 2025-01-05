@@ -15,12 +15,16 @@ export const metadata = {
 
 export default async function Page({ searchParams }: pageProps) {
     searchParamsCache.parse(searchParams);
-
+    
     const page = searchParamsCache.get('page');
     const pageLimit = searchParamsCache.get('limit');
     const search = searchParamsCache.get('q') || '';
     const groupSize = searchParamsCache.get('groupSize') || '';
-    const stage = (searchParamsCache.get('stage') === 'ONSTAGE' || searchParamsCache.get('stage') === 'OFFSTAGE') ? searchParamsCache.get('stage') as "ONSTAGE" | "OFFSTAGE" : undefined;
 
-    return <MyTeamsList/>
+    return <MyTeamsList
+        page={page}
+        pageLimit={pageLimit}
+        search={search}
+        groupSize={groupSize}
+    />
 }

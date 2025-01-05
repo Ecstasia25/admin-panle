@@ -232,4 +232,58 @@ export const teamRouter = router({
         message: "Team fetched successfully",
       })
     }),
+  getTeamsByReapId: privateProcedure
+    .input(
+      z.object({
+        reapId: z.string({
+          required_error: "Reap ID is required",
+        }),
+        page: z.number().optional(),
+        limit: z.number().optional(),
+        search: z.string().optional(),
+        groupSize: z.string().optional(),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { page = 1, limit = 10, search, groupSize, reapId } = input
+      let formatedEventsArray = groupSize ? groupSize.split(".") : []
+
+      let teams = await db.team.findMany({
+        where: {
+          reapId,
+        },
+        include: {
+          reap: true,
+        },
+      })
+
+      if (formatedEventsArray.length > 0) {
+        teams = teams.filter((team) => {
+          return formatedEventsArray.includes(team.groupSize)
+        })
+      }
+
+      if (search) {
+        teams = matchSorter(teams, search, {
+          keys: ["name"],
+        })
+      }
+
+      const allTeams = teams.length
+
+      const offset = (page - 1) * limit
+
+      const paginatedTeams = teams.slice(offset, offset + limit)
+
+      return c.json({
+        success: true,
+        data: {
+          allTeamsCount: allTeams,
+          teams: paginatedTeams,
+          offset,
+          limit,
+        },
+        message: "Teams fetched successfully",
+      })
+    }),
 })

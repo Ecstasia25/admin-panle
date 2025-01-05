@@ -67,7 +67,8 @@ export default function AppSidebar() {
         item.title !== "COORDINATORS" &&
         item.title !== "MY EVENTS" &&
         item.title !== "EVENTS" &&
-        item.title !== "COLLEGE REAPS"
+        item.title !== "COLLEGE REAPS" &&
+        item.title !== "TEAMS"
       )
     }
     return true
@@ -81,8 +82,9 @@ export default function AppSidebar() {
         item.title !== "ADMINS" &&
         item.title !== "USERS" &&
         item.title !== "COORDINATORS" &&
-        item.title !== "MY EVENTS" &&
-        item.title !== "EVENTS"
+        item.title !== "COLLEGE REAPS" &&
+        item.title !== "TEAMS" &&
+        item.title !== "MY TEAMS"
       )
     }
     return true
