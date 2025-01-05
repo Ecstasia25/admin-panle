@@ -8,8 +8,8 @@ getAllUsers = ['get-users']
 createEvent = ['create-event']
 getEventById = ['get-event']
 getEvents = ['get-events']
-getAllFcmTokens = ['get-all-fcms']
-getUserDetailsByFcmToken = ['get-fcms-details']
+
+
 
 getOverviewDetails = ['get-overview-details']
 

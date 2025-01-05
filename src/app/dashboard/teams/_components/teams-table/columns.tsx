@@ -2,10 +2,11 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { User } from '@prisma/client';
+import { Team } from '@prisma/client';
 import { format } from 'date-fns';
 
-export const columns: ColumnDef<User>[] = [
+
+export const columns: ColumnDef<Team>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -27,7 +28,7 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'name',
-    header: 'NAME',
+    header: 'TEAM NAME',
     cell: ({ row }) => {
       return (
         <span className='min-w-[100px] flex items-center'>
@@ -37,29 +38,26 @@ export const columns: ColumnDef<User>[] = [
     }
   },
   {
-    accessorKey: 'email',
-    header: 'EMAIL'
-  },
-  {
-    accessorKey: 'phone',
-    header: 'PHONE',
+    accessorKey: 'teamId',
+    header: 'TEAM ID',
     cell: ({ row }) => {
       return (
-        <span className='flex items-center'>
-          {row.original.phone === null || row.original.phone === undefined ? (
-            <span
-              className='italic'
-            >
-              null
-            </span>
-          ) : row.original.phone}
+        <span className='min-w-[100px] flex items-center'>
+          {row.original.teamId}
         </span>
       )
     }
   },
   {
-    accessorKey: 'role',
-    header: 'ROLE'
+    accessorKey: 'groupSize',
+    header: 'GROUP SIZE',
+    cell: ({ row }) => {
+      return (
+        <span className='min-w-[100px] flex items-center'>
+          {row.original.groupSize}
+        </span>
+      )
+    }
   },
   {
     accessorKey: "createdAt",
@@ -67,7 +65,18 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       return (
         <span className='min-w-[200px] flex items-center'>
-          {format(new Date(row.original.createdAt), 'PPP hh:mm')}
+          {format(new Date(row.original.createdAt), 'PPP hh:mm a')}
+        </span>
+      )
+    }
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "UPDATED AT",
+    cell: ({ row }) => {
+      return (
+        <span className='min-w-[200px] flex items-center'>
+          {format(new Date(row.original.updatedAt), 'PPP hh:mm a')}
         </span>
       )
     }

@@ -33,13 +33,8 @@ const MyEventEditPage = ({ eventId }: MyEventEditPageProps) => {
             createdAt: new Date(data.createdAt),
             updatedAt: new Date(data.updatedAt),
             date: new Date(data.date),
-            discount: data.discount ?? undefined,
-            finalPrice: data.finalPrice ?? undefined,
-            coordinators: data.coordinators.map(coordinator => ({
-                ...coordinator,
-                createdAt: new Date(coordinator.createdAt),
-                updatedAt: new Date(coordinator.updatedAt)
-            }))
+            discount: data.discount ?? null,
+            finalPrice: data.finalPrice ?? null,
         };
     }
 

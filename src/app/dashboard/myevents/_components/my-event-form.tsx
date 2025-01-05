@@ -23,14 +23,16 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { client } from "@/utils/client"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { EventCategory, EventDay, EventStage, User } from "@prisma/client"
+import { Event, EventCategory, EventDay, EventStage, User } from "@prisma/client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   CalendarIcon,
   Loader2,
+  Plus,
   RotateCcw,
   Save,
   WandSparkles,
+  X,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
@@ -50,23 +52,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { MultiSelect } from "@/components/ui/multi-select"
 import FormCardSkeleton from "@/components/ui/form-card-skeleton"
 
-type Event = {
-  id: string
-  title: string
-  description: string
-  stage: EventStage
-  date: Date
-  poster: string
-  groupSize: string
-  slotCount: string
-  archived: boolean
-  price: string
-  discount?: string
-  finalPrice?: string
-  coordinators: User[]
-  createdAt: Date
-  updatedAt: Date
-}
 
 const GROUP_SIZE = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const
 
@@ -77,7 +62,9 @@ type CoordinatorOption = {
 
 const EventFormSchema = z.object({
   title: z.string().min(3, { message: "Title is Required" }),
-  description: z.string().min(10, { message: "Description is Required" }),
+  rules: z.array(z.string()).min(1, {
+    message: "Rules is Required",
+  }),
   category: z.nativeEnum(EventCategory, {
     required_error: "Category is Required",
   }),
@@ -141,7 +128,7 @@ export default function MyEventForm({
     resolver: zodResolver(EventFormSchema),
     defaultValues: {
       title: "",
-      description: "",
+      rules: [""],
       category: EventCategory.DANCE,
       day: EventDay.DAY1,
       poster: "",
@@ -163,7 +150,7 @@ export default function MyEventForm({
 
       form.reset({
         title: eventData.title,
-        description: eventData.description,
+       rules: eventData.rules,
         category: eventData.category,
         day: eventData.day,
         poster: eventData.poster,
@@ -274,6 +261,63 @@ export default function MyEventForm({
     );
   }
 
+  const RulesInput = ({ value, onChange }: { value: string[], onChange: (value: string[]) => void }) => {
+    const [rules, setRules] = useState(Array.isArray(value) ? value : [""]);
+
+    const handleAddRule = () => {
+      setRules([...rules, ""]);
+    };
+
+    const handleRemoveRule = (index: number) => {
+      const newRules = rules.filter((_, i) => i !== index);
+      setRules(newRules);
+      onChange(newRules);
+    };
+
+    const handleRuleChange = (index: number, newValue: string) => {
+      const newRules = rules.map((rule, i) => (i === index ? newValue : rule));
+      setRules(newRules);
+      onChange(newRules);
+    };
+
+    return (
+      <ScrollArea className="h-[200px] w-full p-4 border rounded-xl border-primary">
+        <div className="space-y-2 m-2">
+          {rules.map((rule, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <Input
+                value={rule}
+                onChange={(e) => handleRuleChange(index, e.target.value)}
+                placeholder={`Rule ${index + 1}`}
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => handleRemoveRule(index)}
+                className="h-10 w-10"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleAddRule}
+            className="w-full"
+          >
+            Add Rule
+            <Plus className="h-4 w-4 mr-2" />
+          </Button>
+        </div>
+      </ScrollArea>
+    );
+  };
+
+
+
 
   return (
     <Card className="mx-auto w-full">
@@ -335,15 +379,14 @@ export default function MyEventForm({
                 />
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="rules"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Event Description</FormLabel>
+                      <FormLabel>Event Rules</FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="Enter event description"
-                          {...field}
-                          className="resize-none h-[100px]"
+                        <RulesInput
+                          value={field.value}
+                          onChange={field.onChange}
                         />
                       </FormControl>
                       <FormMessage />
