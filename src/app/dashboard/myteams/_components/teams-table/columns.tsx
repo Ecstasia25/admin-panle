@@ -39,7 +39,7 @@ export const columns: ColumnDef<Team>[] = [
   },
   {
     accessorKey: 'teamId',
-    header: 'TEAM ID',
+    header: 'TEAM CODE',
     cell: ({ row }) => {
       return (
         <span className='min-w-[100px] flex items-center'>
