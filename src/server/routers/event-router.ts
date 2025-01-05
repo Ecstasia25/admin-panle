@@ -12,8 +12,8 @@ export const eventRouter = router({
         title: z.string().min(3, {
           message: "Title is Required",
         }),
-        description: z.string().min(10, {
-          message: "Description is Required",
+        rules: z.array(z.string()).min(1, {
+          message: "Rules is Required",
         }),
         category: z.nativeEnum(EventCategory, {
           required_error: "Category is Required",
@@ -51,7 +51,7 @@ export const eventRouter = router({
       try {
         const {
           title,
-          description,
+          rules,
           category,
           poster,
           date,
@@ -70,7 +70,7 @@ export const eventRouter = router({
         const event = await db.event.create({
           data: {
             title,
-            description,
+            rules,
             category,
             poster,
             date,
@@ -213,8 +213,8 @@ export const eventRouter = router({
         title: z.string().min(3, {
           message: "Title is Required",
         }),
-        description: z.string().min(10, {
-          message: "Description is Required",
+        rules: z.array(z.string()).min(1, {
+          message: "Rules is Required",
         }),
         category: z.nativeEnum(EventCategory, {
           required_error: "Category is Required",
@@ -253,7 +253,7 @@ export const eventRouter = router({
         const {
           id,
           title,
-          description,
+          rules,
           category,
           poster,
           date,
@@ -286,7 +286,7 @@ export const eventRouter = router({
           where: { id },
           data: {
             title,
-            description,
+            rules,
             category,
             poster,
             date,

@@ -1,27 +1,36 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import PageContainer from "@/components/layout/page-container"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useUser } from "@/hooks/users/use-user"
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useQuery } from "@tanstack/react-query"
 import { client } from "@/utils/client"
 import { NumberTicker } from "@/components/shared/number-ticker"
 import { Button } from "@/components/ui/button"
-import { Clapperboard, UserCog, UserPlus, UsersRound } from "lucide-react"
-import { toast } from "sonner"
-import { useDeviceOS } from 'react-haiku'
+import {
+    Clapperboard,
+    Loader,
+    UserCog,
+    UserPlus,
+    UsersRound,
+} from "lucide-react"
 import RecentUsers from "./recent-users"
+import { useRouter } from "next/navigation"
 
 const OverViewPageDetails = () => {
     const { user, isLoading } = useUser()
 
+    const router = useRouter()
 
+
+    if (user?.role === "REAP") {
+        router.replace("/dashboard/profile")
+    }
 
     const { data, isLoading: isOverviewLoading } = useQuery({
-        queryKey: ['get-overview-details'],
+        queryKey: ["get-overview-details"],
         queryFn: async () => {
             const response = await client.overview.getOverviewDetails.$get()
             const { data } = await response.json()
@@ -29,6 +38,13 @@ const OverViewPageDetails = () => {
         },
     })
 
+    if (isLoading) {
+        return (
+            <div className="w-full h-full min-h-screen flex items-center justify-center">
+                <Loader className="size-10 shrink-0 animate-spin text-primary" />
+            </div>
+        )
+    }
 
     return (
         <PageContainer scrollable>
@@ -38,7 +54,7 @@ const OverViewPageDetails = () => {
                         <Skeleton className="w-[220px] h-8" />
                     ) : (
                         <h2 className="text-2xl font-bold tracking-tight">
-                            Hi, {user?.name?.split(' ')[0]} Welcome back 👋
+                            Hi, {user?.name?.split(" ")[0]} Welcome back 👋
                         </h2>
                     )}
                 </div>
@@ -140,9 +156,7 @@ const OverViewPageDetails = () => {
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-8">
                             <Card className="col-span-4 md:col-span-4">
                                 <CardHeader className="mb-4">
-                                    <CardTitle>
-                                        Recent Users
-                                    </CardTitle>
+                                    <CardTitle>Recent Users</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <RecentUsers />

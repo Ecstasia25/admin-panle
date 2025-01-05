@@ -42,7 +42,8 @@ import {
   Layout,
   BellDot,
   Key,
-  UserRoundPen
+  UserRoundPen,
+  Pyramid
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -87,6 +88,7 @@ export const Icons = {
   cog:Cog,
   key:Key,
   userRoundPen: UserRoundPen,
+  pyramid:Pyramid,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
