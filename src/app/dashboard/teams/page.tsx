@@ -3,14 +3,14 @@ import { SearchParams } from 'nuqs/parsers';
 import React from 'react';
 
 import { searchParamsCache } from '@/lib/searchparams';
-import MyTeamsList from './_components/my-teams-list';
+import TeamsList from './_components/teams-list-page';
 
 type pageProps = {
     searchParams: SearchParams;
 };
 
 export const metadata = {
-    title: 'My Teams | Ecstasia Panel'
+    title: 'Teams | Ecstasia Panel'
 };
 
 export default async function Page({ searchParams }: pageProps) {
@@ -20,7 +20,11 @@ export default async function Page({ searchParams }: pageProps) {
     const pageLimit = searchParamsCache.get('limit');
     const search = searchParamsCache.get('q') || '';
     const groupSize = searchParamsCache.get('groupSize') || '';
-    const stage = (searchParamsCache.get('stage') === 'ONSTAGE' || searchParamsCache.get('stage') === 'OFFSTAGE') ? searchParamsCache.get('stage') as "ONSTAGE" | "OFFSTAGE" : undefined;
 
-    return <MyTeamsList/>
+    return <TeamsList
+        page={page}
+        pageLimit={pageLimit}
+        search={search}
+        groupSize={groupSize}
+    />
 }

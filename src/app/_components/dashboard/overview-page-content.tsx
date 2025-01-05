@@ -25,7 +25,7 @@ const OverViewPageDetails = () => {
     const router = useRouter()
 
 
-    if (user?.role === "REAP") {
+    if (user?.role !== "SUPERADMIN") {
         router.replace("/dashboard/profile")
     }
 

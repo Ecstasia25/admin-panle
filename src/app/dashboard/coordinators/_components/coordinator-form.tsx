@@ -155,6 +155,9 @@ export default function CoordinatorForm({
                                                 {(user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
                                                     <SelectItem value="ADMIN">ADMIN</SelectItem>
                                                 )}
+                                                  {(user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
+                                                     <SelectItem value="REAP">COLLEGE REAP</SelectItem>
+                                                )}
                                                 <SelectItem value="COORDINATOR">COORDINATOR</SelectItem>
                                                 <SelectItem value="USER">USER</SelectItem>
                                             </SelectContent>

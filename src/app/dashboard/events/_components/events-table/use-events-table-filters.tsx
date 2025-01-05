@@ -13,7 +13,9 @@ export const GROUP_SIZE_OPTIONS = [
   { value: '1', label: 'SOLO' },
   { value: '2', label: 'DUO' },
   { value: '4', label: 'SQUAD' },
-  { value: '8', label: 'TEAM' }
+  { value: "6", label: "SEXTET" },
+  { value: '8', label: 'OCTET' },
+  { value: '10', label: 'CREW' }
 ];
 
 export const CATEGORY_OPTIONS = [

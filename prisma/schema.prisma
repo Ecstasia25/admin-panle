@@ -28,6 +28,8 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   events      Event[]  @relation("EventCoordinator")
+  teams       Team[]   @relation("TeamMembers")
+  Team        Team[]
 }
 
 enum EventStage {
@@ -76,9 +78,12 @@ model Event {
 
 model Team {
   id        String @id @default(uuid())
+  reap      User   @relation(fields: [reapId], references: [id])
+  reapId    String
   teamId    String @unique
   name      String
   groupSize String
+  members   User[] @relation("TeamMembers")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

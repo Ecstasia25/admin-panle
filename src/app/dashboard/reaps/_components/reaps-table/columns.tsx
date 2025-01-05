@@ -5,6 +5,8 @@ import { CellAction } from './cell-action';
 import { User } from '@prisma/client';
 import { format } from 'date-fns';
 
+
+
 export const columns: ColumnDef<User>[] = [
   {
     id: 'select',
@@ -41,7 +43,7 @@ export const columns: ColumnDef<User>[] = [
     header: 'EMAIL'
   },
   {
-    accessorKey: 'phone',
+    accessorKey: '',
     header: 'PHONE',
     cell: ({ row }) => {
       return (

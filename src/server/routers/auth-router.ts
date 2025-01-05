@@ -151,6 +151,9 @@ export const authRouter = router({
         where: {
           role: "REAP",
         },
+        include: {
+          teams: true,
+        },
       })
 
       if (search) {
