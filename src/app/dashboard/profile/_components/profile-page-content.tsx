@@ -52,8 +52,6 @@ import {
 import data from "@/constants/colleges.json"
 import { cn } from "@/utils"
 
-const DEFAULT_COLLEGE = "University Of Engineering & Management, Kolkata"
-
 const ProfileFormSchema = z.object({
   id: z.string(),
   name: z.string().optional(),
@@ -114,7 +112,7 @@ const ProfilePageContent = () => {
       id: user?.id || "",
       name: user?.name || "",
       phone: user?.phone || "",
-      collegeName: user?.collegeName || DEFAULT_COLLEGE,
+      collegeName: user?.collegeName || "",
       address: user?.address || "",
       image: user?.image || "",
     },
@@ -122,7 +120,7 @@ const ProfilePageContent = () => {
 
   useEffect(() => {
     if (user) {
-      const collegeNameValue = user.collegeName || DEFAULT_COLLEGE
+      const collegeNameValue = user.collegeName || ""
       setInitialCollegeName(collegeNameValue)
       form.reset({
         id: user.id || "",
@@ -340,7 +338,7 @@ const ProfilePageContent = () => {
                                     variant="outline"
                                     role="combobox"
                                     className={cn(
-                                      "w-full justify-between",
+                                      "w-full justify-between text-left text-xs md:text-sm !h-12",
                                       !field.value && "text-muted-foreground"
                                     )}
                                   >
