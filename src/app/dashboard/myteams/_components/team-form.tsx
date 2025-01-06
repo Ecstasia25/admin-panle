@@ -24,7 +24,7 @@ import { Team } from "@prisma/client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Loader2, RotateCcw, Save, WandSparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import * as z from "zod"
@@ -56,7 +56,7 @@ export default function MyTeamForm({
     pageTitle,
     teamId,
 }: {
-    initialData: Team | null
+    initialData: (Team & { members: { id: string }[] }) | null
     pageTitle: string
     teamId?: string
 }) {
@@ -65,6 +65,8 @@ export default function MyTeamForm({
     const router = useRouter()
     const queryClient = useQueryClient()
     const [isFormReady, setIsFormReady] = useState(false)
+
+    
 
     const form = useForm<TeamFormValues>({
         resolver: zodResolver(TeamFormSchema),
@@ -203,6 +205,13 @@ export default function MyTeamForm({
     const isLoading = isTeamLoading || isCollegeUsersLoading
     const isPending = isCreatingTeam || isUpdatingTeam
 
+    const newChangesMade = 
+    form.formState.isDirty ||
+    form.getValues("name") !== teamData?.name ||
+    form.getValues("groupSize") !== teamData?.groupSize.toString() ||
+    form.getValues("members").length !== teamData?.members.length ||
+    form.getValues("members").some((member: string) => !teamData?.members.some((m) => m.id === member))
+
     return (
         <Card className="mx-auto w-full">
             <CardHeader>
@@ -307,7 +316,7 @@ export default function MyTeamForm({
                                         control={form.control}
                                         name="reapId"
                                         render={({ field }) => (
-                                            <FormItem>
+                                            <FormItem className="-mt-3">
                                                 <FormLabel>Representative ID (Not Editable)</FormLabel>
                                                 <FormControl>
                                                     <Input {...field} disabled className="bg-muted" />
@@ -342,7 +351,7 @@ export default function MyTeamForm({
                                                 onValueChange={field.onChange}
                                                 placeholder="Select members"
                                                 disabled={isLoading || isPending}
-                                                maxCount={parseInt(form.getValues("groupSize")) - 1}
+                                                maxCount={parseInt(form.getValues("groupSize"))}
                                                 variant="inverted"
                                                 className="bg-background"
                                             />
@@ -354,7 +363,7 @@ export default function MyTeamForm({
                         </div>
                         <div className="w-full flex items-center justify-end">
                             <Button
-                                disabled={isLoading || isPending}
+                                disabled={isLoading || isPending || !newChangesMade}
                                 type="submit"
                                 className="mr-2"
                             >
