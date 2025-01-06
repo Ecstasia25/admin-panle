@@ -67,7 +67,7 @@ export default function MyTeamForm({
     const queryClient = useQueryClient()
     const [isFormReady, setIsFormReady] = useState(false)
 
-    
+
 
     const form = useForm<TeamFormValues>({
         resolver: zodResolver(TeamFormSchema),
@@ -206,12 +206,14 @@ export default function MyTeamForm({
     const isLoading = isTeamLoading || isCollegeUsersLoading
     const isPending = isCreatingTeam || isUpdatingTeam
 
-    const newChangesMade = 
-    form.formState.isDirty ||
-    form.getValues("name") !== teamData?.name ||
-    form.getValues("groupSize") !== teamData?.groupSize.toString() ||
-    form.getValues("members").length !== teamData?.members.length ||
-    form.getValues("members").some((member: string) => !teamData?.members.some((m) => m.id === member))
+    const newChangesMade =
+        form.formState.isDirty ||
+        form.getValues("name") !== teamData?.name ||
+        form.getValues("groupSize") !== teamData?.groupSize.toString() ||
+        form.getValues("members").length !== teamData?.members.length ||
+        form.getValues("members").some((member: string) => !teamData?.members.some((m) => m.id === member))
+
+    const teamJoinLink = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/yourteams/join/${teamData?.teamId}`
 
     return (
         <Card className="mx-auto w-full">
@@ -335,31 +337,40 @@ export default function MyTeamForm({
                                     </div>
                                 </>
                             )}
-                            <FormField
-                                control={form.control}
-                                name="members"
-                                render={({ field }) => (
-                                    <FormItem className="col-span-2">
-                                        <FormLabel>
-                                            Add Team Members (From {user?.collegeName})
-                                        </FormLabel>
-                                        <FormControl>
-                                            <MultiSelect
-                                                options={formatedUserOptions}
-                                                value={field.value}
-                                                defaultValue={field.value}
-                                                onValueChange={field.onChange}
-                                                placeholder="Select members"
-                                                disabled={isLoading || isPending}
-                                                maxCount={parseInt(form.getValues("groupSize"))}
-                                                variant="inverted"
-                                                className="bg-background"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className="col-span-1 md:col-span-2">
+                                <FormLabel>Team Join Link(Not Editable)</FormLabel>
+                                <CopyInput
+                                    value={teamJoinLink}
+                                    className="bg-muted mt-1"
+                                />
+                            </div>
+                            {teamId && (
+                                <FormField
+                                    control={form.control}
+                                    name="members"
+                                    render={({ field }) => (
+                                        <FormItem className="col-span-2">
+                                            <FormLabel>
+                                                Add Team Members (From {user?.collegeName})
+                                            </FormLabel>
+                                            <FormControl>
+                                                <MultiSelect
+                                                    options={formatedUserOptions}
+                                                    value={field.value}
+                                                    defaultValue={field.value}
+                                                    onValueChange={field.onChange}
+                                                    placeholder="Select members"
+                                                    disabled={isLoading || isPending}
+                                                    maxCount={parseInt(form.getValues("groupSize"))}
+                                                    variant="inverted"
+                                                    className="bg-background"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
                         </div>
                         <div className="w-full flex items-center justify-end">
                             <Button

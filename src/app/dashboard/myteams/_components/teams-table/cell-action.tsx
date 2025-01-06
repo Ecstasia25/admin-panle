@@ -53,7 +53,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const loading = isPending;
 
 
-  const teamJoinLink = `${window.location.origin}/dashboard/yourteams/join/${data.teamId}`
+  const teamJoinLink = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/yourteams/join/${data.teamId}`
 
   return (
     <>
