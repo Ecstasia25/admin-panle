@@ -32,6 +32,12 @@ import { cn } from "@/utils"
 import { useUser } from "@/hooks/users/use-user"
 import { generateTeamId } from "@/lib/utils"
 import FormCardSkeleton from "@/components/ui/form-card-skeleton"
+import { MultiSelect } from "@/components/ui/multi-select"
+
+type MemberOption = {
+    value: string
+    label: string
+}
 
 const GROUP_SIZE = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const
 
@@ -40,6 +46,7 @@ const TeamFormSchema = z.object({
     teamId: z.string().min(3, { message: "Team ID is required" }),
     groupSize: z.string({ required_error: "Group size is required" }),
     reapId: z.string({ required_error: "Representative ID is required" }),
+    members: z.array(z.string()),
 })
 
 type TeamFormValues = z.infer<typeof TeamFormSchema>
@@ -65,9 +72,12 @@ export default function MyTeamForm({
             name: "",
             teamId: generateTeamId(),
             groupSize: "1",
+            reapId: user?.id || "",
+            members: [],
         },
     })
 
+    // Query for team data
     const { data: teamData, isLoading: isTeamLoading } = useQuery({
         queryKey: ["get-team", teamId],
         queryFn: async () => {
@@ -79,31 +89,57 @@ export default function MyTeamForm({
         enabled: !!teamId,
     })
 
-    useEffect(() => {
-        if (user) {
-            form.setValue("reapId", user.id)
-        }
-    }, [user, form])
+    // Query for college users
+    const { data: collegeUsers, isLoading: isCollegeUsersLoading } = useQuery({
+        queryKey: ["get-college-users", user?.collegeName],
+        queryFn: async () => {
+            if (!user?.collegeName) return []
+            const response = await client.auth.getAllUsersByCollegeName.$get({
+                collegeName: user.collegeName,
+            })
+            const { users } = await response.json()
+            return users
+        },
+        enabled: !!user?.collegeName,
+    })
 
+    // Format user options for MultiSelect, excluding the current user and team representative
+    const formatedUserOptions: MemberOption[] = collegeUsers
+        ?.filter((collegeUser) => {
+            const isCurrentUser = collegeUser.id === user?.id
+            const isTeamRep = teamData?.reapId === collegeUser.id
+            return !isCurrentUser && !isTeamRep
+        })
+        .map((user) => ({
+            value: user.id,
+            label: `${user.name} (${user.email})`,
+        })) || []
+
+    // Handle form initialization and updates
     useEffect(() => {
         if (teamData && !isTeamLoading) {
+            const memberIds = teamData.members
+                .filter((member) => member.id !== teamData.reapId)
+                .map((member) => member.id)
+
             form.reset({
                 name: teamData.name,
                 groupSize: teamData.groupSize.toString(),
                 teamId: teamData.teamId,
                 reapId: teamData.reapId,
+                members: memberIds,
             })
             setIsFormReady(true)
         }
     }, [teamData, isTeamLoading, form])
 
+    // Create team mutation
     const { mutate: createTeam, isPending: isCreatingTeam } = useMutation({
         mutationFn: async (data: TeamFormValues) => {
             const res = await client.team.createTeam.$post(data)
             if (!res.ok) throw new Error("Failed to create team")
             const json = await res.json()
-            if (!json.success)
-                throw new Error(json.message || "Failed to create team")
+            if (!json.success) throw new Error(json.message || "Failed to create team")
             return json
         },
         onSuccess: () => {
@@ -113,6 +149,7 @@ export default function MyTeamForm({
         onError: (error) => toast.error(error.message),
     })
 
+    // Update team mutation
     const { mutate: updateTeam, isPending: isUpdatingTeam } = useMutation({
         mutationFn: async (data: TeamFormValues) => {
             if (!teamId) throw new Error("Team ID is required for update")
@@ -122,8 +159,7 @@ export default function MyTeamForm({
             })
             if (!res.ok) throw new Error("Failed to update team")
             const json = await res.json()
-            if (!json.success)
-                throw new Error(json.message || "Failed to update team")
+            if (!json.success) throw new Error(json.message || "Failed to update team")
             return json
         },
         onSuccess: () => {
@@ -143,6 +179,15 @@ export default function MyTeamForm({
     }
 
     function onSubmit(values: TeamFormValues) {
+        // Validate team size
+        const selectedMembersCount = values.members.length
+        const maxGroupSize = parseInt(values.groupSize)
+
+        if (selectedMembersCount > maxGroupSize) { // -1 to account for the representative
+            toast.error(`Maximum ${maxGroupSize} members allowed for this team size`)
+            return
+        }
+
         if (teamId) {
             updateTeam(values)
         } else {
@@ -150,9 +195,13 @@ export default function MyTeamForm({
         }
     }
 
+    // Show loading state
     if (teamId && (isTeamLoading || !isFormReady)) {
         return <FormCardSkeleton />
     }
+
+    const isLoading = isTeamLoading || isCollegeUsersLoading
+    const isPending = isCreatingTeam || isUpdatingTeam
 
     return (
         <Card className="mx-auto w-full">
@@ -165,6 +214,7 @@ export default function MyTeamForm({
                         variant="outline"
                         className="active:scale-95 hidden md:flex"
                         onClick={reloadPage}
+                        disabled={isLoading || isPending}
                     >
                         <RotateCcw
                             className={cn(
@@ -187,7 +237,11 @@ export default function MyTeamForm({
                                     <FormItem>
                                         <FormLabel>Team Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter team name" {...field} />
+                                            <Input
+                                                placeholder="Enter team name"
+                                                {...field}
+                                                disabled={isLoading || isPending}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -199,7 +253,11 @@ export default function MyTeamForm({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Team Size (maximum members)</FormLabel>
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            value={field.value}
+                                            disabled={isLoading || isPending}
+                                        >
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select team size" />
@@ -218,55 +276,88 @@ export default function MyTeamForm({
                                 )}
                             />
                             {teamId && (
-                                <FormField
-                                    control={form.control}
-                                    name="teamId"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Team ID</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Team ID"
-                                                    {...field}
-                                                    disabled
-                                                    className="bg-muted"
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <>
+                                    <FormField
+                                        control={form.control}
+                                        name="teamId"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Team ID</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Team ID"
+                                                        {...field}
+                                                        disabled
+                                                        className="bg-muted"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <div className="flex flex-col">
+                                        <FormLabel>Representative Name (Not Editable)</FormLabel>
+                                        <Input
+                                            value={teamData?.reap?.name ?? ""}
+                                            disabled
+                                            className="bg-muted mt-2"
+                                        />
+                                    </div>
+                                    <FormField
+                                        control={form.control}
+                                        name="reapId"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Representative ID (Not Editable)</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} disabled className="bg-muted" />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <div className="flex flex-col">
+                                        <FormLabel>Representative College Name (Not Editable)</FormLabel>
+                                        <Input
+                                            value={teamData?.reap?.collegeName ?? ""}
+                                            disabled
+                                            className="bg-muted mt-2"
+                                        />
+                                    </div>
+                                </>
                             )}
-                            {teamId && (
-                                <div className="felx flex-col">
-                                    <FormLabel>Representative Name</FormLabel>
-                                    <Input
-                                        value={teamData?.reap?.name ?? ""}
-                                        disabled className="bg-muted mt-2" />
-                                </div>
-                            )}
-                            {teamId && (
-                                <FormField
-                                    control={form.control}
-                                    name="reapId"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Representative ID</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} disabled className="bg-muted" />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )}
-
-
+                            <FormField
+                                control={form.control}
+                                name="members"
+                                render={({ field }) => (
+                                    <FormItem className="col-span-2">
+                                        <FormLabel>
+                                            Add Team Members (From {user?.collegeName})
+                                        </FormLabel>
+                                        <FormControl>
+                                            <MultiSelect
+                                                options={formatedUserOptions}
+                                                value={field.value}
+                                                defaultValue={field.value}
+                                                onValueChange={field.onChange}
+                                                placeholder="Select members"
+                                                disabled={isLoading || isPending}
+                                                maxCount={parseInt(form.getValues("groupSize")) - 1}
+                                                variant="inverted"
+                                                className="bg-background"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         </div>
                         <div className="w-full flex items-center justify-end">
                             <Button
-                                disabled={isCreatingTeam || isUpdatingTeam || isTeamLoading}
-                                type="submit" className="mr-2">
+                                disabled={isLoading || isPending}
+                                type="submit"
+                                className="mr-2"
+                            >
                                 {teamId ? (
                                     <>
                                         Update
