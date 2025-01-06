@@ -45,7 +45,8 @@ import {
   UserRoundPen,
   Pyramid,
   Shapes,
-  Blocks
+  Blocks,
+  Frame
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -92,6 +93,7 @@ export const Icons = {
   userRoundPen: UserRoundPen,
   pyramid:Pyramid,
   blocks:Blocks,
+  frame:Frame,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

@@ -9,21 +9,32 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { client } from '@/utils/client';
-import { Team } from '@prisma/client';
+import { Team, User } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Copy, CopyCheck, Edit, MoreHorizontal, Trash } from 'lucide-react';
+import { Copy, CopyCheck, Edit, Eye, LayoutGrid, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { CopyButton } from '@/components/shared/copy-button';
+
 
 interface CellActionProps {
-  data: Team;
+  data: Team & { members: User[] } & {reap: User};
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [isCopying, setIsCopying] = useState(false)
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const [sheetOpen, setSheetOpen] = useState(false)
 
   const queryClient = useQueryClient();
 
@@ -90,8 +101,64 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             )}
             Copy Team Code
           </DropdownMenuItem>
+          {data.members.length > 0 && (
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                setSheetOpen(true)
+              }}
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              Team Members
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
+      <Sheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      >
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle className='uppercase text-md md:text-lg flex items-center gap-2 mb-2'>
+             <LayoutGrid className='size-5 shrink-0 mt-1' /> 
+             {data.name} Team Details
+            </SheetTitle>
+            <div className='flex flex-col gap-2'>
+             <div className='flex items-center justify-between'>
+             <h1 className='text-md font-normal'>
+                Team Code : {data.teamId}
+              </h1>
+              <CopyButton
+              label='Team Code'
+               value={data.teamId} />
+             </div>
+             <h1 className='text-md font-normal'>
+                Representative Name : <span className='text-muted-foreground'>{data.reap.name}</span>
+              </h1>
+             <h1 className='text-md font-normal'>
+                College Name : <span className='text-muted-foreground'>{data.reap.collegeName}</span>
+              </h1>
+             <h1 className='text-md font-normal mt-3'>
+                Team Members :
+              </h1>
+              {data.members.map((member, index) => (
+                <div key={member.id} className='flex items-center gap-2'>
+                  <h1 key={member.id} className='text-md text-black'>
+                    <span className='font-semibold mr-1'>
+                      {index + 1}.
+                    </span>{member.name}
+                  </h1>
+                  <p className='text-sm'>
+                  (  {member.email})
+                  </p>
+                </div>
+              ))}
+            </div>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+
     </>
   );
 };

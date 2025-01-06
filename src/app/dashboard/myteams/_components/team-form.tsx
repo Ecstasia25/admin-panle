@@ -33,6 +33,7 @@ import { useUser } from "@/hooks/users/use-user"
 import { generateTeamId } from "@/lib/utils"
 import FormCardSkeleton from "@/components/ui/form-card-skeleton"
 import { MultiSelect } from "@/components/ui/multi-select"
+import { CopyInput } from "@/components/ui/copy-input"
 
 type MemberOption = {
     value: string
@@ -293,10 +294,9 @@ export default function MyTeamForm({
                                             <FormItem>
                                                 <FormLabel>Team ID</FormLabel>
                                                 <FormControl>
-                                                    <Input
-                                                        placeholder="Team ID"
-                                                        {...field}
-                                                        disabled
+                                                    <CopyInput
+                                                        value={field.value}
+                                                        readOnly
                                                         className="bg-muted"
                                                     />
                                                 </FormControl>

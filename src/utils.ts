@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function formatedString(value: string) {
   let str = value.trim()
   if (str.length > 10) {
-    str = str.substring(0, 7) + "..." + str.substring(str.length - 5)
+    str = str.substring(0, 8) + "..." + str.substring(str.length - 5)
   }
   return str
 }

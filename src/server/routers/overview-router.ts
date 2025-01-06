@@ -34,6 +34,15 @@ export const overviewRouter = router({
       },
     })
 
+    const reaps = await db.user.findMany({
+      where: {
+        role: "REAP",
+      },
+      include: {
+        events: true,
+      },
+    })
+
     return c.json({
       success: true,
       message: "Overview details",
@@ -42,6 +51,7 @@ export const overviewRouter = router({
         users: users,
         admins: admins,
         coordinators: coordinators,
+        reaps: reaps,
       },
     })
   }),

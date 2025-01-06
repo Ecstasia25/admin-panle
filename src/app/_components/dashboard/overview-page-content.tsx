@@ -27,6 +27,8 @@ const OverViewPageDetails = () => {
 
     if (user?.role !== "SUPERADMIN") {
         router.replace("/dashboard/profile")
+    } else{
+        router.replace("/dashboard")
     }
 
     const { data, isLoading: isOverviewLoading } = useQuery({
@@ -97,11 +99,11 @@ const OverViewPageDetails = () => {
                                 <Card className="relative">
                                     <CardHeader className="flex flex-row items-center justify-start space-y-0 pb-2">
                                         <CardTitle className="text-lg font-medium">
-                                            Total Admins
+                                            Total Reaps
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        {data && <NumberTicker value={data.admins.length} />}
+                                        {data && <NumberTicker value={data.reaps.length} />}
                                     </CardContent>
                                     <div className="absolute top-3 right-3">
                                         <Button

@@ -40,7 +40,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onCopy = (id: string) => {
     setIsCopying(true)
     navigator.clipboard.writeText(id);
-    toast("Team Code Copied");
+    toast.success("Copied to clipboard");
     setTimeout(() => {
       setIsCopying(false)
     }, 2000)
@@ -51,6 +51,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const loading = isPending;
+
+
+  const teamJoinLink = `${window.location.origin}/dashboard/yourteams/join/${data.teamId}`
 
   return (
     <>
@@ -89,6 +92,17 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               <Copy className="w-4 h-4 mr-2" />
             )}
             Copy Team Code
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => onCopy(teamJoinLink)}
+          >
+            {isCopying ? (
+              <CopyCheck className="w-4 h-4 mr-2 text-green-500" />
+            ) : (
+              <Copy className="w-4 h-4 mr-2" />
+            )}
+            Copy Join Link
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

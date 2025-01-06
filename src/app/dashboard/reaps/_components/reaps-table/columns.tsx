@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { User } from '@prisma/client';
 import { format } from 'date-fns';
+import { formatedString } from '@/utils';
 
 
 
@@ -32,7 +33,7 @@ export const columns: ColumnDef<User>[] = [
     header: 'NAME',
     cell: ({ row }) => {
       return (
-        <span className='min-w-[200px] flex items-center'>
+        <span className='min-w-[150px] flex items-center'>
           {row.original.name}
         </span>
       )
@@ -41,6 +42,23 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'email',
     header: 'EMAIL'
+  },
+  {
+    accessorKey: 'collegeName',
+    header: 'COLLEGE NAME',
+    cell: ({ row }) => {
+      return (
+        <span className='min-w-[150px] flex items-center'>
+         {row.original.collegeName ? formatedString(row.original.collegeName) : (
+            <span
+              className='italic'
+            >
+              null
+            </span>
+          )}
+        </span>
+      )
+    }
   },
   {
     accessorKey: '',

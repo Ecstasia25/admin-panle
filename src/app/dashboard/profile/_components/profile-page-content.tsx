@@ -8,6 +8,7 @@ import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import { client } from "@/utils/client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { RiTeamLine } from "react-icons/ri";
 import {
   Check,
   ChevronDown,
@@ -247,6 +248,11 @@ const ProfilePageContent = () => {
                 <CardTitle className="text-left text-2xl font-bold">
                   {user?.name}
                 </CardTitle>
+                <Button
+                  className="flex items-center gap-2">
+                  Join Team
+                  <RiTeamLine className="size-4 shrink-0" />
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
@@ -344,9 +350,9 @@ const ProfilePageContent = () => {
                                   >
                                     {field.value
                                       ? CollegeList.find(
-                                          (college) =>
-                                            college.value === field.value
-                                        )?.label
+                                        (college) =>
+                                          college.value === field.value
+                                      )?.label
                                       : "Select College"}
                                     <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                   </Button>

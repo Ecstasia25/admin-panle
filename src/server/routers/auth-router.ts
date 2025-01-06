@@ -329,7 +329,7 @@ export const authRouter = router({
     .query(async ({ c, input }) => {
       const { collegeName } = input
 
-      let users = await db.user.findMany({
+      const users = await db.user.findMany({
         where: {
           collegeName,
           role: "USER",
@@ -337,9 +337,31 @@ export const authRouter = router({
       })
 
       return c.json({
-          success: true,
-          users,
-          message: "College Users fetched successfully",
+        success: true,
+        users,
+        message: "College Users fetched successfully",
+      })
+    }),
+  getReapsByCollegeName: privateProcedure
+    .input(
+      z.object({
+        collegeName: z.string(),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { collegeName } = input
+
+      const  reaps = await db.user.findMany({
+        where: {
+          collegeName,
+          role: "REAP",
+        },
+      })
+
+      return c.json({
+        success: true,
+        reaps,
+        message: "College Reaps fetched successfully",
       })
     }),
 })
