@@ -50,7 +50,7 @@ const MyTeamsList = ({
     isLoading,
     refetch
   } = useQuery({
-    queryKey: ['get-all-reapevents', filters],
+    queryKey: ['get-all-reapteams', filters],
     queryFn: async () => {
       const response = await client.team.getTeamsByReapId.$get(filters);
       const { data } = await response.json();
@@ -98,7 +98,7 @@ const MyTeamsList = ({
               Reload
             </Button>
             <Link
-              href={"/dashboard/teams/new"}
+              href={"/dashboard/myteams/new"}
               className={cn(buttonVariants({ variant: "default" }))}
             >
               <Plus className="mr-2 h-4 w-4" /> Add New

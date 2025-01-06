@@ -1,10 +1,202 @@
 [
-    {
-        "College Name":"University Of Engineering & Management, Kolkata",
-        "College ID":"1"
-    },
-    {
-        "College Name":"St. Xavier's College, Kolkata",
-        "College ID":"2"
-    }
+  {
+    "College Name": "University Of Engineering & Management, Kolkata",
+    "College ID": "1"
+  },
+  {
+    "College Name": "St. Xavier's College, Kolkata",
+    "College ID": "2"
+  },
+  {
+    "College Name": "Acharya Girish Chandra Bose College",
+    "College ID": "3"
+  },
+  {
+    "College Name": "Acharya Jagadish Chandra Bose College",
+    "College ID": "4"
+  },
+  {
+    "College Name": "Ananda Mohan College",
+    "College ID": "5"
+  },
+  {
+    "College Name": "Asutosh College",
+    "College ID": "6"
+  },
+  {
+    "College Name": "Bangabasi College",
+    "College ID": "7"
+  },
+  {
+    "College Name": "Bangabasi Evening College",
+    "College ID": "8"
+  },
+  {
+    "College Name": "Basanti Devi College",
+    "College ID": "9"
+  },
+  {
+    "College Name": "Bethune College",
+    "College ID": "10"
+  },
+  {
+    "College Name": "Bhawanipur Education Society College",
+    "College ID": "11"
+  },
+  {
+    "College Name": "Bidhan Nagar College",
+    "College ID": "12"
+  },
+  {
+    "College Name": "Calcutta National Medical College",
+    "College ID": "13"
+  },
+  {
+    "College Name": "City College",
+    "College ID": "14"
+  },
+  {
+    "College Name": "City College of Commerce & Business Administration",
+    "College ID": "15"
+  },
+  {
+    "College Name": "Dinabandhu Andrews College",
+    "College ID": "16"
+  },
+  {
+    "College Name": "Goenka College of Commerce & Business Administration",
+    "College ID": "17"
+  },
+  {
+    "College Name": "Gokhale Memorial Girls' College",
+    "College ID": "18"
+  },
+  {
+    "College Name": "Gurudas College",
+    "College ID": "19"
+  },
+  {
+    "College Name": "Heritage Institute of Technology",
+    "College ID": "20"
+  },
+  {
+    "College Name": "Institute of Engineering and Management",
+    "College ID": "21"
+  },
+  {
+    "College Name": "Jadavpur University",
+    "College ID": "22"
+  },
+  {
+    "College Name": "Jogamaya Devi College",
+    "College ID": "23"
+  },
+  {
+    "College Name": "Lady Brabourne College",
+    "College ID": "24"
+  },
+  {
+    "College Name": "Loreto College",
+    "College ID": "25"
+  },
+  {
+    "College Name": "Maulana Azad College",
+    "College ID": "26"
+  },
+  {
+    "College Name": "Medical College and Hospital, Kolkata",
+    "College ID": "27"
+  },
+  {
+    "College Name": "Netaji Nagar College",
+    "College ID": "28"
+  },
+  {
+    "College Name": "Netaji Subhash Engineering College",
+    "College ID": "29"
+  },
+  {
+    "College Name": "Presidency University",
+    "College ID": "30"
+  },
+  {
+    "College Name": "Ramakrishna Mission Residential College, Narendrapur",
+    "College ID": "31"
+  },
+  {
+    "College Name": "RCC Institute of Information Technology",
+    "College ID": "32"
+  },
+  {
+    "College Name": "Scottish Church College",
+    "College ID": "33"
+  },
+  {
+    "College Name": "Seth Anandram Jaipuria College",
+    "College ID": "34"
+  },
+  {
+    "College Name": "Sivanath Sastri College",
+    "College ID": "35"
+  },
+  {
+    "College Name": "South Calcutta Law College",
+    "College ID": "36"
+  },
+  {
+    "College Name": "St. Paul's Cathedral Mission College",
+    "College ID": "37"
+  },
+  {
+    "College Name": "St. Thomas' College of Engineering and Technology",
+    "College ID": "38"
+  },
+  {
+    "College Name": "Surendranath College",
+    "College ID": "39"
+  },
+  {
+    "College Name": "Techno India University",
+    "College ID": "40"
+  },
+  {
+    "College Name": "University of Calcutta",
+    "College ID": "41"
+  },
+  {
+    "College Name": "Vidyasagar College",
+    "College ID": "42"
+  },
+  {
+    "College Name": "Vidyasagar College for Women",
+    "College ID": "43"
+  },
+  {
+    "College Name": "Vivekananda College",
+    "College ID": "44"
+  },
+  {
+    "College Name": "Vivekananda College for Women",
+    "College ID": "45"
+  },
+  {
+    "College Name": "Women's Christian College",
+    "College ID": "46"
+  },
+  {
+    "College Name": "Prafulla Chandra College",
+    "College ID": "47"
+  },
+  {
+    "College Name": "Maharaja Sris Chandra College",
+    "College ID": "48"
+  },
+  {
+    "College Name": "Maharani Kasiswari College",
+    "College ID": "49"
+  },
+  {
+    "College Name": "Moulana Azad College",
+    "College ID": "50"
+  }
 ]

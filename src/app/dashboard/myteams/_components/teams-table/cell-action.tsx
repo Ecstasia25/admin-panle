@@ -32,7 +32,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       await client.team.deleteTeam.$post({ id });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get-all-teams"] })
+      queryClient.invalidateQueries({ queryKey: ["get-all-reapteams"] })
       toast.success("Team deleted successfully")
     }
   })

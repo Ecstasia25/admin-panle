@@ -52,6 +52,7 @@ export const authRouter = router({
         where: { id },
         include: {
           events: true,
+          teams: true,
         },
       })
       return c.json({ user })
@@ -319,6 +320,28 @@ export const authRouter = router({
 
     return c.json({ users })
   }),
+  getAllUsersByCollegeName: privateProcedure
+    .input(
+      z.object({
+        collegeName: z.string(),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { collegeName } = input
+
+      let users = await db.user.findMany({
+        where: {
+          collegeName,
+          role: "USER",
+        },
+      })
+
+      return c.json({
+          success: true,
+          users,
+          message: "College Users fetched successfully",
+      })
+    }),
 })
 
 // ExionsTech@2024

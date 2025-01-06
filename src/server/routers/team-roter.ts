@@ -69,10 +69,11 @@ export const teamRouter = router({
         groupSize: z.string({
           required_error: "Group Size is required",
         }),
+        members: z.array(z.string()).optional(),
       })
     )
     .mutation(async ({ c, input }) => {
-      const { id, name, groupSize } = input
+      const { id, name, groupSize, members } = input
 
       try {
         // Update the team
@@ -83,6 +84,11 @@ export const teamRouter = router({
           data: {
             name,
             groupSize,
+            members: {
+              set: members?.map((member) => ({
+                id: member,
+              })),
+            },
           },
         })
         return c.json({
@@ -120,6 +126,7 @@ export const teamRouter = router({
         },
         include: {
           reap: true,
+          members: true,
         },
       })
       return c.json({
