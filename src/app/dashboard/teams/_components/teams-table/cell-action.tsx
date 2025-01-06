@@ -11,7 +11,7 @@ import {
 import { client } from '@/utils/client';
 import { Team, User } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Copy, CopyCheck, Edit, Eye, MoreHorizontal, Trash } from 'lucide-react';
+import { Copy, CopyCheck, Edit, Eye, LayoutGrid, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -23,10 +23,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { CopyButton } from '@/components/shared/copy-button';
 
 
 interface CellActionProps {
-  data: Team & { members: User[] };
+  data: Team & { members: User[] } & {reap: User};
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -108,7 +109,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               }}
             >
               <Eye className="mr-2 h-4 w-4" />
-              View team Members
+              Team Members
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>
@@ -119,10 +120,28 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       >
         <SheetContent>
           <SheetHeader>
-            <SheetTitle className='uppercase underline underline-offset-1'>
-              {data.name} Team Members
+            <SheetTitle className='uppercase text-md md:text-lg flex items-center gap-2 mb-2'>
+             <LayoutGrid className='size-5 shrink-0 mt-1' /> 
+             {data.name} Team Details
             </SheetTitle>
-            <SheetDescription>
+            <div className='flex flex-col gap-2'>
+             <div className='flex items-center justify-between'>
+             <h1 className='text-md font-normal'>
+                Team Code : {data.teamId}
+              </h1>
+              <CopyButton
+              label='Team Code'
+               value={data.teamId} />
+             </div>
+             <h1 className='text-md font-normal'>
+                Representative Name : <span className='text-muted-foreground'>{data.reap.name}</span>
+              </h1>
+             <h1 className='text-md font-normal'>
+                College Name : <span className='text-muted-foreground'>{data.reap.collegeName}</span>
+              </h1>
+             <h1 className='text-md font-normal mt-3'>
+                Team Members :
+              </h1>
               {data.members.map((member, index) => (
                 <div key={member.id} className='flex items-center gap-2'>
                   <h1 key={member.id} className='text-md text-black'>
@@ -135,7 +154,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                   </p>
                 </div>
               ))}
-            </SheetDescription>
+            </div>
           </SheetHeader>
         </SheetContent>
       </Sheet>
