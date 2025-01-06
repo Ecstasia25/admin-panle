@@ -9,21 +9,31 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { client } from '@/utils/client';
-import { Team } from '@prisma/client';
+import { Team, User } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Copy, CopyCheck, Edit, MoreHorizontal, Trash } from 'lucide-react';
+import { Copy, CopyCheck, Edit, Eye, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+
 
 interface CellActionProps {
-  data: Team;
+  data: Team & { members: User[] };
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [isCopying, setIsCopying] = useState(false)
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const [sheetOpen, setSheetOpen] = useState(false)
 
   const queryClient = useQueryClient();
 
@@ -90,8 +100,46 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             )}
             Copy Team Code
           </DropdownMenuItem>
+          {data.members.length > 0 && (
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                setSheetOpen(true)
+              }}
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              View team Members
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
+      <Sheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      >
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle className='uppercase underline underline-offset-1'>
+              {data.name} Team Members
+            </SheetTitle>
+            <SheetDescription>
+              {data.members.map((member, index) => (
+                <div key={member.id} className='flex items-center gap-2'>
+                  <h1 key={member.id} className='text-md text-black'>
+                    <span className='font-semibold mr-1'>
+                      {index + 1}.
+                    </span>{member.name}
+                  </h1>
+                  <p className='text-sm'>
+                  (  {member.email})
+                  </p>
+                </div>
+              ))}
+            </SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+
     </>
   );
 };

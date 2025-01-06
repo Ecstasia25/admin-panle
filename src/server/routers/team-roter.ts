@@ -185,6 +185,7 @@ export const teamRouter = router({
       let teams = await db.team.findMany({
         include: {
           reap: true,
+          members: true,
         },
       })
 
@@ -205,6 +206,7 @@ export const teamRouter = router({
       const offset = (page - 1) * limit
 
       const paginatedTeams = teams.slice(offset, offset + limit)
+      
 
       return c.json({
         success: true,

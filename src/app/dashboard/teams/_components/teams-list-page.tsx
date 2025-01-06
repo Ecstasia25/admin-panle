@@ -66,6 +66,9 @@ const TeamsList = ({ page, search, pageLimit, groupSize }: TeamsListProps) => {
     }, 1000)
   }
 
+
+  
+
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
