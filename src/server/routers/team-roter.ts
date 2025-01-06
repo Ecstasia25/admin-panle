@@ -206,7 +206,6 @@ export const teamRouter = router({
       const offset = (page - 1) * limit
 
       const paginatedTeams = teams.slice(offset, offset + limit)
-      
 
       return c.json({
         success: true,
@@ -294,5 +293,115 @@ export const teamRouter = router({
         },
         message: "Teams fetched successfully",
       })
+    }),
+  joinTeam: privateProcedure
+    .input(
+      z.object({
+        id: z.string({
+          required_error: "ID is required",
+        }),
+        userId: z.string({
+          required_error: "User ID is required",
+        }),
+      })
+    )
+    .mutation(async ({ c, input }) => {
+      const { id, userId } = input
+
+      try {
+        // Fetch the team to check the current number of members
+        const team = await db.team.findUnique({
+          where: {
+            id,
+          },
+          include: {
+            members: true,
+          },
+        })
+
+        if (team && team.members.length >= parseInt(team.groupSize)) {
+          return c.json({
+            success: false,
+            freeSpace: false,
+            message: "Maximum members reached",
+          })
+        }
+
+        // Update the team
+        const updatedTeam = await db.team.update({
+          where: {
+            id,
+          },
+          data: {
+            members: {
+              connect: {
+                id: userId,
+              },
+            },
+          },
+        })
+        return c.json({
+          success: true,
+          data: updatedTeam,
+          message: "Team updated successfully",
+        })
+      } catch (error: any) {
+        console.error("Error updating team:", error)
+
+        // Return an error response
+        return c.json({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to update the team",
+        })
+      }
+    }),
+  exitTeam: privateProcedure
+    .input(
+      z.object({
+        id: z.string({
+          required_error: "ID is required",
+        }),
+        userId: z.string({
+          required_error: "User ID is required",
+        }),
+      })
+    )
+    .mutation(async ({ c, input }) => {
+      const { id, userId } = input
+
+      try {
+        // Update the team
+        const updatedTeam = await db.team.update({
+          where: {
+            id,
+          },
+          data: {
+            members: {
+              disconnect: {
+                id: userId,
+              },
+            },
+          },
+        })
+        return c.json({
+          success: true,
+          data: updatedTeam,
+          message: "Team updated successfully",
+        })
+      } catch (error: any) {
+        console.error("Error updating team:", error)
+
+        // Return an error response
+        return c.json({
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to update the team",
+        })
+      }
     }),
 })

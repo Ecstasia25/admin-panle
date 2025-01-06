@@ -81,4 +81,12 @@ export const navItems: NavItem[] = [
     isActive: false,
     items: [], // No child items
   },
+  {
+    title: "YOUR TEAMS",
+    url: "/dashboard/yourteams",
+    icon: "frame",
+    shortcut: ["y", "t"],
+    isActive: false,
+    items: [], // No child items
+  },
 ]
