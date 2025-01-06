@@ -5,7 +5,7 @@ import { CellAction } from "./cell-action"
 import { Team, User } from "@prisma/client"
 import { format } from "date-fns"
 
-export const columns: ColumnDef<Team & { members: User[]; reap: User }>[] = [
+export const columns: ColumnDef<Team>[] = [
   {
     id: "select",
     header: ({ table }) => (

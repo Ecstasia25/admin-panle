@@ -1,20 +1,28 @@
-'use client';
-import { AlertModal } from '@/components/modal/alert-modal';
-import { Button } from '@/components/ui/button';
+"use client"
+import { AlertModal } from "@/components/modal/alert-modal"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { client } from '@/utils/client';
-import { Team, User } from '@prisma/client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Copy, CopyCheck, Edit, Eye, LayoutGrid, MoreHorizontal, Trash } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { toast } from 'sonner';
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { client } from "@/utils/client"
+import { Team, User } from "@prisma/client"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import {
+  Copy,
+  CopyCheck,
+  Edit,
+  Eye,
+  LayoutGrid,
+  MoreHorizontal,
+  Trash,
+} from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
 import {
   Sheet,
   SheetContent,
@@ -23,45 +31,44 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { CopyButton } from '@/components/shared/copy-button';
-
+import { CopyButton } from "@/components/shared/copy-button"
 
 interface CellActionProps {
-  data: Team & { members: User[] } & {reap: User};
+  data: Team & { members?: User[] } & { reap?: User }
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [isCopying, setIsCopying] = useState(false)
-  const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const [open, setOpen] = useState(false)
+  const router = useRouter()
   const [sheetOpen, setSheetOpen] = useState(false)
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   const { mutate: deleteTeam, isPending } = useMutation({
     mutationFn: async (id: string) => {
-      await client.team.deleteTeam.$post({ id });
+      await client.team.deleteTeam.$post({ id })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-all-teams"] })
       toast.success("Team deleted successfully")
-    }
+    },
   })
 
   const onCopy = (id: string) => {
     setIsCopying(true)
-    navigator.clipboard.writeText(id);
-    toast("Team Code Copied");
+    navigator.clipboard.writeText(id)
+    toast("Team Code Copied")
     setTimeout(() => {
       setIsCopying(false)
     }, 2000)
-  };
+  }
   const onConfirm = () => {
-    deleteTeam(data.id);
-    setOpen(false);
-  };
+    deleteTeam(data.id)
+    setOpen(false)
+  }
 
-  const loading = isPending;
+  const loading = isPending
 
   return (
     <>
@@ -85,9 +92,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
-          <DropdownMenuItem
-            disabled={isPending}
-            onClick={() => setOpen(true)}>
+          <DropdownMenuItem disabled={isPending} onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -101,7 +106,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             )}
             Copy Team Code
           </DropdownMenuItem>
-          {data.members.length > 0 && (
+          {data.members && data.members.length > 0 && (
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={() => {
@@ -114,51 +119,51 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-      <Sheet
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-      >
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle className='uppercase text-md md:text-lg flex items-center gap-2 mb-2'>
-             <LayoutGrid className='size-5 shrink-0 mt-1' /> 
-             {data.name} Team Details
+            <SheetTitle className="uppercase text-md md:text-lg flex items-center gap-2 mb-2">
+              <LayoutGrid className="size-5 shrink-0 mt-1" />
+              {data.name} Team Details
             </SheetTitle>
-            <div className='flex flex-col gap-2'>
-             <div className='flex items-center justify-between'>
-             <h1 className='text-md font-normal'>
-                Team Code : {data.teamId}
-              </h1>
-              <CopyButton
-              label='Team Code'
-               value={data.teamId} />
-             </div>
-             <h1 className='text-md font-normal'>
-                Representative Name : <span className='text-muted-foreground'>{data.reap.name}</span>
-              </h1>
-             <h1 className='text-md font-normal'>
-                College Name : <span className='text-muted-foreground'>{data.reap.collegeName}</span>
-              </h1>
-             <h1 className='text-md font-normal mt-3'>
-                Team Members :
-              </h1>
-              {data.members.map((member, index) => (
-                <div key={member.id} className='flex items-center gap-2'>
-                  <h1 key={member.id} className='text-md text-black'>
-                    <span className='font-semibold mr-1'>
-                      {index + 1}.
-                    </span>{member.name}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <h1 className="text-md font-normal">
+                  Team Code : {data.teamId}
+                </h1>
+                <CopyButton label="Team Code" value={data.teamId} />
+              </div>
+              {data.reap && (
+                <>
+                  <h1 className="text-md font-normal">
+                    Representative Name :{" "}
+                    <span className="text-muted-foreground">
+                      {data.reap.name}
+                    </span>
                   </h1>
-                  <p className='text-sm'>
-                  (  {member.email})
-                  </p>
-                </div>
-              ))}
+                  <h1 className="text-md font-normal">
+                    College Name :{" "}
+                    <span className="text-muted-foreground">
+                      {data.reap.collegeName}
+                    </span>
+                  </h1>
+                </>
+              )}
+              <h1 className="text-md font-normal mt-3">Team Members :</h1>
+              {data.members &&
+                data.members.map((member, index) => (
+                  <div key={member.id} className="flex items-center gap-2">
+                    <h1 key={member.id} className="text-md text-black">
+                      <span className="font-semibold mr-1">{index + 1}.</span>
+                      {member.name}
+                    </h1>
+                    <p className="text-sm">( {member.email})</p>
+                  </div>
+                ))}
             </div>
           </SheetHeader>
         </SheetContent>
       </Sheet>
-
     </>
-  );
-};
+  )
+}
