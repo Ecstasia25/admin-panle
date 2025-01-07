@@ -83,6 +83,7 @@ model Team {
   teamId    String @unique
   name      String
   groupSize String
+  collegeOnly Boolean @default(false)
   members   User[] @relation("TeamMembers")
 
   createdAt DateTime @default(now())

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -32,6 +33,7 @@ import { cn } from "@/utils"
 import { useUser } from "@/hooks/users/use-user"
 import { generateTeamId } from "@/lib/utils"
 import FormCardSkeleton from "@/components/ui/form-card-skeleton"
+import { Checkbox } from "@/components/ui/checkbox"
 
 const GROUP_SIZE = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const
 
@@ -40,6 +42,7 @@ const TeamFormSchema = z.object({
     teamId: z.string().min(3, { message: "Team ID is required" }),
     groupSize: z.string({ required_error: "Group size is required" }),
     reapId: z.string({ required_error: "Representative ID is required" }),
+    collegeOnly: z.boolean().optional(),
 })
 
 type TeamFormValues = z.infer<typeof TeamFormSchema>
@@ -65,6 +68,7 @@ export default function TeamForm({
             name: "",
             teamId: generateTeamId(),
             groupSize: "1",
+            collegeOnly: false,
         },
     })
 
@@ -92,6 +96,7 @@ export default function TeamForm({
                 groupSize: teamData.groupSize.toString(),
                 teamId: teamData.teamId,
                 reapId: teamData.reapId,
+                collegeOnly: teamData.collegeOnly,
             })
             setIsFormReady(true)
         }
@@ -217,6 +222,27 @@ export default function TeamForm({
                                     </FormItem>
                                 )}
                             />
+                            <FormField
+                                control={form.control}
+                                name="collegeOnly"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-white dark:bg-background">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                            <FormLabel>College Only</FormLabel>
+                                            <FormDescription className="-ml-6 text-xs">
+                                                If you enable this, only college students can join this
+                                                team.
+                                            </FormDescription>
+                                        </div>
+                                    </FormItem>
+                                )}
+                            />
                             {teamId && (
                                 <FormField
                                     control={form.control}
@@ -242,7 +268,9 @@ export default function TeamForm({
                                     <FormLabel>Representative Name</FormLabel>
                                     <Input
                                         value={teamData?.reap?.name ?? ""}
-                                        disabled className="bg-muted mt-2" />
+                                        disabled
+                                        className="bg-muted mt-2"
+                                    />
                                 </div>
                             )}
                             {teamId && (
@@ -260,13 +288,13 @@ export default function TeamForm({
                                     )}
                                 />
                             )}
-
-
                         </div>
                         <div className="w-full flex items-center justify-end">
                             <Button
                                 disabled={isCreatingTeam || isUpdatingTeam || isTeamLoading}
-                                type="submit" className="mr-2">
+                                type="submit"
+                                className="mr-2"
+                            >
                                 {teamId ? (
                                     <>
                                         Update

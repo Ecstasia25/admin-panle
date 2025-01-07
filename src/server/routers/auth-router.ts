@@ -332,7 +332,6 @@ export const authRouter = router({
       const users = await db.user.findMany({
         where: {
           collegeName,
-          role: "USER",
         },
       })
 

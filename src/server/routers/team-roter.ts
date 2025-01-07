@@ -20,10 +20,11 @@ export const teamRouter = router({
         reapId: z.string({
           required_error: "Reap is required",
         }),
+        collegeOnly: z.boolean().optional(),
       })
     )
     .mutation(async ({ c, input }) => {
-      const { name, teamId, groupSize, reapId } = input
+      const { name, teamId, groupSize, reapId, collegeOnly } = input
 
       try {
         // Create the team
@@ -32,6 +33,7 @@ export const teamRouter = router({
             name,
             teamId,
             groupSize,
+            collegeOnly,
             reap: {
               connect: {
                 id: reapId,
@@ -69,11 +71,12 @@ export const teamRouter = router({
         groupSize: z.string({
           required_error: "Group Size is required",
         }),
+        collegeOnly: z.boolean().optional(),
         members: z.array(z.string()).optional(),
       })
     )
     .mutation(async ({ c, input }) => {
-      const { id, name, groupSize, members } = input
+      const { id, name, groupSize, members, collegeOnly } = input
 
       try {
         // Update the team
@@ -84,6 +87,7 @@ export const teamRouter = router({
           data: {
             name,
             groupSize,
+            collegeOnly,
             members: {
               set: members?.map((member) => ({
                 id: member,

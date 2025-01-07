@@ -17,6 +17,7 @@ import {
   Edit,
   Eye,
   LayoutGrid,
+  LogOut,
   MoreHorizontal,
   Trash,
 } from "lucide-react"
@@ -101,6 +102,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() => router.push(`/dashboard/yourteams/join/${data.teamId}`)}
+          >
+            <LogOut className="mr-2 h-4 w-4" /> Leave Team
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
             onClick={() => onCopy(data.teamId)}
