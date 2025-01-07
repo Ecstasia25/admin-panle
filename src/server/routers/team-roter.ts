@@ -404,4 +404,53 @@ export const teamRouter = router({
         })
       }
     }),
+  getTeamByTeamCode: privateProcedure
+    .input(
+      z.object({
+        teamId: z.string({
+          required_error: "Team ID is required",
+        }),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { teamId } = input
+
+      const team = await db.team.findUnique({
+        where: {
+          teamId,
+        },
+        include: {
+          reap: true,
+          members: true,
+        },
+      })
+      return c.json({
+        success: true,
+        team,
+        message: "Team fetched successfully",
+      })
+    }),
+  checkValidTeamCode: privateProcedure
+    .input(
+      z.object({
+        teamId: z.string({
+          required_error: "Team ID is required",
+        }),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { teamId } = input
+
+      const team = await db.team.findUnique({
+        where: {
+          teamId,
+        },
+      })
+      return c.json({
+        success: true,
+        team,
+        isValid: !!team,
+        message: "Team fetched successfully",
+      })
+    }),
 })
