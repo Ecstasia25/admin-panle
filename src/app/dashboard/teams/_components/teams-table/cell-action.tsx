@@ -128,7 +128,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               <LayoutGrid className="size-5 shrink-0 mt-1" />
               {data.name} Team Details
             </SheetTitle>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 w-full overflow-y-scroll">
               <div className="flex items-center justify-between">
                 <h1 className="text-md font-normal">
                   Team Code : {data.teamId}
