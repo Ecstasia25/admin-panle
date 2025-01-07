@@ -70,6 +70,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const loading = isPending
 
+  const checkMemberPresentInTeam = data.members?.some((member) => member !== undefined)
+
   return (
     <>
       <AlertModal
@@ -92,7 +94,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
-          <DropdownMenuItem disabled={isPending} onClick={() => setOpen(true)}>
+          <DropdownMenuItem disabled={isPending || checkMemberPresentInTeam} onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>
           <DropdownMenuItem

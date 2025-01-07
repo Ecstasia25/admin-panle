@@ -262,6 +262,7 @@ export const teamRouter = router({
         },
         include: {
           reap: true,
+          members: true,
         },
       })
 

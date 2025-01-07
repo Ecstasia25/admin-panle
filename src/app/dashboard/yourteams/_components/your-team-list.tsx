@@ -71,6 +71,16 @@ const YourTeamList = ({
     }, 1000)
   }
 
+  const checkCollegeNameAvaliable = user?.collegeName === null ? false : true
+
+  const redirectJoinTeam = () => {
+    if (checkCollegeNameAvaliable) {
+      router.push("/dashboard/yourteams/join")
+    } else {
+      toast.info("Please update your college name on profile to join a team")
+    }
+  }
+
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
@@ -94,12 +104,9 @@ const YourTeamList = ({
               />
               Reload
             </Button>
-            <Link
-              href={"/dashboard/yourteams/join"}
-              className={cn(buttonVariants({ variant: "default" }))}
-            >
+            <Button onClick={redirectJoinTeam}>
               <Plus className="mr-2 h-4 w-4" /> Join
-            </Link>
+            </Button>
           </div>
         </div>
         <Separator />

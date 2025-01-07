@@ -174,6 +174,10 @@ const TeamJoinConfirmationPage = ({
     }
 
     const handleJoinTeam = () => {
+        if (user?.collegeName === null) {
+            toast.info("Please update your college name on profile to join a team")
+            return
+        }
         if (teamData) {
             joinTeam({
                 id: teamData.id,

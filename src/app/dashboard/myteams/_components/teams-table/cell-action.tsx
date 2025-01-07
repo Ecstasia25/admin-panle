@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { client } from '@/utils/client';
-import { Team } from '@prisma/client';
+import { Team, User } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Copy, CopyCheck, Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 interface CellActionProps {
-  data: Team;
+  data: Team & { members?: User[] } & { reap?: User };
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -66,6 +66,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const teamJoinLink = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/yourteams/join/${data.teamId}`
 
+  const checkMemberPresentInTeam = data.members?.some((member) => member !== undefined)
+
   return (
     <>
       <AlertModal
@@ -89,7 +91,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
           <DropdownMenuItem
-            disabled={isPending}
+            disabled={isPending || checkMemberPresentInTeam}
             onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>

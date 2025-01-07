@@ -8,7 +8,7 @@ import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import { client } from "@/utils/client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { RiTeamLine } from "react-icons/ri";
+import { RiTeamLine } from "react-icons/ri"
 import {
   Check,
   ChevronDown,
@@ -232,6 +232,17 @@ const ProfilePageContent = () => {
     setShowDeleteModal(false)
   }
 
+  const checkCollegeNameAvaliable = user?.collegeName === null ? false : true
+
+
+  const redirectJoinTeam = () => {
+    if (checkCollegeNameAvaliable) {
+      router.push("/dashboard/yourteams/join")
+    } else {
+      toast.info("Please update your college name to join a team")
+    }
+  }
+
   return (
     <>
       <PageContainer scrollable>
@@ -249,14 +260,14 @@ const ProfilePageContent = () => {
                 <CardTitle className="text-left text-2xl font-bold">
                   {user?.name}
                 </CardTitle>
-                <Link
-                
-                  href="/dashboard/yourteams/join">
+
                 <Button
-                  className="flex items-center gap-2">
+                  onClick={redirectJoinTeam}
+                  className="flex items-center gap-2"
+                >
                   Join Team
                   <RiTeamLine className="size-4 shrink-0" />
-                </Button></Link>
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
@@ -354,9 +365,9 @@ const ProfilePageContent = () => {
                                   >
                                     {field.value
                                       ? CollegeList.find(
-                                        (college) =>
-                                          college.value === field.value
-                                      )?.label
+                                          (college) =>
+                                            college.value === field.value
+                                        )?.label
                                       : "Select College"}
                                     <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                   </Button>

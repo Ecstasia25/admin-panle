@@ -80,6 +80,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setIsCopying(false)
     }, 2000)
   }
+
+  const checkMemberPresentInTeam = data.members?.some((member) => member !== undefined)
+
+  
   return (
     <>
       <AlertModal
