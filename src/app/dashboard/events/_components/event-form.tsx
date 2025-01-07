@@ -306,7 +306,7 @@ export default function EventForm({
               />
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 onClick={() => handleRemoveRule(index)}
                 className="h-10 w-10"
@@ -322,7 +322,7 @@ export default function EventForm({
             className="w-full"
           >
             Add Rule
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-4 w-4 ml-2" />
           </Button>
         </div>
       </ScrollArea>
