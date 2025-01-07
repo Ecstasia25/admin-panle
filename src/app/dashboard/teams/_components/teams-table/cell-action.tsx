@@ -152,12 +152,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               <h1 className="text-md font-normal mt-3">Team Members :</h1>
               {data.members &&
                 data.members.map((member, index) => (
-                  <div key={member.id} className="flex items-center gap-2">
+                  <div key={member.id} className="flex flex-col items-start gap-1">
                     <h1 key={member.id} className="text-md text-black">
                       <span className="font-semibold mr-1">{index + 1}.</span>
                       {member.name}
                     </h1>
-                    <p className="text-sm">( {member.email})</p>
+                    <p className="text-sm">
+                     <span className="font-semibold">Email :</span> {member.email}</p>
                   </div>
                 ))}
             </div>
