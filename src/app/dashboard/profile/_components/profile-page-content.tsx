@@ -52,6 +52,7 @@ import {
 } from "@/components/ui/popover"
 import data from "@/constants/colleges.json"
 import { cn } from "@/utils"
+import Link from "next/link"
 
 const ProfileFormSchema = z.object({
   id: z.string(),
@@ -248,11 +249,14 @@ const ProfilePageContent = () => {
                 <CardTitle className="text-left text-2xl font-bold">
                   {user?.name}
                 </CardTitle>
+                <Link
+                
+                  href="/dashboard/yourteams/join">
                 <Button
                   className="flex items-center gap-2">
                   Join Team
                   <RiTeamLine className="size-4 shrink-0" />
-                </Button>
+                </Button></Link>
               </div>
             </CardHeader>
             <CardContent>
