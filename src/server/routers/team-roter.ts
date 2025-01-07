@@ -404,4 +404,112 @@ export const teamRouter = router({
         })
       }
     }),
+  getTeamByTeamCode: privateProcedure
+    .input(
+      z.object({
+        teamId: z.string({
+          required_error: "Team ID is required",
+        }),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { teamId } = input
+
+      const team = await db.team.findUnique({
+        where: {
+          teamId,
+        },
+        include: {
+          reap: true,
+          members: true,
+        },
+      })
+      return c.json({
+        success: true,
+        team,
+        message: "Team fetched successfully",
+      })
+    }),
+  checkValidTeamCode: privateProcedure
+    .input(
+      z.object({
+        teamId: z.string({
+          required_error: "Team ID is required",
+        }),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { teamId } = input
+
+      const team = await db.team.findUnique({
+        where: {
+          teamId,
+        },
+      })
+      return c.json({
+        success: true,
+        team,
+        isValid: !!team,
+        message: "Team fetched successfully",
+      })
+    }),
+  getTeamsByMemberId: privateProcedure
+    .input(
+      z.object({
+        memberId: z.string({
+          required_error: "Member ID is required",
+        }),
+        page: z.number().optional(),
+        limit: z.number().optional(),
+        search: z.string().optional(),
+        groupSize: z.string().optional(),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const { page = 1, limit = 10, search, groupSize, memberId } = input
+      let formatedEventsArray = groupSize ? groupSize.split(".") : []
+
+      let teams = await db.team.findMany({
+        where: {
+          members: {
+            some: {
+              id: memberId,
+            },
+          },
+        },
+        include: {
+          reap: true,
+          members: true,
+        },
+      })
+
+      if (formatedEventsArray.length > 0) {
+        teams = teams.filter((team) => {
+          return formatedEventsArray.includes(team.groupSize)
+        })
+      }
+
+      if (search) {
+        teams = matchSorter(teams, search, {
+          keys: ["name"],
+        })
+      }
+
+      const allTeams = teams.length
+
+      const offset = (page - 1) * limit
+
+      const paginatedTeams = teams.slice(offset, offset + limit)
+
+      return c.json({
+        success: true,
+        data: {
+          allTeamsCount: allTeams,
+          teams: paginatedTeams,
+          offset,
+          limit,
+        },
+        message: "Teams fetched successfully",
+      })
+    }),
 })

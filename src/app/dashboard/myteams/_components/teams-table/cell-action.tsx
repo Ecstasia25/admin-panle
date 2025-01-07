@@ -22,6 +22,7 @@ interface CellActionProps {
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [isCopying, setIsCopying] = useState(false)
+  const [isCopying2, setIsCopying2] = useState(false)
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -45,6 +46,16 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setIsCopying(false)
     }, 2000)
   };
+  const onCopy2 = (id: string) => {
+    setIsCopying2(true)
+    navigator.clipboard.writeText(id);
+    toast.success("Link copied to clipboard");
+    setTimeout(() => {
+      setIsCopying2(false)
+    }, 2000)
+  };
+
+
   const onConfirm = () => {
     deleteTeam(data.id);
     setOpen(false);
@@ -95,9 +106,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => onCopy(teamJoinLink)}
+            onClick={() => onCopy2(teamJoinLink)}
           >
-            {isCopying ? (
+            {isCopying2 ? (
               <CopyCheck className="w-4 h-4 mr-2 text-green-500" />
             ) : (
               <Copy className="w-4 h-4 mr-2" />
