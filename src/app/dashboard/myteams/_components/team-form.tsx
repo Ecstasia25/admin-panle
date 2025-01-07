@@ -23,7 +23,7 @@ import { client } from "@/utils/client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Team } from "@prisma/client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { Loader2, RotateCcw, Save, WandSparkles } from "lucide-react"
+import { Dot, Info, Loader2, RotateCcw, Save, TriangleAlert, WandSparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -36,10 +36,12 @@ import FormCardSkeleton from "@/components/ui/form-card-skeleton"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { CopyInput } from "@/components/ui/copy-input"
 import { Checkbox } from "@/components/ui/checkbox"
+import { GoDotFill } from "react-icons/go"
 
 type MemberOption = {
   value: string
   label: string
+  otherCollege?: boolean
 }
 
 const GROUP_SIZE = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const
@@ -114,12 +116,25 @@ export default function MyTeamForm({
       ?.filter((collegeUser) => {
         const isCurrentUser = collegeUser.id === user?.id
         const isTeamRep = teamData?.reapId === collegeUser.id
-        return !isCurrentUser && !isTeamRep
+        const isTeamMember = teamData?.members.some(
+          (member) => member.id === collegeUser.id
+        )
+        return !isCurrentUser && !isTeamRep && !isTeamMember
       })
       .map((user) => ({
         value: user.id,
         label: `${user.name} (${user.email})`,
+        otherCollege: user.collegeName !== teamData?.reap?.collegeName,
       })) || []
+
+  const teamMemberOptions: MemberOption[] =
+    teamData?.members.map((member) => ({
+      value: member.id,
+      label: `${member.name} (${member.email})`,
+      otherCollege: member.collegeName !== teamData?.reap?.collegeName,
+    })) || []
+
+  const allOptions = [...formatedUserOptions, ...teamMemberOptions]
 
   // Handle form initialization and updates
   useEffect(() => {
@@ -383,9 +398,24 @@ export default function MyTeamForm({
                       <FormLabel>
                         Add Team Members (From {user?.collegeName})
                       </FormLabel>
+                      <FormDescription className="flex gap-1 items-cente0.5">
+                       <TriangleAlert className="size-4 shrink-0 mt-1"/> Here you can add only your college participants but
+                        deselect the participants from other colleges already
+                        joined team
+                      </FormDescription>
+                      <FormDescription className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1 text-black dark:text-white">
+                          <GoDotFill className="size-7 mt-0.5 fill-primary" />{" "}
+                          Participants From Same College
+                        </div>
+                        <div className="flex items-center gap-1 text-black dark:text-white">
+                          <GoDotFill className="size-7 mt-0.5 fill-red-500" />{" "}
+                          Participants From Other College
+                        </div>
+                      </FormDescription>
                       <FormControl>
                         <MultiSelect
-                          options={formatedUserOptions}
+                          options={allOptions}
                           value={field.value}
                           defaultValue={field.value}
                           onValueChange={field.onChange}

@@ -60,6 +60,7 @@ interface MultiSelectProps
   options: {
     /** The text to display for the option. */
     label: string;
+    otherCollege?:boolean;
     /** The unique value associated with the option. */
     value: string;
     /** Optional icon component to display alongside the option. */
@@ -211,7 +212,8 @@ export const MultiSelect = React.forwardRef<
                         key={value}
                         className={cn("rounded-lg",
                           isAnimating ? "animate-bounce" : "",
-                          multiSelectVariants({ variant })
+                          multiSelectVariants({ variant }),
+                          option?.otherCollege && "bg-red-500 text-white"
                         )}
                         style={{ animationDuration: `${animation}s` }}
                       >
