@@ -11,7 +11,7 @@ import { Plus, RotateCcw } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { toast } from "sonner"
-// import TeamsTable from "./teams-table"
+import TeamsTable from "./teams-table"
 import { useUser } from "@/hooks/users/use-user"
 import { useRouter } from "next/navigation"
 
@@ -22,13 +22,18 @@ interface YourTeamListProps {
   groupSize?: string
 }
 
-const YourTeamList = ({ page, search, pageLimit, groupSize }: YourTeamListProps) => {
+const YourTeamList = ({
+  page,
+  search,
+  pageLimit,
+  groupSize,
+}: YourTeamListProps) => {
   const { user } = useUser()
   const router = useRouter()
   const [spinReload, setSpinReload] = useState(false)
 
   const filters = {
-    id: user?.id,
+    memberId: user?.id || "",
     page,
     limit: pageLimit,
     ...(search && { search }),
@@ -36,45 +41,42 @@ const YourTeamList = ({ page, search, pageLimit, groupSize }: YourTeamListProps)
   }
   const queryClient = useQueryClient()
 
-//   const { data, isLoading, refetch } = useQuery({
-//     queryKey: ["get-all-teams", filters],
-//     queryFn: async () => {
-//       const response = await client.team.getTeams.$get(filters)
-//       const { data } = await response.json()
-//       return data
-//     },
-//   })
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["get-your-joined-teams", filters],
+    queryFn: async () => {
+      const response = await client.team.getTeamsByMemberId.$get(filters)
+      const { data } = await response.json()
+      return data
+    },
+  })
 
-//   const teamsCount = data?.allTeamsCount || 0
+  const teamsCount = data?.allTeamsCount || 0
 
-//   const dataWithDates = data?.teams?.map((team) => ({
-//     ...team,
-//     createdAt: new Date(team.createdAt),
-//     updatedAt: new Date(team.updatedAt),
-//   }))
+  const dataWithDates = data?.teams?.map((team) => ({
+    ...team,
+    createdAt: new Date(team.createdAt),
+    updatedAt: new Date(team.updatedAt),
+  }))
 
-//   const handleReload = () => {
-//     setSpinReload(true)
-//     queryClient.invalidateQueries({
-//       queryKey: ["get-all-teams", filters],
-//       exact: true,
-//     })
-//     refetch()
-//     toast.success("Data Refetched")
-//     setTimeout(() => {
-//       setSpinReload(false)
-//     }, 1000)
-//   }
-
-
-  
+  const handleReload = () => {
+    setSpinReload(true)
+    queryClient.invalidateQueries({
+      queryKey: ["get-your-joined-teams", filters],
+      exact: true,
+    })
+    refetch()
+    toast.success("Data Refetched")
+    setTimeout(() => {
+      setSpinReload(false)
+    }, 1000)
+  }
 
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <Heading
-            title={`Your Teams ()`}
+            title={`Joined Teams (${teamsCount})`}
             description="View all your teams you joined"
           />
 
@@ -82,7 +84,7 @@ const YourTeamList = ({ page, search, pageLimit, groupSize }: YourTeamListProps)
             <Button
               variant={"secondary"}
               className="active:scale-95 hidden md:flex"
-            //   onClick={handleReload}
+              onClick={handleReload}
             >
               <RotateCcw
                 className={cn(
@@ -101,11 +103,11 @@ const YourTeamList = ({ page, search, pageLimit, groupSize }: YourTeamListProps)
           </div>
         </div>
         <Separator />
-        {/* <TeamsTable
+        <TeamsTable
           data={dataWithDates || []}
           totalData={teamsCount}
           isLoading={isLoading}
-        /> */}
+        />
 
         <Separator />
       </div>
