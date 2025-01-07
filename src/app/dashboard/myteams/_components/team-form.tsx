@@ -337,13 +337,15 @@ export default function MyTeamForm({
                                     </div>
                                 </>
                             )}
-                            <div className="col-span-1 md:col-span-2">
-                                <FormLabel>Team Join Link(Not Editable)</FormLabel>
-                                <CopyInput
-                                    value={teamJoinLink}
-                                    className="bg-muted mt-1"
-                                />
-                            </div>
+                            {teamId && (
+                                <div className="col-span-1 md:col-span-2">
+                                    <FormLabel>Team Join Link(Not Editable)</FormLabel>
+                                    <CopyInput
+                                        value={teamJoinLink}
+                                        className="bg-muted mt-1"
+                                    />
+                                </div>
+                            )}
                             {teamId && (
                                 <FormField
                                     control={form.control}
