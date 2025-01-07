@@ -26,14 +26,14 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 
-export const TeamCodeFormSchema = z.object({
+const TeamCodeFormSchema = z.object({
     teamCode: z
         .string()
         .min(6, "Team code must be 6 characters long")
         .max(6, "Team code must be 6 characters long"),
 })
 
-export type TeamCodeFormValues = z.infer<typeof TeamCodeFormSchema>
+type TeamCodeFormValues = z.infer<typeof TeamCodeFormSchema>
 
 const JoinDetailsPage = () => {
     const { user } = useUser()
