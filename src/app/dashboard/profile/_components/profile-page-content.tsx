@@ -53,6 +53,7 @@ import {
 import data from "@/constants/colleges.json"
 import { cn } from "@/utils"
 import Link from "next/link"
+import { useClerk } from "@clerk/nextjs"
 
 const ProfileFormSchema = z.object({
   id: z.string(),
@@ -79,7 +80,7 @@ const ProfilePageContent = () => {
   const [isCopying2, setIsCopying2] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [initialCollegeName, setInitialCollegeName] = useState("")
-
+  const { signOut } = useClerk()
   const queryClient = useQueryClient()
   const router = useRouter()
   const {
@@ -161,7 +162,8 @@ const ProfilePageContent = () => {
       await client.auth.deleteUser.$post({ id })
     },
     onSuccess: () => {
-      router.push("/")
+      signOut()
+      router.push("/sign-up")
       toast.success("Account deleted successfully")
       setShowDeleteModal(false)
     },
@@ -365,9 +367,9 @@ const ProfilePageContent = () => {
                                   >
                                     {field.value
                                       ? CollegeList.find(
-                                          (college) =>
-                                            college.value === field.value
-                                        )?.label
+                                        (college) =>
+                                          college.value === field.value
+                                      )?.label
                                       : "Select College"}
                                     <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                   </Button>
