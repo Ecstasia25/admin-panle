@@ -16,20 +16,21 @@ enum Role {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  clerkId     String   @unique
+  id          String    @id @default(uuid())
+  clerkId     String    @unique
   name        String?
-  email       String?  @unique
+  email       String?   @unique
   phone       String?
   image       String?
   address     String?
   collegeName String?
-  role        Role     @default(USER)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  events      Event[]  @relation("EventCoordinator")
-  teams       Team[]   @relation("TeamMembers")
-  Team        Team[]
+  role        Role      @default(USER)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  events      Event[]   @relation("EventCoordinator")
+  teams       Team[]    @relation("TeamMembers")
+  team        Team[]
+  booking     Booking[]
 }
 
 enum EventStage {
@@ -71,20 +72,63 @@ model Event {
   discount   String?
   finalPrice String?
 
-  coordinators User[]   @relation("EventCoordinator")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  coordinators User[]    @relation("EventCoordinator")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  Booking      Booking[]
 }
 
 model Team {
-  id        String @id @default(uuid())
-  reap      User   @relation(fields: [reapId], references: [id])
-  reapId    String
-  teamId    String @unique
-  name      String
-  groupSize String
+  id          String  @id @default(uuid())
+  reap        User    @relation(fields: [reapId], references: [id])
+  reapId      String
+  teamId      String  @unique
+  name        String
+  groupSize   String
   collegeOnly Boolean @default(false)
-  members   User[] @relation("TeamMembers")
+  members     User[]  @relation("TeamMembers")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  booking   Booking[]
+}
+
+enum BokkingStatus {
+  PROCESSING
+  CONFIRMED
+  CANCELLED
+}
+
+model Booking {
+  id        String        @id @default(uuid())
+  leader    User          @relation(fields: [userId], references: [id])
+  userId    String
+  event     Event         @relation(fields: [eventId], references: [id])
+  eventId   String
+  price     String
+  team      Team          @relation(fields: [teamId], references: [id])
+  teamId    String
+  paymentId String?
+  isPaid    Boolean       @default(false)
+  status    BokkingStatus @default(PROCESSING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  ticket    Ticket[]
+}
+
+enum TicketStatus {
+  CONFIRMED
+  CHECKEDIN
+  CANCELLED
+  EXPIRED
+}
+
+model Ticket {
+  id         String       @id @default(uuid())
+  booking    Booking      @relation(fields: [bookingId], references: [id])
+  bookingId  String
+  status     TicketStatus @default(CONFIRMED)
+  secretCode String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

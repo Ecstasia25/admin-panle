@@ -6,6 +6,7 @@ import { eventRouter } from "./routers/event-router"
 import { coordinatorEvents } from "./routers/coordinator-router"
 import { overviewRouter } from "./routers/overview-router"
 import { teamRouter } from "./routers/team-roter"
+import { bookingRouter } from "./routers/booking-router"
 
 const app = new Hono().basePath("/api").use(cors())
 
@@ -15,6 +16,7 @@ const appRouter = app
   .route("/coevents", coordinatorEvents)
   .route("/overview", overviewRouter)
   .route("/team", teamRouter)
+  .route("/book", bookingRouter)
 
 
 export const httpHandler = handle(app)
