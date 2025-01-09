@@ -3,7 +3,7 @@ import { transporter } from "./nodemailer"
 
 const domain = process.env.NEXT_PUBLIC_APP_URL
 
-export const bookingEventEmail = async (
+export const JoinTeamMail = async (
   leaderEmail: string,
   eventTitle: string,
   membersName: string[],
@@ -13,7 +13,7 @@ export const bookingEventEmail = async (
   totalENtry: string
 ) => {
   const info = await transporter.sendMail({
-    from: `"Jayma Bio Innovations" <${process.env.GMAIL_EMAIL}>`,
+    from: `"Ecstasia 2025" <${process.env.GMAIL_EMAIL}>`,
     to: leaderEmail,
     subject: `Event Registration: ${eventTitle}`,
     html: ``,

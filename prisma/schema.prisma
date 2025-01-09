@@ -29,8 +29,8 @@ model User {
   updatedAt   DateTime  @updatedAt
   events      Event[]   @relation("EventCoordinator")
   teams       Team[]    @relation("TeamMembers")
-  Team        Team[]
-  Booking     Booking[]
+  team        Team[]
+  booking     Booking[]
 }
 
 enum EventStage {
@@ -90,7 +90,7 @@ model Team {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  Booking   Booking[]
+  booking   Booking[]
 }
 
 enum BokkingStatus {
@@ -108,10 +108,12 @@ model Booking {
   price     String
   team      Team          @relation(fields: [teamId], references: [id])
   teamId    String
+  paymentId String?
+  isPaid    Boolean       @default(false)
   status    BokkingStatus @default(PROCESSING)
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
-  Ticket    Ticket[]
+  ticket    Ticket[]
 }
 
 enum TicketStatus {

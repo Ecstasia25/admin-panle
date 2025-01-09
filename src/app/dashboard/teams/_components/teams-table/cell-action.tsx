@@ -94,7 +94,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
-          <DropdownMenuItem disabled={isPending || checkMemberPresentInTeam} onClick={() => setOpen(true)}>
+          <DropdownMenuItem disabled={isPending} onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
           </DropdownMenuItem>
           <DropdownMenuItem
