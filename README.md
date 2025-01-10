@@ -1,1 +1,1 @@
-# Ecstasia Panel
+# Ecstasia Panel (Developed By Exions Tech)
