@@ -1,67 +1,71 @@
 "use client"
 
 import PageContainer from "@/components/layout/page-container"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/utils"
 import { client } from "@/utils/client"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Plus, RotateCcw } from "lucide-react"
-import Link from "next/link"
+import { RotateCcw } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
-import TeamsTable from "./teams-table"
+import MyBookingsTable from "./bookings-table"
 import { useUser } from "@/hooks/users/use-user"
-import { useRouter } from "next/navigation"
 
-interface YourTeamListProps {
+interface EventListPageProps {
   page: number
   search?: string
   pageLimit: number
-  groupSize?: string
 }
 
-const YourTeamList = ({
+const MyBookingsList = ({
   page,
   search,
   pageLimit,
-  groupSize,
-}: YourTeamListProps) => {
-  const { user } = useUser()
-  const router = useRouter()
+}: EventListPageProps) => {
+    const {user} = useUser()
   const [spinReload, setSpinReload] = useState(false)
-
   const filters = {
     memberId: user?.id || "",
     page,
     limit: pageLimit,
     ...(search && { search }),
-    ...(groupSize && { groupSize }),
   }
   const queryClient = useQueryClient()
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["get-your-joined-teams", filters],
+    queryKey: ["get-all-bookings-by-memberId", filters],
     queryFn: async () => {
-      const response = await client.team.getTeamsByMemberId.$get(filters)
-      const { data } = await response.json()
+      const response = await client.booking.getBookingsByMemberId.$get(filters)
+        const { data } = await response.json()
       return data
     },
   })
 
-  const teamsCount = data?.allTeamsCount || 0
+  const bookingsCount = data?.bookingCount || 0
 
-  const dataWithDates = data?.teams?.map((team) => ({
-    ...team,
-    createdAt: new Date(team.createdAt),
-    updatedAt: new Date(team.updatedAt),
-  }))
+  const dataWithDates = data?.bookings?.map((booking) => ({
+    ...booking,
+    createdAt: new Date(booking.createdAt),
+    updatedAt: new Date(booking.updatedAt),
+    team: {
+      ...booking.team,
+      createdAt: new Date(booking.team.createdAt),
+      updatedAt: new Date(booking.team.updatedAt),
+    },
+    event: {
+      ...booking.event,
+      createdAt: new Date(booking.event.createdAt),
+      updatedAt: new Date(booking.event.updatedAt),
+      date: new Date(booking.event.date),
+    }
+  })) || []
 
   const handleReload = () => {
     setSpinReload(true)
     queryClient.invalidateQueries({
-      queryKey: ["get-your-joined-teams", filters],
+      queryKey: ["get-all-bookings-by-memberId", filters],
       exact: true,
     })
     refetch()
@@ -71,19 +75,13 @@ const YourTeamList = ({
     }, 1000)
   }
 
-  const checkCollegeNameAvaliable = user?.collegeName === null ? false : true
-
-  const redirectJoinTeam = () => {
-      router.push("/dashboard/yourteams/join")
-  }
-
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <Heading
-            title={`Joined Teams (${teamsCount})`}
-            description="View all your teams you joined"
+            title={`My Bookings (${bookingsCount})`}
+            description="View all your bookings here"
           />
 
           <div className="flex items-center gap-2">
@@ -100,22 +98,17 @@ const YourTeamList = ({
               />
               Reload
             </Button>
-            <Button onClick={redirectJoinTeam}>
-              <Plus className="mr-2 h-4 w-4" /> Join
-            </Button>
           </div>
         </div>
         <Separator />
-        <TeamsTable
-          data={dataWithDates || []}
-          totalData={teamsCount}
+        <MyBookingsTable
+          data={dataWithDates}
+          totalData={bookingsCount}
           isLoading={isLoading}
         />
-
-        <Separator />
       </div>
     </PageContainer>
   )
 }
 
-export default YourTeamList
+export default MyBookingsList

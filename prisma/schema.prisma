@@ -93,26 +93,26 @@ model Team {
   booking   Booking[]
 }
 
-enum BokkingStatus {
-  PROCESSING
+enum BokingStatus {
+  PENDING
   CONFIRMED
   CANCELLED
 }
 
 model Booking {
-  id        String        @id @default(uuid())
-  leader    User          @relation(fields: [userId], references: [id])
+  id        String       @id @default(uuid())
+  leader    User         @relation(fields: [userId], references: [id])
   userId    String
-  event     Event         @relation(fields: [eventId], references: [id])
+  event     Event        @relation(fields: [eventId], references: [id])
   eventId   String
   price     String
-  team      Team          @relation(fields: [teamId], references: [id])
+  team      Team         @relation(fields: [teamId], references: [id])
   teamId    String
-  paymentId String?
-  isPaid    Boolean       @default(false)
-  status    BokkingStatus @default(PROCESSING)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  paymentScreenshot String?
+  isPaid    Boolean      @default(false)
+  status    BokingStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
   ticket    Ticket[]
 }
 

@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { router } from "../__internals/router"
 import { privateProcedure } from "../procedures"
-import { BokkingStatus } from "@prisma/client"
+import { BokingStatus, EventCategory } from "@prisma/client"
 import { db } from "@/utils/db"
 import { matchSorter } from "match-sorter"
 
@@ -14,10 +14,10 @@ export const bookingRouter = router({
         teamId: z.string(),
         price: z.string(),
         status: z
-          .nativeEnum(BokkingStatus, {
+          .nativeEnum(BokingStatus, {
             required_error: "Status is required",
           })
-          .default(BokkingStatus.PROCESSING),
+          .default(BokingStatus.PENDING),
       })
     )
     .mutation(async ({ c, input }) => {
@@ -42,21 +42,21 @@ export const bookingRouter = router({
       z.object({
         bookingId: z.string(),
         status: z
-          .nativeEnum(BokkingStatus, {
+          .nativeEnum(BokingStatus, {
             required_error: "Status is required",
           })
           .optional(),
-        paymentId: z.string().optional(),
+        paymentScreenshot: z.string().optional(),
         isPaid: z.boolean().optional(),
       })
     )
     .mutation(async ({ c, input }) => {
-      const { bookingId, status, paymentId, isPaid } = input
+      const { bookingId, status, paymentScreenshot, isPaid } = input
       const booking = await db.booking.update({
         where: { id: bookingId },
         data: {
           status,
-          paymentId,
+          paymentScreenshot,
           isPaid,
         },
       })
@@ -72,15 +72,42 @@ export const bookingRouter = router({
         page: z.number().optional(),
         limit: z.number().optional(),
         search: z.string().optional(),
+        category: z.nativeEnum(EventCategory).optional(),
+        groupSize: z.string().optional(),
       })
     )
     .query(async ({ c, input }) => {
-      const { page = 1, limit = 10, search } = input
-      let bookings = await db.booking.findMany()
+      const { page = 1, limit = 10, search, category, groupSize } = input
+
+      let categoryFormatedArray = category ? category.split(".") : []
+      let groupSizeFormatedArray = groupSize ? groupSize.split(".") : []
+
+      let bookings = await db.booking.findMany({
+        include: {
+          team: true,
+          event: true,
+        },
+      })
 
       if (search) {
         bookings = matchSorter(bookings, search, {
           keys: ["team.name", "leader.name", "event.name"],
+        })
+      }
+
+      if (categoryFormatedArray.length > 0) {
+        bookings = bookings.filter((booking) => {
+          return categoryFormatedArray.every((category) => {
+            return booking.event.category === category
+          })
+        })
+      }
+
+      if (groupSizeFormatedArray.length > 0) {
+        bookings = bookings.filter((booking) => {
+          return groupSizeFormatedArray.every((groupSize) => {
+            return booking.event.groupSize === groupSize
+          })
         })
       }
 
@@ -122,11 +149,15 @@ export const bookingRouter = router({
     .input(
       z.object({
         memberId: z.string(),
+        page: z.number().optional(),
+        limit: z.number().optional(),
+        search: z.string().optional(),
       })
     )
     .query(async ({ c, input }) => {
-      const { memberId } = input
-      const bookings = await db.booking.findMany({
+      const { memberId, page = 1, limit = 10, search } = input
+
+      let bookings = await db.booking.findMany({
         where: {
           team: {
             members: {
@@ -136,10 +167,30 @@ export const bookingRouter = router({
             },
           },
         },
+        include: {
+          team: true,
+          event: true,
+        },
       })
+
+      const allBooikings = bookings.length
+      const offset = (page - 1) * limit
+
+      const paginatedBookings = bookings.slice(offset, offset + limit)
+
+      if (search) {
+        bookings = matchSorter(bookings, search, {
+          keys: ["team.name", "leader.name", "event.name"],
+        })
+      }
       return c.json({
         success: true,
-        bookings,
+        data: {
+          bookings: paginatedBookings,
+          bookingCount: allBooikings,
+          offset,
+          limit,
+        },
         message: "Bookings fetched successfully",
       })
     }),

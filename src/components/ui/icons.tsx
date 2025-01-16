@@ -46,7 +46,8 @@ import {
   Pyramid,
   Shapes,
   Blocks,
-  Frame
+  Frame,
+  Ratio
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -94,6 +95,7 @@ export const Icons = {
   pyramid:Pyramid,
   blocks:Blocks,
   frame:Frame,
+  ratio:Ratio,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
