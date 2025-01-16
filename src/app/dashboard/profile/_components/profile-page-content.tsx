@@ -238,11 +238,7 @@ const ProfilePageContent = () => {
 
 
   const redirectJoinTeam = () => {
-    if (checkCollegeNameAvaliable) {
       router.push("/dashboard/yourteams/join")
-    } else {
-      toast.info("Please update your college name to join a team")
-    }
   }
 
   return (
