@@ -40,11 +40,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={cn(poppins.variable, eb_garamond.variable)}>
         <body className="min-h-[calc(100vh-1px)] flex flex-col font-sans antialiased">
-        <NextTopLoader showSpinner={false} color="#DDB49F" />
+          <NextTopLoader showSpinner={false} color="#DDB49F" />
           <main className="relative flex-1 flex flex-col">
             <Providers
             >{children}
-            <Toaster />
+              <Toaster />
             </Providers>
           </main>
         </body>
