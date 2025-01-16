@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { router } from "../__internals/router"
 import { privateProcedure } from "../procedures"
-import { BokkingStatus } from "@prisma/client"
+import { BokingStatus } from "@prisma/client"
 import { db } from "@/utils/db"
 import { matchSorter } from "match-sorter"
 
@@ -14,10 +14,10 @@ export const bookingRouter = router({
         teamId: z.string(),
         price: z.string(),
         status: z
-          .nativeEnum(BokkingStatus, {
+          .nativeEnum(BokingStatus, {
             required_error: "Status is required",
           })
-          .default(BokkingStatus.PROCESSING),
+          .default(BokingStatus.PENDING),
       })
     )
     .mutation(async ({ c, input }) => {
@@ -42,21 +42,21 @@ export const bookingRouter = router({
       z.object({
         bookingId: z.string(),
         status: z
-          .nativeEnum(BokkingStatus, {
+          .nativeEnum(BokingStatus, {
             required_error: "Status is required",
           })
           .optional(),
-        paymentId: z.string().optional(),
+        paymentScreenshot: z.string().optional(),
         isPaid: z.boolean().optional(),
       })
     )
     .mutation(async ({ c, input }) => {
-      const { bookingId, status, paymentId, isPaid } = input
+      const { bookingId, status, paymentScreenshot, isPaid } = input
       const booking = await db.booking.update({
         where: { id: bookingId },
         data: {
           status,
-          paymentId,
+          paymentScreenshot,
           isPaid,
         },
       })
