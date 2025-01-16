@@ -16,7 +16,7 @@ const appRouter = app
   .route("/coevents", coordinatorEvents)
   .route("/overview", overviewRouter)
   .route("/team", teamRouter)
-  .route("/book", bookingRouter)
+  .route("/booking", bookingRouter)
 
 
 export const httpHandler = handle(app)

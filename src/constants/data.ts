@@ -89,4 +89,12 @@ export const navItems: NavItem[] = [
     isActive: false,
     items: [], // No child items
   },
+  {
+    title: "MY BOOKINGS",
+    url: "/dashboard/mybookings",
+    icon: "ratio",
+    shortcut: ["m", "b"],
+    isActive: false,
+    items: [], // No child items
+  },
 ]
