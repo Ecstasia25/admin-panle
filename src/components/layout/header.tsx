@@ -18,11 +18,13 @@ export default function Header() {
       </div>
 
       <div className="flex items-center gap-2 px-4">
-        {user?.role === "SUPERADMIN" || user?.role === "ADMIN" && (
+
+      {(user?.role === "SUPERADMIN" || user?.role === "ADMIN") && (
           <div className="hidden md:flex">
-            <SearchInput />
-          </div>
-        )}
+          <SearchInput />
+        </div>
+      )}
+
         <UserNav />
         <ThemeToggle />
       </div>
