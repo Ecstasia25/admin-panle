@@ -59,7 +59,7 @@ export function UserNav() {
             <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem
+            {/* <DropdownMenuItem
               onClick={() => router.push("/dashboard/myevents")}
             >
               Your Events
@@ -70,12 +70,8 @@ export function UserNav() {
               >
                 Manage Events
               </DropdownMenuItem>
-            )}
-            {/* <DropdownMenuItem>
-              Settings
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>New Team</DropdownMenuItem> */}
+            )} */}
+    
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>Log out</DropdownMenuItem>
