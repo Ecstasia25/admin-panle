@@ -7,8 +7,8 @@ const Page = () => {
 
     <div className="w-full flex-1 flex items-center justify-center">
       <SignUp
-         fallbackRedirectUrl={"/dashboard"}
-         forceRedirectUrl={"/dashboard"}
+         fallbackRedirectUrl={"/"}
+         forceRedirectUrl={"/"}
       />
     </div>
   )
