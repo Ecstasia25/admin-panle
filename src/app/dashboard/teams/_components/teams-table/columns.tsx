@@ -5,7 +5,12 @@ import { CellAction } from "./cell-action"
 import { Team, User } from "@prisma/client"
 import { format } from "date-fns"
 
-export const columns: ColumnDef<Team>[] = [
+
+interface TeamWithReap extends Team {
+  reap?: User
+}
+
+export const columns: ColumnDef<TeamWithReap>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -32,6 +37,17 @@ export const columns: ColumnDef<Team>[] = [
       return (
         <span className="min-w-[100px] flex items-center">
           {row.original.name}
+        </span>
+      )
+    },
+  },
+  {
+    accessorKey: "reap.name",
+    header: "REAP NAME",
+    cell: ({ row }) => {
+      return (
+        <span className="min-w-[100px] flex items-center">
+          {row.original.reap?.name}
         </span>
       )
     },
