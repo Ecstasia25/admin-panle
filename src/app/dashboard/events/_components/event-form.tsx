@@ -20,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
 import { client } from "@/utils/client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {

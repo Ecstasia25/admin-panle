@@ -11,7 +11,7 @@ import {
 import { client } from '@/utils/client';
 import { Event } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Copy, CopyCheck, Edit, MoreHorizontal, Trash } from 'lucide-react';
+import { BadgeCheck, Copy, CopyCheck, Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -69,6 +69,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() => router.push(`/dashboard/mybookings/book/${data.id}`)}
+          >
+            <BadgeCheck className="mr-2 h-4 w-4" /> Register
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => router.push(`/dashboard/events/${data.id}`)}
           >
