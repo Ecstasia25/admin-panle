@@ -295,6 +295,9 @@ const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
                     )}
                   />
                   <div className="col-sapn-1 flex flex-col gap-2 items-start justify-start border rounded-xl p-4">
+                    <h1 className="text-md font-medium">
+                      Pay Here : 
+                    </h1>
                     <Image
                       src="/payment-qr/qr.jpg"
                       width={400}
