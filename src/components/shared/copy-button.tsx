@@ -31,6 +31,7 @@ export const CopyButton = ({
   return (
     <Button
       variant="outline"
+      type="button"
       size="icon"
       className={cn(
         "transition-all duration-200 hover:bg-gray-200/20 w-10 h-10",
