@@ -53,7 +53,7 @@ import { MultiSelect } from "@/components/ui/multi-select"
 import FormCardSkeleton from "@/components/ui/form-card-skeleton"
 
 
-const GROUP_SIZE = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const
+const GROUP_SIZE = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10","11","12"] as const
 
 type CoordinatorOption = {
   value: string
@@ -75,8 +75,7 @@ const EventFormSchema = z.object({
   slotCount: z.string({ required_error: "Slot Count is Required" }),
   archived: z.boolean().optional(),
   price: z.string({ required_error: "Price is Required" }),
-  discount: z.string().optional(),
-  finalPrice: z.string().optional(),
+  pricePerPerson: z.boolean().optional(),
   day: z.nativeEnum(EventDay, {
     required_error: "Event day is required",
   }),
@@ -138,8 +137,7 @@ export default function MyEventForm({
       slotCount: "30",
       archived: false,
       price: "100",
-      discount: "",
-      finalPrice: "",
+      pricePerPerson: false,
       coordinators: [],
     },
   })
@@ -150,7 +148,7 @@ export default function MyEventForm({
 
       form.reset({
         title: eventData.title,
-       rules: eventData.rules,
+        rules: eventData.rules,
         category: eventData.category,
         day: eventData.day,
         poster: eventData.poster,
@@ -160,8 +158,7 @@ export default function MyEventForm({
         slotCount: eventData.slotCount.toString(),
         archived: eventData.archived,
         price: eventData.price.toString(),
-        discount: eventData.discount?.toString() || "",
-        finalPrice: eventData.finalPrice?.toString() || "",
+        pricePerPerson: eventData.pricePerPerson,
         coordinators: eventData.coordinators.map((coordinator) => coordinator.id),
       })
       setIsFormReady(true);
@@ -238,22 +235,6 @@ export default function MyEventForm({
 
   }
 
-  const price = form.watch("price")
-  const discount = form.watch("discount")
-
-  const finalPrice = useMemo(() => {
-    const basePrice = parseFloat(price) || 0
-    const discountPercent = parseFloat(discount ?? "0") || 0
-
-    if (!isNaN(basePrice) && !isNaN(discountPercent)) {
-      const discountAmount = (basePrice * discountPercent) / 100
-      const calculated = (basePrice - discountAmount).toFixed(2)
-      form.setValue("finalPrice", calculated)
-      return calculated
-    }
-    return "0.00"
-  }, [price, discount, form])
-
 
   if (eventId && (isEventLoading || !isFormReady)) {
     return (
@@ -279,6 +260,9 @@ export default function MyEventForm({
       setRules(newRules);
       onChange(newRules);
     };
+
+
+
 
     return (
       <ScrollArea className="h-[200px] w-full p-4 border rounded-xl border-primary">
@@ -553,99 +537,94 @@ export default function MyEventForm({
                     )}
                   />
                 </div>
-                <div className="w-full flex flex-col md:flex-row items-center gap-4">
-                  <FormField
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Event Category</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select event category" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {Object.values(EventCategory).map((category) => (
-                              <SelectItem key={category} value={category}>
-                                {category}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="stage"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Event Stage Type</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select event stage type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {Object.values(EventStage).map((stage) => (
-                              <SelectItem key={stage} value={stage}>
-                                {stage}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
               </div>
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               <FormField
                 control={form.control}
-                name="price"
-                disabled
+                name="category"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Event Event Price</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter event price" {...field} />
-                    </FormControl>
+                    <FormLabel>Event Category</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select event category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.values(EventCategory).map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
-                name="discount"
+                name="stage"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Event Stage Type</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select event stage type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.values(EventStage).map((stage) => (
+                          <SelectItem key={stage} value={stage}>
+                            {stage}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="pricePerPerson"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-white dark:bg-background">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Price per person</FormLabel>
+                      <FormDescription className="-ml-6 text-xs">
+                        If you enable this, the price will be calculated per
+                        person
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="price"
                 disabled
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Event Discount Percentage</FormLabel>
+                    <FormLabel>Event Price</FormLabel>
                     <FormControl>
-                      <div className="relative flex items-center gap-2">
-                        <Input {...field} placeholder="Enter discount" />
-                        <span className="absolute top-[27%] right-[35%] text-sm">
-                          %
-                        </span>
-                        <Input
-                          className="w-[80px]"
-                          disabled
-                          value={finalPrice || ""}
-                          placeholder="Enter discount"
-                        />
-                      </div>
+                      <Input placeholder="Enter event price" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

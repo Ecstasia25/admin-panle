@@ -103,29 +103,11 @@ export const columns: ColumnDef<Event>[] = [
     cell: ({ row }) => {
       return (
         <span className='min-w-[100px] flex items-center'>
-          {row.original.price}
-        </span>
-      )
-    }
-  },
-  {
-    accessorKey: 'discount',
-    header: 'DISCOUNT',
-    cell: ({ row }) => {
-      return (
-        <span className='min-w-[100px] flex items-center'>
-          {row.original.discount} %
-        </span>
-      )
-    }
-  },
-  {
-    accessorKey: 'finalPrice',
-    header: 'DISCOUNTED PRICE',
-    cell: ({ row }) => {
-      return (
-        <span className='min-w-[150px] flex items-center'>
-          {row.original.finalPrice}
+          {row.original.price} {
+            row.original.pricePerPerson && (
+              <span className='text-sm ml-1'>/ person</span>
+            )
+          }
         </span>
       )
     }
