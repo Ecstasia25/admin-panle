@@ -37,8 +37,7 @@ export const eventRouter = router({
         price: z.string({
           required_error: "Price is Required",
         }),
-        discount: z.string().optional(),
-        finalPrice: z.string().optional(),
+        pricePerPerson: z.boolean().optional(),
         coordinators: z.array(z.string()).min(1, {
           message: "At least one coordinator is required",
         }),
@@ -60,10 +59,9 @@ export const eventRouter = router({
           slotCount,
           archived,
           price,
-          discount,
-          finalPrice,
           coordinators,
           day,
+          pricePerPerson,
         } = input
 
         // Create the event in the database
@@ -79,9 +77,8 @@ export const eventRouter = router({
             slotCount,
             archived,
             price,
-            discount,
-            finalPrice,
             day,
+            pricePerPerson,
             coordinators: {
               connect: coordinators.map((id) => ({
                 id,
@@ -238,8 +235,7 @@ export const eventRouter = router({
         price: z.string({
           required_error: "Price is Required",
         }),
-        discount: z.string().optional(),
-        finalPrice: z.string().optional(),
+        pricePerPerson: z.boolean().optional(),
         day: z.nativeEnum(EventDay, {
           required_error: "Day is Required",
         }),
@@ -262,8 +258,7 @@ export const eventRouter = router({
           slotCount,
           archived,
           price,
-          discount,
-          finalPrice,
+          pricePerPerson,
           coordinators,
           day,
         } = input
@@ -295,9 +290,8 @@ export const eventRouter = router({
             slotCount,
             archived,
             price,
-            discount,
-            finalPrice,
             day,
+            pricePerPerson,
             coordinators: {
               disconnect: currentEvent.coordinators.map((e) => ({ id: e.id })),
 

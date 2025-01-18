@@ -36,8 +36,6 @@ const EventEditPage = ({ eventId }: EventEditPageProps) => {
             createdAt: new Date(data.createdAt),
             updatedAt: new Date(data.updatedAt),
             date: new Date(data.date),
-            discount: data.discount ?? null,
-            finalPrice: data.finalPrice ?? null,
         };
     }
 

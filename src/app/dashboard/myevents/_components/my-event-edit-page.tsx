@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { client } from "@/utils/client";
@@ -10,7 +9,6 @@ import MyEventForm from "./my-event-form";
 interface MyEventEditPageProps {
     eventId: string;
 }
-
 
 
 const MyEventEditPage = ({ eventId }: MyEventEditPageProps) => {
@@ -33,8 +31,6 @@ const MyEventEditPage = ({ eventId }: MyEventEditPageProps) => {
             createdAt: new Date(data.createdAt),
             updatedAt: new Date(data.updatedAt),
             date: new Date(data.date),
-            discount: data.discount ?? null,
-            finalPrice: data.finalPrice ?? null,
         };
     }
 

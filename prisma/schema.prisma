@@ -68,9 +68,8 @@ model Event {
   slotCount String
   archived  Boolean    @default(false)
 
-  price      String
-  discount   String?
-  finalPrice String?
+  price          String
+  pricePerPerson Boolean @default(false)
 
   coordinators User[]    @relation("EventCoordinator")
   createdAt    DateTime  @default(now())
@@ -100,20 +99,20 @@ enum BokingStatus {
 }
 
 model Booking {
-  id        String       @id @default(uuid())
-  leader    User         @relation(fields: [userId], references: [id])
-  userId    String
-  event     Event        @relation(fields: [eventId], references: [id])
-  eventId   String
-  price     String
-  team      Team         @relation(fields: [teamId], references: [id])
-  teamId    String
+  id                String       @id @default(uuid())
+  leader            User         @relation(fields: [userId], references: [id])
+  userId            String
+  event             Event        @relation(fields: [eventId], references: [id])
+  eventId           String
+  price             String
+  team              Team         @relation(fields: [teamId], references: [id])
+  teamId            String
   paymentScreenshot String?
-  isPaid    Boolean      @default(false)
-  status    BokingStatus @default(PENDING)
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  ticket    Ticket[]
+  isPaid            Boolean      @default(false)
+  status            BokingStatus @default(PENDING)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  ticket            Ticket[]
 }
 
 enum TicketStatus {
