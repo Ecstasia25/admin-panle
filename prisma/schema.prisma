@@ -100,6 +100,7 @@ enum BokingStatus {
 
 model Booking {
   id                String       @id @default(uuid())
+  bookingId         String       @unique
   leader            User         @relation(fields: [userId], references: [id])
   userId            String
   event             Event        @relation(fields: [eventId], references: [id])

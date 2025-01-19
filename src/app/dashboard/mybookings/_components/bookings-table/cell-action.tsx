@@ -45,7 +45,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onCopy = (id: string) => {
     setIsCopying(true)
     navigator.clipboard.writeText(id);
-    toast("Event ID Copied");
+    toast("Booking ID Copied");
     setTimeout(() => {
       setIsCopying(false)
     }, 2000)
@@ -74,11 +74,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             onClick={() => router.push(`/dashboard/events/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           {/* <DropdownMenuItem
             disabled={isPending}
             onClick={() => setOpen(true)}>
@@ -86,7 +86,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           </DropdownMenuItem> */}
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => onCopy(data.id)}
+            onClick={() => onCopy(data.bookingId)}
           >
             {isCopying ? (
               <CopyCheck className="w-4 h-4 mr-2 text-green-500" />

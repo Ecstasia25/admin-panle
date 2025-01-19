@@ -15,3 +15,13 @@ export const generateTeamId = () => {
   }
   return teamId.toUpperCase()
 }
+
+export const generateBookingId = () => {
+  const uuid = uuidv4().replace(/-/g, "")
+  let bookingId = ""
+  for (let i = 0; i < 8; i++) {
+    const char = uuid[Math.floor(Math.random() * uuid.length)]
+    bookingId += char
+  }
+  return bookingId.toUpperCase()
+}

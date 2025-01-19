@@ -3,7 +3,7 @@
 import { useUser } from "@/hooks/users/use-user"
 import { client } from "@/utils/client"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -35,12 +35,22 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { AlertCircle, Check, ChevronDown, CircleAlert } from "lucide-react"
+import {
+  AlertCircle,
+  BadgeCheck,
+  Check,
+  ChevronDown,
+  CircleAlert,
+  Loader2,
+} from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 import { CopyButton } from "@/components/shared/copy-button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ImageUploader } from "@/components/shared/image-uploader"
+import { generateBookingId } from "@/lib/utils"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 interface EventBookingsPageProps {
   eventId: string
@@ -50,6 +60,7 @@ interface EventBookingsPageProps {
 const BookingFormSchema = z.object({
   leaderId: z.string().nonempty("Leader ID is required"),
   eventId: z.string().nonempty("Event ID is required"),
+  bookingId: z.string().nonempty("Booking ID is required"),
   price: z.string().nonempty("Price is required"),
   teamId: z.string().nonempty("Team is required"),
   paymentScreenshot: z.string().nonempty("Payment Screenshot is required"),
@@ -58,10 +69,9 @@ const BookingFormSchema = z.object({
 type BookingFormValues = z.infer<typeof BookingFormSchema>
 
 const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
-  const [isFormReady, setIsFormReady] = useState(false)
   const { user } = useUser()
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null)
-
+  const router = useRouter()
   const upiId = process.env.NEXT_PUBLIC_PAYMENT_UPI_ID!
 
   // Form setup with zod validation
@@ -73,6 +83,31 @@ const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
       teamId: "",
       price: "",
       paymentScreenshot: "",
+      bookingId: generateBookingId(),
+    },
+  })
+
+  const { mutate: createBooking, isPending: isCreatingBooking } = useMutation({
+    mutationFn: async (data: BookingFormValues) => {
+      const response = await client.booking.createBooking.$post({
+        ...data,
+        userId: data.leaderId,
+      })
+      if (!response.ok) {
+        throw new Error("Failed to create booking")
+      }
+      const json = await response.json()
+      if (!json.success) {
+        throw new Error(json.message || "Failed to create booking")
+      }
+      return json
+    },
+    onSuccess: () => {
+      toast.success("Registered successfully")
+      router.push("/dashboard/mybookings")
+    },
+    onError: (error: Error) => {
+      toast.error(error.message)
     },
   })
 
@@ -133,36 +168,43 @@ const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
       : 0
     : parseFloat(eventData?.price ?? "0")
 
-  // Set form defaults when event and user data are ready
+  // Update form values when data changes
   useEffect(() => {
-    if (eventData && user) {
-      form.reset({
-        leaderId: user.id,
-        eventId: eventData.id,
-        price: finalPrice.toString(),
-        teamId: "",
-        paymentScreenshot: "",
-      })
-      setIsFormReady(true)
+    if (selectedTeamId && finalPrice) {
+      form.setValue("teamId", selectedTeamId)
+      form.setValue("price", finalPrice.toString())
     }
-  }, [eventData, user, form, isFormReady])
+  }, [selectedTeamId, finalPrice, form])
 
-  // Form submission handler
-  const onSubmit = (values: BookingFormValues) => {
-    console.log("Form submitted with values:", values)
-  }
+  useEffect(() => {
+    if (user?.id) {
+      form.setValue("leaderId", user.id)
+    }
+  }, [user, form])
 
   const filteredTeams = isFixedTeamSize
     ? teamsData?.teams
     : teamsData?.teams.filter(
-      (team) => team.members.length === Number(eventData?.groupSize)
-    )
+        (team) => team.members.length === Number(eventData?.groupSize)
+      )
 
   const teams =
     filteredTeams?.map((team) => ({
       value: team.id,
       label: team.name,
     })) || []
+
+  const onSubmit = (values: BookingFormValues) => {
+    if (!selectedTeamId) {
+      toast.error("Please select a team")
+      return
+    }
+    if (!values.paymentScreenshot) {
+      toast.error("Please upload payment screenshot")
+      return
+    }
+    createBooking(values)
+  }
 
   const Square = ({
     className,
@@ -263,8 +305,8 @@ const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
                                 >
                                   {field.value
                                     ? teams.find(
-                                      (team) => team.value === team.value
-                                    )?.label
+                                        (team) => team.value === team.value
+                                      )?.label
                                     : "Choose your team"}
                                   <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
@@ -380,7 +422,7 @@ const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
                         as the Team Lead)
                       </AlertDescription>
                     </Alert>
-                    {!selectedTeamId && (
+                    {selectedTeamId && (
                       <div className="w-full flex items-start gap-3">
                         <FormField
                           control={form.control}
@@ -388,7 +430,7 @@ const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>
-                                Payment Screenshot{" "} of ₹ {finalPrice} /-
+                                Payment Screenshot of ₹ {finalPrice} /-
                               </FormLabel>
                               <FormControl>
                                 <ImageUploader
@@ -402,8 +444,42 @@ const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
                         />
                         <div className="flex flex-col gap-2">
                           <h1 className="text-sm font-medium flex items-center gap-1">
-                           <CircleAlert className="size-4 text-red-500 mt-0.5 shrink-0" /> Important Info About Event Registration
+                            <CircleAlert className="size-4 text-red-500 mt-0.5 shrink-0" />{" "}
+                            Important Info About Event Registration
                           </h1>
+                          <li className="text-sm font-normal">
+                            Please make sure that the payment screenshot is
+                            clear and visible. (In case of any issue contact
+                            college representative)
+                          </li>
+                          <li className="text-sm font-normal">
+                            Edit or modification not allowed after the
+                            registration process is completed.
+                          </li>
+                          <li className="text-sm font-normal">
+                            If any edit or modification required contact event
+                            admin.
+                          </li>
+                          <li className="text-sm font-normal">
+                            After the registration process is completed, team
+                            leader got a confirmation mail.
+                          </li>
+                          <li className="text-sm font-normal">
+                            Your registration is confirmed after the payment is
+                            verified by the event admin.
+                          </li>
+                          <Button
+                            type="submit"
+                            disabled={isCreatingBooking}
+                            className="w-full mt-4 flex items-center gap-2"
+                          >
+                            Register
+                            {isCreatingBooking ? (
+                              <Loader2 className="size-4 shrink-0 animate-spin" />
+                            ) : (
+                              <BadgeCheck className="size-4 shrink-0" />
+                            )}
+                          </Button>
                         </div>
                       </div>
                     )}
