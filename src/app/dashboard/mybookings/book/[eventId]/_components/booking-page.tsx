@@ -35,10 +35,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Check, ChevronDown } from "lucide-react"
+import { AlertCircle, Check, ChevronDown, CircleAlert } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 import { CopyButton } from "@/components/shared/copy-button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { ImageUploader } from "@/components/shared/image-uploader"
 
 interface EventBookingsPageProps {
   eventId: string
@@ -58,6 +60,7 @@ type BookingFormValues = z.infer<typeof BookingFormSchema>
 const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
   const [isFormReady, setIsFormReady] = useState(false)
   const { user } = useUser()
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null)
 
   const upiId = process.env.NEXT_PUBLIC_PAYMENT_UPI_ID!
 
@@ -97,6 +100,21 @@ const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
     enabled: !!user?.id,
   })
 
+  const { data: selectedTeamData, isLoading: isSelectedTeamLoading } = useQuery(
+    {
+      queryKey: ["team-details", selectedTeamId],
+      queryFn: async () => {
+        if (!selectedTeamId) return null
+        const response = await client.team.getTeamById.$get({
+          id: selectedTeamId,
+        })
+        const { team } = await response.json()
+        return team
+      },
+      enabled: !!selectedTeamId,
+    }
+  )
+
   // Calculate price dynamically
   const calculatedPrice = () => {
     if (!eventData) return ""
@@ -107,13 +125,21 @@ const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
     return price
   }
 
+  const isFixedTeamSize = eventData?.pricePerPerson
+
+  const finalPrice = isFixedTeamSize
+    ? selectedTeamData?.members?.length
+      ? selectedTeamData.members.length * parseFloat(eventData?.price)
+      : 0
+    : parseFloat(eventData?.price ?? "0")
+
   // Set form defaults when event and user data are ready
   useEffect(() => {
     if (eventData && user) {
       form.reset({
         leaderId: user.id,
         eventId: eventData.id,
-        price: calculatedPrice(),
+        price: finalPrice.toString(),
         teamId: "",
         paymentScreenshot: "",
       })
@@ -126,13 +152,11 @@ const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
     console.log("Form submitted with values:", values)
   }
 
-  const isFixedTeamSize = eventData?.pricePerPerson
-
   const filteredTeams = isFixedTeamSize
     ? teamsData?.teams
     : teamsData?.teams.filter(
-        (team) => team.members.length === Number(eventData?.groupSize)
-      )
+      (team) => team.members.length === Number(eventData?.groupSize)
+    )
 
   const teams =
     filteredTeams?.map((team) => ({
@@ -210,93 +234,208 @@ const EventBookingsPage = ({ eventId }: EventBookingsPageProps) => {
                 <Skeleton className="h-20" />
               </div>
             ) : teamsData?.teams?.length ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <div className="col-span-1 md:col-span-3 flex flex-col md:flex-row gap-4">
-                  <FormField
-                    control={form.control}
-                    name="teamId"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col col-span-2">
-                        <div className="flex flex-col gap-1">
-                          <FormLabel>Select your team</FormLabel>
-                          <p className="text-sm font-medium text-red-600 w-[70%]">
-                            Here you can see only eligible teams for this event
-                            (in case of any issue contact college
-                            representative) *
-                          </p>
-                        </div>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                className={cn(
-                                  "w-[400px] justify-between",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value
-                                  ? teams.find(
+                  <div className="col-span-1 md:col-span-2 flex flex-col gap-3">
+                    <FormField
+                      control={form.control}
+                      name="teamId"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col w-full">
+                          <div className="flex flex-col gap-1">
+                            <FormLabel>Select your team</FormLabel>
+                            <p className="text-sm font-medium text-red-600 w-[70%]">
+                              Here you can see only eligible teams for this
+                              event (in case of any issue contact college
+                              representative) *
+                            </p>
+                          </div>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  className={cn(
+                                    "w-[400px] justify-between",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value
+                                    ? teams.find(
                                       (team) => team.value === team.value
                                     )?.label
-                                  : "Choose your team"}
-                                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[400px] p-0">
-                            <Command>
-                              <CommandInput placeholder="Search team..." />
-                              <CommandList>
-                                <CommandEmpty>No teams found</CommandEmpty>
-                                <CommandGroup>
-                                  {teams.map((team) => (
-                                    <CommandItem
-                                      value={team.label}
-                                      key={team.value}
-                                      onSelect={() => {
-                                        form.setValue("teamId", team.value)
-                                      }}
-                                    >
-                                      <Square className="bg-indigo-400/20 text-indigo-500 mt-1">
-                                        {team.label.charAt(0).toUpperCase()}
-                                      </Square>
-                                      {team.label}
-                                      <Check
-                                        className={cn(
-                                          "ml-auto",
-                                          team.value === field.value
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                                <CommandSeparator />
-                                <CommandGroup>
-                                  <Link href="/dashboard/yourteams/join">
-                                    <Button
-                                      variant={"ghost"}
-                                      className="w-full justify-start font-normal"
-                                    >
-                                      <RiTeamLine className="size-4 shrink-0 mr-2" />
-                                      Join a new team
-                                    </Button>
-                                  </Link>
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
+                                    : "Choose your team"}
+                                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[400px] p-0">
+                              <Command>
+                                <CommandInput placeholder="Search team..." />
+                                <CommandList>
+                                  <CommandEmpty>No teams found</CommandEmpty>
+                                  <CommandGroup>
+                                    {teams.map((team) => (
+                                      <CommandItem
+                                        value={team.label}
+                                        key={team.value}
+                                        onSelect={() => {
+                                          form.setValue("teamId", team.value)
+                                          setSelectedTeamId(team.value)
+                                        }}
+                                      >
+                                        <Square className="bg-indigo-400/20 text-indigo-500 mt-1">
+                                          {team.label.charAt(0).toUpperCase()}
+                                        </Square>
+                                        {team.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            team.value === field.value
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                  <CommandSeparator />
+                                  <CommandGroup>
+                                    <Link href="/dashboard/yourteams/join">
+                                      <Button
+                                        variant={"ghost"}
+                                        className="w-full justify-start font-normal"
+                                      >
+                                        <RiTeamLine className="size-4 shrink-0 mr-2" />
+                                        Join a new team
+                                      </Button>
+                                    </Link>
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    {selectedTeamId && (
+                      <div className="flex flex-col gap-1">
+                        <h1 className="text-lg font-medium">
+                          Selected Team Details
+                        </h1>
+                        {isSelectedTeamLoading ? (
+                          <div className="w-[70%] flex flex-col gap-2">
+                            <Skeleton className="h-6 w-full" />
+                            <Skeleton className="h-6" />
+                            <Skeleton className="h-6" />
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-1">
+                            <h1 className="text-sm font-medium">
+                              {" "}
+                              Team Name :
+                              <span className="font-normal">
+                                {" "}
+                                {selectedTeamData?.name}
+                              </span>
+                            </h1>
+                            <h1 className="text-sm font-medium">
+                              {" "}
+                              Team Code :
+                              <span className="font-normal">
+                                {" "}
+                                {selectedTeamData?.teamId}
+                              </span>
+                            </h1>
+                            <h1 className="text-sm font-medium">
+                              {" "}
+                              Team Size:
+                              <span className="font-normal">
+                                {" "}
+                                {selectedTeamData?.groupSize}
+                              </span>
+                            </h1>
+                            <h1 className="text-sm font-medium">
+                              {" "}
+                              Present Members Count:
+                              <span className="font-normal">
+                                {" "}
+                                {selectedTeamData?.members.length}
+                              </span>
+                            </h1>
+                          </div>
+                        )}
+                      </div>
                     )}
-                  />
-                  <div className="col-sapn-1 flex flex-col gap-2 items-start justify-start border rounded-xl p-4">
+
+                    <Alert variant="destructive" className="mt-2">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Team Lead</AlertTitle>
+                      <AlertDescription>
+                        Please make sure that the team lead is registering for
+                        the event on behalf of the team. (who completed the
+                        registration process we will consider that participant
+                        as the Team Lead)
+                      </AlertDescription>
+                    </Alert>
+                    {!selectedTeamId && (
+                      <div className="w-full flex items-start gap-3">
+                        <FormField
+                          control={form.control}
+                          name="paymentScreenshot"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>
+                                Payment Screenshot{" "} of ₹ {finalPrice} /-
+                              </FormLabel>
+                              <FormControl>
+                                <ImageUploader
+                                  value={field.value ? [field.value] : []}
+                                  onChange={(url) => field.onChange(url)}
+                                  onRemove={() => field.onChange("")}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <div className="flex flex-col gap-2">
+                          <h1 className="text-sm font-medium flex items-center gap-1">
+                           <CircleAlert className="size-4 text-red-500 mt-0.5 shrink-0" /> Important Info About Event Registration
+                          </h1>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-sapn-1 flex flex-col gap-2 items-start justify-start border rounded-xl p-4 shrink-0">
                     <h1 className="text-md font-medium">
-                      Pay Here : 
+                      Pay Here :{" "}
+                      {isFixedTeamSize ? (
+                        <>
+                          {selectedTeamData ? (
+                            <>
+                              {isSelectedTeamLoading ? (
+                                <Skeleton className="w-20 h-5" />
+                              ) : (
+                                <span>₹ {finalPrice} /-</span>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-xs text-red-600">
+                              select a team to calculate the total amount
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {isEventLoading ? (
+                            <Skeleton className="w-20 h-5" />
+                          ) : (
+                            <span>₹ {finalPrice} /-</span>
+                          )}
+                        </>
+                      )}
                     </h1>
                     <Image
                       src="/payment-qr/qr.jpg"
