@@ -70,7 +70,8 @@ export default function AppSidebar() {
         item.title !== "COLLEGE REAPS" &&
         item.title !== "TEAMS" &&
         item.title !== "YOUR TEAMS" && 
-        item.title !== "BOOKINGS"
+        item.title !== "BOOKINGS" && 
+        item.title !== "EVENT BOOKINGS"
       )
     }
     return true
@@ -85,7 +86,9 @@ export default function AppSidebar() {
         item.title !== "COORDINATORS" &&
         item.title !== "COLLEGE REAPS" &&
         item.title !== "TEAMS" &&
-        item.title !== "MY TEAMS"
+        item.title !== "MY TEAMS" && 
+        item.title !== "EVENTS" &&
+        item.title !== "BOOKINGS"
       )
     }
     return true
@@ -103,7 +106,8 @@ export default function AppSidebar() {
         item.title !== "MY TEAMS" &&
         item.title !== "MY EVENTS" &&
         item.title !== "EVENTS" && 
-        item.title !== "BOOKINGS"
+        item.title !== "BOOKINGS" && 
+         item.title !== "EVENT BOOKINGS"
       )
     }
     return true

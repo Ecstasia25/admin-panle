@@ -78,7 +78,7 @@ export const bookingRouter = router({
         message: "Booking updated successfully",
       })
     }),
-    getAllBookings: privateProcedure
+  getAllBookings: privateProcedure
     .input(
       z.object({
         page: z.number().optional(),
@@ -90,13 +90,21 @@ export const bookingRouter = router({
       })
     )
     .query(async ({ c, input }) => {
-      const { page = 1, limit = 10, search, category, groupSize , bookingStatus} = input
-  
+      const {
+        page = 1,
+        limit = 10,
+        search,
+        category,
+        groupSize,
+        bookingStatus,
+      } = input
+
       let categoryFormatedArray = category ? category.split(".") : []
       let groupSizeFormatedArray = groupSize ? groupSize.split(".") : []
-      let bookingStatusFormatedArray = bookingStatus ? bookingStatus.split(".") : []
+      let bookingStatusFormatedArray = bookingStatus
+        ? bookingStatus.split(".")
+        : []
 
-  
       let bookings = await db.booking.findMany({
         include: {
           team: {
@@ -107,37 +115,37 @@ export const bookingRouter = router({
           event: true,
         },
       })
-  
+
       if (categoryFormatedArray.length > 0) {
-        bookings = bookings.filter((booking) => 
+        bookings = bookings.filter((booking) =>
           categoryFormatedArray.includes(booking.event.category)
         )
       }
-  
+
       if (groupSizeFormatedArray.length > 0) {
-        bookings = bookings.filter((booking) => 
+        bookings = bookings.filter((booking) =>
           groupSizeFormatedArray.includes(booking.team.groupSize)
         )
       }
 
       if (bookingStatusFormatedArray.length > 0) {
-        bookings = bookings.filter((booking) => 
+        bookings = bookings.filter((booking) =>
           bookingStatusFormatedArray.includes(booking.status)
         )
       }
-  
+
       if (search) {
         bookings = matchSorter(bookings, search, {
           keys: ["bookingId"],
         })
       }
-  
+
       const allBookings = bookings.length
-  
+
       const offset = (page - 1) * limit
-  
+
       const paginatedBookings = bookings.slice(offset, offset + limit)
-  
+
       return c.json({
         success: true,
         data: {
@@ -236,6 +244,96 @@ export const bookingRouter = router({
       return c.json({
         success: true,
         message: "Booking deleted successfully",
+      })
+    }),
+  getAllBookingsByCorId: privateProcedure
+    .input(
+      z.object({
+        corId: z.string(),
+        page: z.number().optional(),
+        limit: z.number().optional(),
+        search: z.string().optional(),
+        groupSize: z.string().optional(),
+        category: z.string().optional(),
+        bookingStatus: z.string().optional(),
+      })
+    )
+    .query(async ({ c, input }) => {
+      const {
+        page = 1,
+        limit = 10,
+        search,
+        category,
+        groupSize,
+        bookingStatus,
+        corId,
+      } = input
+
+      let categoryFormatedArray = category ? category.split(".") : []
+      let groupSizeFormatedArray = groupSize ? groupSize.split(".") : []
+      let bookingStatusFormatedArray = bookingStatus
+        ? bookingStatus.split(".")
+        : []
+
+      let bookings = await db.booking.findMany({
+        where: {
+          event: {
+            coordinators: {
+              some: {
+                id: corId,
+              },
+            },
+          },
+        },
+        include: {
+          team: {
+            include: {
+              members: true,
+            },
+          },
+          event: true,
+        },
+      })
+
+      if (categoryFormatedArray.length > 0) {
+        bookings = bookings.filter((booking) =>
+          categoryFormatedArray.includes(booking.event.category)
+        )
+      }
+
+      if (groupSizeFormatedArray.length > 0) {
+        bookings = bookings.filter((booking) =>
+          groupSizeFormatedArray.includes(booking.team.groupSize)
+        )
+      }
+
+      if (bookingStatusFormatedArray.length > 0) {
+        bookings = bookings.filter((booking) =>
+          bookingStatusFormatedArray.includes(booking.status)
+        )
+      }
+
+      if (search) {
+        bookings = matchSorter(bookings, search, {
+          keys: ["bookingId"],
+        })
+      }
+
+      const allBookings = bookings.length
+
+      const offset = (page - 1) * limit
+
+      const paginatedBookings = bookings.slice(offset, offset + limit)
+
+      return c.json({
+        success: true,
+        data: {
+          bookings: paginatedBookings,
+          bookingsCount: allBookings,
+          offset,
+          limit,
+        },
+        message: "Bookings fetched successfully",
       })
     }),
 })
