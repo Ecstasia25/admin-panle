@@ -34,7 +34,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const { mutate: deleteAdmin, isPending } = useMutation({
     mutationFn: async (id: string) => {
-      await client.event.deleteEvent.$post({ id })
+      await client.booking.deleteBooking.$post({ bookingId: id });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get-all-bookings"] })
@@ -79,11 +79,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem> */}
-          {/* <DropdownMenuItem
+          <DropdownMenuItem
             disabled={isPending}
             onClick={() => setOpen(true)}>
             <Trash className="mr-2 h-4 w-4" /> Delete
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
             onClick={() => onCopy(data.bookingId)}
