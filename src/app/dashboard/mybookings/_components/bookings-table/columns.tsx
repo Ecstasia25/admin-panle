@@ -37,23 +37,23 @@ export const columns: ColumnDef<BookingWithTeam>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'id',
+    accessorKey: 'bookingId',
     header: 'BOOKING ID',
     cell: ({ row }) => {
       return (
         <span className='min-w-[100px] flex items-center'>
-          {row.original.id}
+          {row.original.bookingId}
         </span>
       )
     }
   },
   {
-    accessorKey: 'teamId',
-    header: 'TEAM ID',
+    accessorKey: 'team.teamId',
+    header: 'TEAM CODE',
     cell: ({ row }) => {
       return (
         <span className='min-w-[100px] flex items-center'>
-          {row.original.teamId}
+          {row.original.team.teamId}
         </span>
       )
     }

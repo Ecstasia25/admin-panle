@@ -14,6 +14,7 @@ export const bookingRouter = router({
         teamId: z.string(),
         price: z.string(),
         paymentScreenshot: z.string().optional(),
+        bookingId: z.string(),
         status: z
           .nativeEnum(BokingStatus, {
             required_error: "Status is required",
@@ -22,9 +23,10 @@ export const bookingRouter = router({
       })
     )
     .mutation(async ({ c, input }) => {
-      const { eventId, userId, teamId, status = "PENDING", price, paymentScreenshot } = input
+      const {  eventId,bookingId, userId, teamId, status = "PENDING", price, paymentScreenshot } = input
       const booking = await db.booking.create({
         data: {
+          bookingId,
           event: { connect: { id: eventId } },
           leader: { connect: { id: userId } },
           team: { connect: { id: teamId } },
