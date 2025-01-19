@@ -3,15 +3,19 @@
 import { DataTable } from '@/components/ui/table/data-table';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
 
-import { Booking, Event, Team } from '@prisma/client';
+import { Booking, Event, Team, User } from '@prisma/client';
 
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { BOOKING_STATUS, CATEGORY_OPTIONS, GROUP_SIZE_OPTIONS, useAdminTableFilters } from './use-bookings-table-filters';
 import { DataTableFilterBox } from '@/components/ui/table/data-table-filter-box';
 import { columns } from './columns';
 
+interface TeamWithmembers extends Team {
+  members: User[];
+}
+
 interface BookingWithTeam extends Booking {
-  team: Team;
+  team: TeamWithmembers;
   event: Event;
 }
 

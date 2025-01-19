@@ -63,6 +63,11 @@ const AllBookingsList = ({
                 ...booking.team,
                 createdAt: new Date(booking.team.createdAt),
                 updatedAt: new Date(booking.team.updatedAt),
+                members: booking.team.members.map((member) => ({
+                    ...member,
+                    createdAt: new Date(member.createdAt),
+                    updatedAt: new Date(member.updatedAt),
+                  })),
             },
             event: {
                 ...booking.event,
