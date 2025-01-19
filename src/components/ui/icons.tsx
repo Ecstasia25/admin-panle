@@ -48,7 +48,8 @@ import {
   Blocks,
   Frame,
   Ratio,
-  ReceiptIndianRupee
+  ReceiptIndianRupee,
+  Library
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -97,6 +98,7 @@ export const Icons = {
   blocks:Blocks,
   frame:Frame,
   ratio:Ratio,
+  library: Library,
   receiptRuppe: ReceiptIndianRupee,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
