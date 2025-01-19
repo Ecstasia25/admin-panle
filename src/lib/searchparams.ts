@@ -16,6 +16,7 @@ export const searchParams = {
   category: parseAsString,
   day: parseAsString,
   deviceOs: parseAsString,
+  bookingStatus : parseAsString
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

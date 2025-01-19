@@ -9,7 +9,7 @@ type pageProps = {
 }
 
 export const metadata = {
-  title: "Teams | Ecstasia Panel",
+  title: "My Bookings | Ecstasia Panel",
 }
 
 export default async function Page({ searchParams }: pageProps) {
