@@ -2,10 +2,13 @@
 
 import { DataTable } from '@/components/ui/table/data-table';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
-import { columns } from './columns';
+
 import { Booking, Event, Team } from '@prisma/client';
-import { useAdminTableFilters } from './use-bookings-table-filters';
+
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
+import { BOOKING_STATUS, CATEGORY_OPTIONS, GROUP_SIZE_OPTIONS, useAdminTableFilters } from './use-bookings-table-filters';
+import { DataTableFilterBox } from '@/components/ui/table/data-table-filter-box';
+import { columns } from './columns';
 
 interface BookingWithTeam extends Booking {
   team: Team;
@@ -28,6 +31,12 @@ export default function EventsTable({
     setSearchQuery,
     resetFilters,
     isAnyFilterActive,
+    categoryFilter,
+    setCategoryFilter,
+    groupSizeFilter,
+    setGroupSizeFilter,
+    bookingStatusFilter,
+    setBookingStatusFilter
 
   } = useAdminTableFilters();
 
@@ -39,6 +48,35 @@ export default function EventsTable({
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           setPage={setPage}
+        />
+        <DataTableFilterBox
+          filterKey="bookingStatus"
+          title="Booking Status"
+          options={BOOKING_STATUS}
+          setFilterValue={
+            setBookingStatusFilter
+          }
+          filterValue={bookingStatusFilter}
+        />
+        <DataTableFilterBox
+          filterKey="category"
+          title="Category"
+          options={CATEGORY_OPTIONS}
+          setFilterValue={
+            setCategoryFilter
+          }
+          filterValue={categoryFilter}
+        />
+        <DataTableFilterBox
+          filterKey="groupSize"
+          title="Group Size"
+          options={GROUP_SIZE_OPTIONS}
+          setFilterValue={
+            setGroupSizeFilter
+          }
+          filterValue={
+            groupSizeFilter
+          }
         />
         <DataTableResetFilter
           isFilterActive={isAnyFilterActive}

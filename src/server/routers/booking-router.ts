@@ -23,7 +23,15 @@ export const bookingRouter = router({
       })
     )
     .mutation(async ({ c, input }) => {
-      const {  eventId,bookingId, userId, teamId, status = "PENDING", price, paymentScreenshot } = input
+      const {
+        eventId,
+        bookingId,
+        userId,
+        teamId,
+        status = "PENDING",
+        price,
+        paymentScreenshot,
+      } = input
       const booking = await db.booking.create({
         data: {
           bookingId,
@@ -70,62 +78,71 @@ export const bookingRouter = router({
         message: "Booking updated successfully",
       })
     }),
-  getAllBookings: privateProcedure
+    getAllBookings: privateProcedure
     .input(
       z.object({
         page: z.number().optional(),
         limit: z.number().optional(),
         search: z.string().optional(),
-        category: z.nativeEnum(EventCategory).optional(),
         groupSize: z.string().optional(),
+        category: z.string().optional(),
+        bookingStatus: z.string().optional(),
       })
     )
     .query(async ({ c, input }) => {
-      const { page = 1, limit = 10, search, category, groupSize } = input
-
+      const { page = 1, limit = 10, search, category, groupSize , bookingStatus} = input
+  
       let categoryFormatedArray = category ? category.split(".") : []
       let groupSizeFormatedArray = groupSize ? groupSize.split(".") : []
+      let bookingStatusFormatedArray = bookingStatus ? bookingStatus.split(".") : []
 
+  
       let bookings = await db.booking.findMany({
         include: {
-          team: true,
+          team: {
+            include: {
+              members: true,
+            },
+          },
           event: true,
         },
       })
+  
+      if (categoryFormatedArray.length > 0) {
+        bookings = bookings.filter((booking) => 
+          categoryFormatedArray.includes(booking.event.category)
+        )
+      }
+  
+      if (groupSizeFormatedArray.length > 0) {
+        bookings = bookings.filter((booking) => 
+          groupSizeFormatedArray.includes(booking.team.groupSize)
+        )
+      }
 
+      if (bookingStatusFormatedArray.length > 0) {
+        bookings = bookings.filter((booking) => 
+          bookingStatusFormatedArray.includes(booking.status)
+        )
+      }
+  
       if (search) {
         bookings = matchSorter(bookings, search, {
-          keys: ["team.name", "leader.name", "event.name"],
+          keys: ["bookingId"],
         })
       }
-
-      if (categoryFormatedArray.length > 0) {
-        bookings = bookings.filter((booking) => {
-          return categoryFormatedArray.every((category) => {
-            return booking.event.category === category
-          })
-        })
-      }
-
-      if (groupSizeFormatedArray.length > 0) {
-        bookings = bookings.filter((booking) => {
-          return groupSizeFormatedArray.every((groupSize) => {
-            return booking.event.groupSize === groupSize
-          })
-        })
-      }
-
-      const allBooikings = bookings.length
-
+  
+      const allBookings = bookings.length
+  
       const offset = (page - 1) * limit
-
+  
       const paginatedBookings = bookings.slice(offset, offset + limit)
-
+  
       return c.json({
         success: true,
         data: {
           bookings: paginatedBookings,
-          bookingsCount: allBooikings,
+          bookingsCount: allBookings,
           offset,
           limit,
         },
@@ -172,21 +189,26 @@ export const bookingRouter = router({
           },
         },
         include: {
-          team: true,
+          team: {
+            include: {
+              members: true,
+            },
+          },
           event: true,
         },
       })
+
+      if (search) {
+        bookings = matchSorter(bookings, search, {
+          keys: ["bookingId"],
+        })
+      }
 
       const allBooikings = bookings.length
       const offset = (page - 1) * limit
 
       const paginatedBookings = bookings.slice(offset, offset + limit)
 
-      if (search) {
-        bookings = matchSorter(bookings, search, {
-          keys: ["team.name", "leader.name", "event.name"],
-        })
-      }
       return c.json({
         success: true,
         data: {
