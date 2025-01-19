@@ -1,23 +1,24 @@
 "use client"
-import { Checkbox } from "@/components/ui/checkbox"
+
 import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action"
-import { Booking, Event, Team } from "@prisma/client"
+import { Booking, Event, Team, User } from "@prisma/client"
 import { format } from "date-fns"
-import { Button } from "@/components/ui/button"
-import { ArrowUpDown } from "lucide-react"
 import Image from "next/image"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 
+interface TeamWithMembers extends Team {
+  members: User[];
+}
+
 interface BookingWithTeam extends Booking {
-  team: Team
+  team: TeamWithMembers;
   event: Event
 }
 
@@ -174,6 +175,6 @@ export const columns: ColumnDef<BookingWithTeam>[] = [
   {
     id: "actions",
     header: "ACTIONS",
-    cell: ({ row }) => <CellAction data={row.original} />,
+    cell: ({ row }) => <CellAction data={row.original} />
   },
 ]

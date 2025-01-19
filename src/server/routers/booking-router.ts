@@ -99,7 +99,11 @@ export const bookingRouter = router({
   
       let bookings = await db.booking.findMany({
         include: {
-          team: true,
+          team: {
+            include: {
+              members: true,
+            },
+          },
           event: true,
         },
       })
@@ -185,7 +189,11 @@ export const bookingRouter = router({
           },
         },
         include: {
-          team: true,
+          team: {
+            include: {
+              members: true,
+            },
+          },
           event: true,
         },
       })

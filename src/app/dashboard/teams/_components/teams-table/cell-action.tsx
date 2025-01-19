@@ -26,10 +26,8 @@ import { toast } from "sonner"
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet"
 import { CopyButton } from "@/components/shared/copy-button"
 
